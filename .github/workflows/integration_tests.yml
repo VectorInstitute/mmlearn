@@ -1,0 +1,46 @@
+name: integration tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .pre-commit-config.yaml
+      - .github/workflows/code_checks.yml
+      - .github/workflows/integration_tests.yml
+      - '**.py'
+      - '**.ipynb'
+      - poetry.lock
+      - pyproject.toml
+      - '**.rst'
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .pre-commit-config.yaml
+      - .github/workflows/code_checks.yml
+      - .github/workflows/integration_tests.yml
+      - '**.py'
+      - '**.ipynb'
+      - poetry.lock
+      - pyproject.toml
+      - '**.rst'
+      - '**.md'
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Install poetry
+        run: python3 -m pip install --upgrade pip && python3 -m pip install poetry
+      - uses: actions/setup-python@v5.0.0
+        with:
+          python-version: '3.9'
+      - name: Install dependencies and check code
+        run: |
+          poetry env use '3.9'
+          source $(poetry env info --path)/bin/activate
+          poetry install --with test
+          pytest -m integration_test

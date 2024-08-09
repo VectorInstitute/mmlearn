@@ -1,0 +1,157 @@
+[tool.poetry]
+name = "mmlearn"
+version = "0.1.0a0.dev0" # https://www.python.org/dev/peps/pep-0440/#version-schemes
+description = "A modular framework for research on multimodal representation learning."
+readme = "README.md"
+authors = ["Vector AI Engineering <ai_engineering@vectorinstitute.ai>"]
+license = "Apache-2.0"
+repository = "https://github.com/VectorInstitute/mmlearn"
+packages = [
+    { include = "mmlearn"},
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9, <3.13"
+numpy = "^2.0.0"
+hydra-core = "^1.3.0"
+hydra-zen = "^0.13.0"
+hydra-submitit-launcher = "^1.2.0"
+transformers = "^4.44.0"
+torch = {version = "^2.3.0", source = "torch-cu121"}
+lightning = "^2.3.0"
+jsonlines = "^4.0.0"
+pandas = "^2.2.2"
+
+[tool.poetry.group.vision.dependencies]
+torchvision = {version = "^0.18.0", source = "torch-cu121"}
+opencv-python = "^4.10.0.84"
+timm = "^1.0.7"
+
+[tool.poetry.group.video.dependencies]
+pytorchvideo = {git = "https://github.com/facebookresearch/pytorchvideo", branch = "main"}
+decord = "^0.6.0"
+
+[tool.poetry.group.audio.dependencies]
+torchaudio = {version = "^2.3.0", source = "torch-cu121"}
+
+[tool.poetry.group.peft]
+optional = true
+
+[tool.poetry.group.peft.dependencies]
+peft = "^0.12.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+wandb = "^0.17.6"
+ipykernel = "^6.29.5"
+ipython = "8.18.0"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+ruff = "^0.5.6"
+mypy = "^1.11.1"
+pytest = "^8.3.2"
+pre-commit = "^3.8.0"
+nbqa = { version = "^1.8.7", extras = ["toolchain"] }
+pip-audit = "^2.7.3"
+typos = "^1.23.6"
+
+[[tool.poetry.source]]
+name = "torch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+priority = "supplemental"
+
+[tool.mypy]
+ignore_missing_imports = true
+install_types = true
+pretty = true
+namespace_packages = true
+explicit_package_bases = true
+non_interactive = true
+warn_unused_configs = true
+allow_any_generics = false
+allow_untyped_calls = false
+allow_untyped_defs = false
+allow_incomplete_defs = false
+check_untyped_defs = true
+allow_untyped_decorators = false
+warn_unreachable = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+implicit_reexport = false
+strict_equality = true
+extra_checks = true
+
+[tool.ruff]
+include = ["*.py", "pyproject.toml", "*.ipynb"]
+line-length = 88
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "A", # flake8-builtins
+    "B", # flake8-bugbear
+    "COM", # flake8-commas
+    "C4", # flake8-comprehensions
+    "RET", # flake8-return
+    "SIM", # flake8-simplify
+    "ICN", # flake8-import-conventions
+    "Q", # flake8-quotes
+    "RSE", # flake8-raise
+    "D", # pydocstyle
+    "E", # pycodestyle
+    "F", # pyflakes
+    "I", # isort
+    "W", # pycodestyle
+    "N", # pep8-naming
+    "ERA", # eradicate
+    "PL", # pylint
+]
+fixable = ["A", "B", "COM", "C4", "RET", "SIM", "ICN", "Q", "RSE", "D", "E", "F", "I", "W", "N", "ERA", "PL"]
+ignore = [
+    "E501", # line length violation
+    "C901", # `function_name` is too complex
+    "PLR0913", # Too many arguments
+    "PLR2004", # Magic value used in comparison
+    "COM812", # Missing trailing comma
+]
+
+# Ignore import violations in all `__init__.py` files.
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "F401", "F403", "F811"]
+
+[tool.ruff.lint.pep8-naming]
+ignore-names = ["X*", "setUp*"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 88
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
+markers = [
+    "integration_test: marks tests as integration tests",
+]
+
+[tool.poetry.scripts]
+mmlearn_run = 'mmlearn.cli.run:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
