@@ -40,9 +40,10 @@ repos:
     rev: v1.11.1
     hooks:
       - id: mypy
-        entry: python3 -m mypy --show-error-codes --pretty --config-file pyproject.toml
-        types: [python]
-        exclude: "tests"
+        entry: mypy
+        args: ["--config-file=pyproject.toml", "--show-error-codes", "--pretty"]
+        types_or: [python, pyi]
+        exclude: tests|projects
 
   - repo: https://github.com/nbQA-dev/nbQA
     rev: 1.8.7
@@ -58,5 +59,3 @@ repos:
       entry: python3 -m pytest -m "not integration_test"
       pass_filenames: false
       always_run: true
-
-exclude: "projects"

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mmlearn"
-version = "0.1.0a0.dev1" # https://www.python.org/dev/peps/pep-0440/#version-schemes
+version = "0.1.0a0.dev2" # https://www.python.org/dev/peps/pep-0440/#version-schemes
 description = "A modular framework for research on multimodal representation learning."
 readme = "README.md"
 authors = ["Vector AI Engineering <ai_engineering@vectorinstitute.ai>"]
@@ -20,16 +20,18 @@ transformers = "^4.44.0"
 torch = {version = "^2.3.0", source = "torch-cu121"}
 lightning = "^2.3.0"
 jsonlines = "^4.0.0"
-pandas = "^2.2.2"
+pandas = {version="^2.2.2", extras=["numexpr", "bottleneck"]}
+
+torchvision = {version = "^0.18.0", source = "torch-cu121", optional = true}
+opencv-python = {version = "^4.10.0.84", optional = true}
+timm = {version = "^1.0.7", optional = true}
+torchaudio = {version = "^2.3.0", source = "torch-cu121", optional = true}
+peft = {version = "^0.12.0", optional = true}
 
 [tool.poetry.group.vision.dependencies]
 torchvision = {version = "^0.18.0", source = "torch-cu121"}
 opencv-python = "^4.10.0.84"
 timm = "^1.0.7"
-
-[tool.poetry.group.video.dependencies]
-pytorchvideo = {git = "https://github.com/facebookresearch/pytorchvideo", branch = "main"}
-decord = "^0.6.0"
 
 [tool.poetry.group.audio.dependencies]
 torchaudio = {version = "^2.3.0", source = "torch-cu121"}
@@ -52,7 +54,7 @@ ipython = "8.18.0"
 optional = true
 
 [tool.poetry.group.test.dependencies]
-ruff = "^0.5.6"
+ruff = "^0.5.7"
 mypy = "^1.11.1"
 pytest = "^8.3.2"
 pre-commit = "^3.8.0"
@@ -64,6 +66,11 @@ typos = "^1.23.6"
 name = "torch-cu121"
 url = "https://download.pytorch.org/whl/cu121"
 priority = "supplemental"
+
+[tool.poetry.extras]
+peft = ["peft"]
+vision = ["torchvision", "opencv-python", "timm"]
+audio = ["torchaudio"]
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -125,9 +132,9 @@ ignore = [
     "COM812", # Missing trailing comma
 ]
 
-# Ignore import violations in all `__init__.py` files.
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["E402", "F401", "F403", "F811"]
+"__init__.py" = ["E402", "F401", "F403", "F811"] # Ignore import violations in all `__init__.py` files.
+"projects/*" = ["D", "F", "I"] # Ignore docstring, pyflakes, and isort violations in all `projects` files.
 
 [tool.ruff.lint.pep8-naming]
 ignore-names = ["X*", "setUp*"]
