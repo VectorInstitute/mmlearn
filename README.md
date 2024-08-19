@@ -16,6 +16,12 @@ python3 -m venv /path/to/new/virtual/environment
 source /path/to/new/virtual/environment/bin/activate
 ```
 
+#### Installing binaries
+To install the pre-built binaries, run:
+```bash
+python3 -m pip install mmlearn
+```
+
 <details>
 <summary><b>Installation Options</b></summary>
 You can install optional dependencies to enable additional features. Use one or more of the pip extras listed below to
@@ -72,12 +78,6 @@ python3 -m pip install mmlearn[vision,audio]
 ```
 
 </details>
-
-#### Installing binaries
-To install the pre-built binaries, run:
-```bash
-python3 -m pip install mmlearn
-```
 
 #### Building from source
 To install the library from source, run:
