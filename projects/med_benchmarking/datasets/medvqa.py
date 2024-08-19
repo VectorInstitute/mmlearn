@@ -3,11 +3,10 @@
 import json
 import os
 import warnings
-from typing import Any, Callable, Dict, Literal, Optional
+from typing import Any, Callable, Dict, List, Literal, Optional, Union
 
 import numpy as np
 import torch
-from hydra_zen import MISSING, builds, store
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import CenterCrop, Compose, Grayscale, Resize, ToTensor
@@ -205,32 +204,37 @@ class MedVQA(Dataset[Example]):
         return len(self.entries)
 
 
-_MedVQAConf = builds(
-    MedVQA,
-    split="train",
-    encoder={"image_size": 224, "feat_dim": 512, "images_filename": "images_clip.pkl"},
-    autoencoder={
-        "available": True,
-        "image_size": 128,
-        "feat_dim": 64,
-        "images_filename": "images128x128.pkl",
-    },
-    num_ans_candidates=MISSING,
-)
-_PathVQAConf = builds(
-    MedVQA,
-    root_dir=os.getenv("PATHVQA_ROOT_DIR", MISSING),
-    num_ans_candidates=3974,
-    autoencoder={"available": False},
-    builds_bases=(_MedVQAConf,),
-)
-_VQARADConf = builds(
-    MedVQA,
-    root_dir=os.getenv("VQARAD_ROOT_DIR", MISSING),
-    num_ans_candidates=458,
-    autoencoder={"available": False},
-    builds_bases=(_MedVQAConf,),
-)
-store(_MedVQAConf, name="MedVQA", group="datasets", provider="mmlearn")
-store(_PathVQAConf, name="PathVQA", group="datasets", provider="mmlearn")
-store(_VQARADConf, name="VQARAD", group="datasets", provider="mmlearn")
+class MedVQAProcessor:
+    """Preprocessor for textual reports of MedVQA datasets."""
+
+    def __call__(self, sentence: Union[str, List[str]]) -> Union[str, List[str]]:
+        """Process the textual captions."""
+        if not isinstance(sentence, (list, str)):
+            raise TypeError(
+                f"Expected sentence to be a string or list of strings, got {type(sentence)}"
+            )
+
+        def _preprocess_sentence(sentence: str) -> str:
+            sentence = sentence.lower()
+            if "? -yes/no" in sentence:
+                sentence = sentence.replace("? -yes/no", "")
+            if "? -open" in sentence:
+                sentence = sentence.replace("? -open", "")
+            if "? - open" in sentence:
+                sentence = sentence.replace("? - open", "")
+            return (
+                sentence.replace(",", "")
+                .replace("?", "")
+                .replace("'s", " 's")
+                .replace("...", "")
+                .replace("x ray", "x-ray")
+                .replace(".", "")
+            )
+
+        if isinstance(sentence, str):
+            return _preprocess_sentence(sentence)
+
+        for i, s in enumerate(sentence):
+            sentence[i] = _preprocess_sentence(s)
+
+        return sentence

@@ -1,0 +1,2 @@
+timm~=1.0.7
+torchvision~=0.18.0

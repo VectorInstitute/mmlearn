@@ -6,21 +6,18 @@ from typing import Callable, List, Literal, Optional
 
 import pandas as pd
 import torch
-from hydra_zen import MISSING, store
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
+from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
 
 
-@store(
-    group="datasets",
-    provider="mmlearn",
-    root_dir=os.getenv("QUILT_ROOT_DIR", MISSING),
-)
+@external_store(group="datasets", root_dir=os.getenv("QUILT_ROOT_DIR", MISSING))
 class Quilt(Dataset[Example]):
     """Quilt-1M dataset.
 

@@ -58,3 +58,5 @@ repos:
       entry: python3 -m pytest -m "not integration_test"
       pass_filenames: false
       always_run: true
+
+exclude: "projects"
