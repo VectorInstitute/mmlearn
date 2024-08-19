@@ -5,21 +5,18 @@ import os
 from typing import Callable, Dict, Literal, Optional, Union
 
 import torch
-from hydra_zen import MISSING, store
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
+from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
 
 
-@store(
-    group="datasets",
-    provider="mmlearn",
-    root_dir=os.getenv("ROCO_ROOT_DIR", MISSING),
-)
+@external_store(group="datasets", root_dir=os.getenv("ROCO_ROOT_DIR", MISSING))
 class ROCO(Dataset[Example]):
     """ROCO dataset.
 

@@ -69,7 +69,7 @@ task:
     eps: 1.0e-6
   lr_scheduler:
     scheduler:
-      T_max: 537_775
+      T_max: 107_555 # make sure to change this if max_epochs or accumulate_grad_batches is changed
     extras:
       interval: step
   loss:
@@ -80,15 +80,15 @@ task:
         task_specs:
           - query_modality: text
             target_modality: rgb
-            top_k: [200]
+            top_k: [10, 200]
           - query_modality: rgb
             target_modality: text
-            top_k: [200]
+            top_k: [10, 200]
       run_on_validation: false
       run_on_test: true
 
 trainer:
-  max_epochs: 100
+  max_epochs: 20
   precision: 16-mixed
   deterministic: False
   benchmark: True

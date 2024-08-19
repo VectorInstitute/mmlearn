@@ -5,18 +5,12 @@ from mmlearn.datasets.processors.masking import (
     RandomMaskGenerator,
 )
 from mmlearn.datasets.processors.tokenizers import HFTokenizer
-from mmlearn.datasets.processors.transforms import (
-    MedVQAProcessor,
-    TrimText,
-    med_clip_vision_transform,
-)
+from mmlearn.datasets.processors.transforms import TrimText
 
 
 __all__ = [
     "BlockwiseImagePatchMaskGenerator",
     "HFTokenizer",
-    "MedVQAProcessor",
     "RandomMaskGenerator",
     "TrimText",
-    "med_clip_vision_transform",
 ]

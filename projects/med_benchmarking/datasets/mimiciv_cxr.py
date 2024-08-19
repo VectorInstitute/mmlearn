@@ -8,12 +8,13 @@ from typing import Callable, Literal, Optional, get_args
 import numpy as np
 import pandas as pd
 import torch
-from hydra_zen import MISSING, store
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 from tqdm import tqdm
 
+from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
@@ -22,9 +23,8 @@ from mmlearn.datasets.core.example import Example
 logger = logging.getLogger(__name__)
 
 
-@store(
+@external_store(
     group="datasets",
-    provider="mmlearn",
     root_dir=os.getenv("MIMICIVCXR_ROOT_DIR", MISSING),
     split="train",
     labeler="double_image",
