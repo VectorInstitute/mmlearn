@@ -20,7 +20,7 @@ transformers = "^4.44.0"
 torch = {version = "^2.3.0", source = "torch-cu121"}
 lightning = "^2.3.0"
 jsonlines = "^4.0.0"
-pandas = {version="^2.2.2", extras=["numexpr", "bottleneck"]}
+pandas = {version="^2.2.2", extras=["performance"]}
 
 torchvision = {version = "^0.18.0", source = "torch-cu121", optional = true}
 opencv-python = {version = "^4.10.0.84", optional = true}
