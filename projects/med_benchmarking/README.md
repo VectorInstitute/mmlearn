@@ -3,7 +3,7 @@ Prior to running any experiments under this project, please install the required
 ```bash
 pip install -r requirements.txt
 ```
-**NOTE**: It is assumed that the requirements for the `mmlearn` package have already been installed in a virtual environment. 
+**NOTE**: It is assumed that the requirements for the `mmlearn` package have already been installed in a virtual environment.
 If not, please refer to the README file in the `mmlearn` package for installation instructions.
 
 Also, please make sure to set the following environment variables:
