@@ -6,11 +6,8 @@ import numpy as np
 import pytest
 import torch
 
-from mmlearn.datasets.core.example import (
-    Example,
-    collate_example_list,
-    find_matching_indices,
-)
+from mmlearn.datasets.core.data_collator import DefaultDataCollator
+from mmlearn.datasets.core.example import Example, find_matching_indices
 
 
 def test_example():
@@ -97,7 +94,7 @@ def test_collate_example_list():
         ),
         "a_numpy_array": torch.tensor([[1, 2, 3]]),
     }
-    result = collate_example_list(
+    result = DefaultDataCollator()(
         [img_class_example, img_text_pair, audio_text_pair, nested_example],
     )
     for key in expected_result:

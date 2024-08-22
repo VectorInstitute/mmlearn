@@ -288,3 +288,6 @@ def _is_format_string(string: str) -> bool:
     """
     pattern = r"\{.*?\}"
     return bool(re.search(pattern, string))
+
+
+Modalities = ModalityRegistry()

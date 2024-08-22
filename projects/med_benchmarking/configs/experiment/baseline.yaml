@@ -2,20 +2,17 @@
 
 defaults:
   - /datasets@datasets.train.roco: ROCO
-  - /datasets/tokenizers@datasets.train.roco.tokenizer: HFCLIPTokenizer
   - /datasets/transforms@datasets.train.roco.transform: med_clip_vision_transform
   - /datasets@datasets.train.quilt: Quilt
-  - /datasets/tokenizers@datasets.train.quilt.tokenizer: HFCLIPTokenizer
   - /datasets/transforms@datasets.train.quilt.transform: med_clip_vision_transform
   - /datasets@datasets.train.mimiciv: MIMICIVCXR
-  - /datasets/tokenizers@datasets.train.mimiciv.tokenizer: HFCLIPTokenizer
   - /datasets/transforms@datasets.train.mimiciv.transform: med_clip_vision_transform
   - /datasets@datasets.train.pmcoa: PMCOA
-  - /datasets/tokenizers@datasets.train.pmcoa.tokenizer: HFCLIPTokenizer
   - /datasets/transforms@datasets.train.pmcoa.transform: med_clip_vision_transform
   - /datasets@datasets.val.pmcoa: PMCOA
-  - /datasets/tokenizers@datasets.val.pmcoa.tokenizer: HFCLIPTokenizer
   - /datasets/transforms@datasets.val.pmcoa.transform: med_clip_vision_transform
+  - /datasets/tokenizers@dataloader.train.collate_fn.batch_processors.text: HFCLIPTokenizer
+  - /datasets/tokenizers@dataloader.val.collate_fn.batch_processors.text: HFCLIPTokenizer
   - /modules/encoders@task.encoders.text: HFCLIPTextEncoderWithProjection
   - /modules/encoders@task.encoders.rgb: HFCLIPVisionEncoderWithProjection
   - /modules/layers@task.postprocessors.norm_and_logit_scale.norm: L2Norm
@@ -27,6 +24,7 @@ defaults:
   - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
   - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
   - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
+  - /trainer/callbacks@trainer.callbacks.model_summary: ModelSummary
   - /trainer/logger@trainer.logger.wandb: WandbLogger
   - override /task: ContrastivePretraining
   - _self_
@@ -106,6 +104,8 @@ trainer:
       monitor: val/loss
       patience: 5
       mode: min
+    model_summary:
+      max_depth: 2
 
 tags:
   - ${experiment_name}

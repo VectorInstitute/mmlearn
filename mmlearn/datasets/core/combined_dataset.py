@@ -94,8 +94,11 @@ class CombinedDataset(Dataset[Example]):
                 "Expected dataset examples to be instances of `Example` "
                 f"but found {type(example)}",
             )
-        example.dataset_index = dataset_idx
-        example.create_ids()
+
+        if not hasattr(example, "dataset_index"):
+            example.dataset_index = dataset_idx
+        if not hasattr(example, "example_ids"):
+            example.create_ids()
 
         return example
 

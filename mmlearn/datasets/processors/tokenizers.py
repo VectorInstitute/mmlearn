@@ -85,7 +85,7 @@ class HFTokenizer:
                 if isinstance(value, torch.Tensor):
                     batch_encoding[key] = torch.squeeze(value, 0)
 
-        # replace 'input_ids' with 'Modalities.TEXT' for consistency
+        # use 'Modalities.TEXT' key for input_ids for consistency
         batch_encoding[Modalities.TEXT] = batch_encoding["input_ids"]
         return dict(batch_encoding)
 

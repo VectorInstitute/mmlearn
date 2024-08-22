@@ -22,7 +22,7 @@ from hydra_zen import ZenStore, builds, store
 from lightning.pytorch.loggers.wandb import _WANDB_AVAILABLE
 from omegaconf import II, MISSING, SI, DictConfig
 
-from mmlearn.datasets.core.example import collate_example_list
+from mmlearn.datasets.core.data_collator import DefaultDataCollator
 
 
 def _get_default_ckpt_dir() -> Any:
@@ -35,8 +35,8 @@ _DataLoaderConf = builds(
     populate_full_signature=True,
     dataset=MISSING,
     pin_memory=True,
-    collate_fn=collate_example_list,
-    hydra_convert="all",
+    collate_fn=DefaultDataCollator(),
+    hydra_convert="object",
 )
 
 
@@ -152,7 +152,7 @@ class MMLearnConf:
         metadata={"help": "Configuration for torch.jit.compile."},
     )
     hydra: HydraConf = HydraConf(
-        searchpath=["pkg://mmlearn/conf", "file://./configs"],
+        searchpath=["pkg://mmlearn/conf"],
         run=RunDir(
             dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}")
         ),
