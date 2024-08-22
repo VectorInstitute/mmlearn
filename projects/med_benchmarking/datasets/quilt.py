@@ -9,7 +9,7 @@ import torch
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
+from torchvision.transforms import ToTensor
 
 from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
@@ -105,7 +105,7 @@ class Quilt(Dataset[Example]):
         self.subset = subset
 
         if processor is None and transform is None:
-            self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
+            self.transform = ToTensor()
         elif processor is None:
             self.transform = transform
         else:

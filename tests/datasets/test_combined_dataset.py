@@ -7,9 +7,12 @@ import torch
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset, IterableDataset
 
-from mmlearn.datasets.core.combined_dataset import CombinedDataset
-from mmlearn.datasets.core.example import Example, collate_example_list
-from mmlearn.datasets.core.samplers import CombinedDatasetRatioSampler
+from mmlearn.datasets.core import (
+    CombinedDataset,
+    CombinedDatasetRatioSampler,
+    DefaultDataCollator,
+    Example,
+)
 
 
 class DummyIterableDataset(IterableDataset):
@@ -124,7 +127,7 @@ class TestCombinedDatasetRatioSampler:
             combined_dataset,
             batch_size=1,
             sampler=sampler,
-            collate_fn=collate_example_list,
+            collate_fn=DefaultDataCollator(),
         )
 
         with pytest.warns(
@@ -158,7 +161,7 @@ class TestCombinedDatasetRatioSampler:
             combined_dataset,
             batch_size=2,
             sampler=sampler,
-            collate_fn=collate_example_list,
+            collate_fn=DefaultDataCollator(),
         )
 
         with pytest.warns(

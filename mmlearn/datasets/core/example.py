@@ -6,7 +6,6 @@ from typing import Any, Hashable, Optional
 
 import torch
 from lightning.fabric.utilities import rank_zero_warn
-from torch.utils.data import default_collate
 
 
 class Example(OrderedDict[Any, Any]):
@@ -89,76 +88,6 @@ class Example(OrderedDict[Any, Any]):
         if isinstance(value, MutableMapping):
             value = Example(value)
         super().__setitem__(key, value)
-
-
-def _merge_examples(examples: list[Example]) -> dict[str, Any]:
-    """Convert a list of `dataset.example.Example` objects into a dictionary.
-
-    This method will merge examples with the same key into a list.
-
-    Parameters
-    ----------
-    examples : list[Example]
-        List of examples to convert.
-
-    Returns
-    -------
-    dict[str, Any]
-        Dictionary of converted examples.
-    """
-    merged_examples: dict[str, Any] = {}
-    for example in examples:
-        for key in example:
-            if key in merged_examples:
-                merged_examples[key].append(example[key])
-            else:
-                merged_examples[key] = [example[key]]
-
-    for key in merged_examples:
-        if isinstance(merged_examples[key][0], Example):
-            merged_examples[key] = _merge_examples(merged_examples[key])
-
-    return merged_examples
-
-
-def _collate_example_dict(examples: dict[str, Any]) -> dict[str, Any]:
-    """Collate a dictionary of examples into a batch.
-
-    Parameters
-    ----------
-    examples : dict[str, Any]
-        Dictionary of examples to collate.
-
-    Returns
-    -------
-    dict[str, Any]
-        Dictionary of collated examples.
-    """
-    batch = {}
-    for k, v in examples.items():
-        if isinstance(v, dict):
-            batch[k] = _collate_example_dict(v)
-        else:
-            batch[k] = default_collate(v)
-
-    return batch
-
-
-def collate_example_list(examples: list[Example]) -> dict[str, Any]:
-    """Collate a list of `Example` objects into a batch.
-
-    Parameters
-    ----------
-    examples : list[Example]
-        List of examples to collate.
-
-    Returns
-    -------
-    dict[str, Any]
-        Dictionary of batched examples.
-
-    """
-    return _collate_example_dict(_merge_examples(examples))
 
 
 def find_matching_indices(

@@ -11,7 +11,7 @@ import torch
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
+from torchvision.transforms import ToTensor
 from tqdm import tqdm
 
 from mmlearn.conf import external_store
@@ -122,7 +122,7 @@ class MIMICIVCXR(Dataset):
         if transform is not None:
             self.transform = transform
         else:
-            self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
+            self.transform = ToTensor()
         self.tokenizer = tokenizer
         self.include_report = include_report
 
