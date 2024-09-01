@@ -102,6 +102,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
             indexes = torch.arange(query_embeddings.size(0), device=pl_module.device)
 
             metric.update(query_embeddings, target_embeddings, indexes)
+            
 
     def on_evaluation_epoch_end(self, pl_module: pl.LightningModule) -> Dict[str, Any]:
         """Compute the retrieval recall metrics.

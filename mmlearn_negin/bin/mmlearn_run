@@ -1,0 +1,6 @@
+#!/fs01/home/negin/mmlearn/mmlearn_negin/bin/python
+import sys
+from mmlearn.cli.run import main
+
+if __name__ == '__main__':
+    sys.exit(main())

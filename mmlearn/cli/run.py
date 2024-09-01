@@ -39,6 +39,8 @@ logger = logging.getLogger(__package__)
 def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
     """Entry point for training or evaluation."""
     cfg_copy = copy.deepcopy(cfg)  # copy of the config for logging
+    
+    print(OmegaConf.to_yaml(cfg))
 
     L.seed_everything(cfg.seed, workers=True)
     torch.set_float32_matmul_precision("high")
@@ -55,13 +57,13 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
         trainer, Trainer
     ), "Trainer must be an instance of `lightning.pytorch.trainer.Trainer`"
 
-    if rank_zero_only.rank == 0 and loggers is not None:  # update wandb config
-        for trainer_logger in loggers:
-            if isinstance(trainer_logger, WandbLogger):
-                trainer_logger.experiment.config.update(
-                    OmegaConf.to_container(cfg_copy, resolve=True, enum_to_str=True),
-                    allow_val_change=True,
-                )
+    # if rank_zero_only.rank == 0 and loggers is not None:  # update wandb config
+    #     for trainer_logger in loggers:
+    #         if isinstance(trainer_logger, WandbLogger):
+    #             trainer_logger.experiment.config.update(
+    #                 OmegaConf.to_container(cfg_copy, resolve=True, enum_to_str=True),
+    #                 allow_val_change=True,
+    #             )
     trainer.print(OmegaConf.to_yaml(cfg_copy, resolve=True))
 
     requires_distributed_sampler = (
@@ -138,6 +140,7 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
             model, train_loader, val_loader, ckpt_path=cfg.resume_from_checkpoint
         )
     elif cfg.job_type == JobType.eval:
+        print(f"****test_loader : {test_loader}")
         trainer.test(model, test_loader, ckpt_path=cfg.resume_from_checkpoint)
 
 

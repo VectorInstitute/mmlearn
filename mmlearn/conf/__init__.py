@@ -23,7 +23,7 @@ from lightning.pytorch.loggers.wandb import _WANDB_AVAILABLE
 from omegaconf import II, MISSING, SI, DictConfig
 
 from mmlearn.datasets.core.example import collate_example_list
-
+_WANDB_AVAILABLE = False
 
 def _get_default_ckpt_dir() -> Any:
     """Get the default checkpoint directory."""
@@ -151,27 +151,29 @@ class MMLearnConf:
         },
         metadata={"help": "Configuration for torch.jit.compile."},
     )
-    hydra: HydraConf = HydraConf(
-        searchpath=["pkg://mmlearn/conf", "file://./configs"],
-        run=RunDir(
-            dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}")
-        ),
-        sweep=SweepDir(
-            dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}"),
-            subdir=SI("${hydra.job.num}_${hydra.job.id}"),
-        ),
-        help=HelpConf(
-            app_name="mmlearn",
-            header="mmlearn: A modular framework for research on multimodal representation learning.",
-        ),
-        job=JobConf(
-            name=II("experiment_name"),
-            env_set={
-                "NCCL_IB_DISABLE": "1",  # disable InfiniBand (the Vector cluster does not have it)
-                "TORCH_NCCL_ASYNC_ERROR_HANDLING": "3",
-                "HYDRA_FULL_ERROR": "1",
-            },
-        ),
+    hydra: HydraConf = field(
+        default_factory=lambda: HydraConf(
+            searchpath=["pkg://mmlearn/conf", "file://./configs"],
+            run=RunDir(
+                dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}")
+            ),
+            sweep=SweepDir(
+                dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}"),
+                subdir=SI("${hydra.job.num}_${hydra.job.id}"),
+            ),
+            help=HelpConf(
+                app_name="mmlearn",
+                header="mmlearn: A modular framework for research on multimodal representation learning.",
+            ),
+            job=JobConf(
+                name=II("experiment_name"),
+                env_set={
+                    "NCCL_IB_DISABLE": "1",
+                    "TORCH_NCCL_ASYNC_ERROR_HANDLING": "3",
+                    "HYDRA_FULL_ERROR": "1",
+                },
+            ),
+        )
     )
 
 
