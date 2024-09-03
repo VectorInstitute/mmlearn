@@ -112,3 +112,14 @@ class HAM10000(Dataset[Example]):
         """Return the length of the dataset."""
         return len(self.metadata)
     
+    def label_mapping(self):
+        label_mapping = {
+            "nv": "melanocytic nevus",
+            "mel": "melanoma",
+            "bkl": "benign keratosis",
+            "bcc": "basal cell carcinoma",
+            "akiec": "actinic keratosis",
+            "vasc": "vascular lesion",
+            "df": "dermatofibroma"
+        }
+        return label_mapping

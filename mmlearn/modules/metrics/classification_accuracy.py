@@ -7,7 +7,7 @@ import torch
 from torchmetrics.utilities.data import dim_zero_cat
 
 @store(group="modules/metrics", provider="mmlearn")
-class ZeroShotClassificationAccuracy(Metric):
+class ClassificationAccuracy(Metric):
     """
     Zero-Shot Classification Accuracy metric.
 
@@ -34,11 +34,13 @@ class ZeroShotClassificationAccuracy(Metric):
 
     def __init__(
         self,
-        top_k: Tuple[int, ...] = (1,),
+        mode: Literal["zero_shot", "linear_probing"],
+        top_k: int,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self.top_k = top_k
+        self.mode = mode
 
         self.add_state("predictions", default=[], dist_reduce_fx=None)
         self.add_state("true_indices", default=[], dist_reduce_fx=None)
@@ -57,15 +59,13 @@ class ZeroShotClassificationAccuracy(Metric):
         self.predictions.append(preds)
         self.true_indices.append(true_indices)
         
-        
     def _is_distributed(self) -> bool:
         if self.distributed_available_fn is not None:
             distributed_available = self.distributed_available_fn
 
         return distributed_available() if callable(distributed_available) else False  # type: ignore[no-any-return]
 
-
-    def compute(self, target_embeddings: torch.Tensor) -> List[float]:
+    def compute(self) -> torch.Tensor:
         """
         Compute the top-k accuracies from the embeddings using dynamically provided target embeddings.
 
@@ -76,8 +76,8 @@ class ZeroShotClassificationAccuracy(Metric):
 
         Returns
         -------
-        List[float]
-            List of computed top-k accuracies.
+        torch.Tensor
+            Average of computed top-k accuracies.
         """
         predictions = torch.cat(self.predictions, dim=0)
         true_indices = torch.cat(self.true_indices, dim=0)
@@ -85,26 +85,88 @@ class ZeroShotClassificationAccuracy(Metric):
         if self._is_distributed():
             predictions = torch.cat(gather_all_tensors(predictions), dim=0)
             true_indices = torch.cat(gather_all_tensors(true_indices), dim=0)
-        return self.zero_shot_accuracy(predictions, true_indices, target_embeddings)
+            
+        if self.mode == "zero_shot":
+            return self.zero_shot_accuracy(predictions, true_indices, self.target_embeddings)
+        elif self.mode == "linear_probing":
+            return self.linear_probing_accuracy(predictions, true_indices)
 
-    def zero_shot_accuracy(self, predictions, true_indices, target_embeddings):
+    def set_target_embeddings(self, target_embeddings: torch.Tensor) -> torch.Tensor:
+        self.target_embeddings = target_embeddings
+        
+
+    def zero_shot_accuracy(self, predictions: torch.Tensor, true_indices: torch.Tensor, target_embeddings: torch.Tensor) -> torch.Tensor:
         """
-        Compute zero-shot accuracy using cosine similarity.
+        Compute top-k zero-shot accuracy using cosine similarity.
 
-        predictions: torch.Tensor
+        Parameters
+        ----------
+        predictions : torch.Tensor
             Predicted embeddings, shape (N, embedding_dim).
-        true_indices: torch.Tensor
+        
+        true_indices : torch.Tensor
             True label indices, shape (N,).
-        target_embeddings: torch.Tensor
+        
+        target_embeddings : torch.Tensor
             Precomputed target embeddings for all labels, shape (num_classes, embedding_dim).
-
+        
+        k : int
+            The value of k for which to compute the top-k accuracy.
+        
         Returns
         -------
-        list of top-k accuracies in the same order as `top_k`
+        torch.Tensor
+            The top-k zero-shot accuracy as a tensor.
         """
-        similarities = torch.matmul(predictions, target_embeddings.t())
-        top_k_values = similarities.topk(max(self.top_k), dim=1).indices
-        correct = top_k_values == true_indices.unsqueeze(1)
-        accuracies = [correct[:, :k].any(dim=1).float().mean().item() for k in self.top_k]
-        return torch.tensor(accuracies).mean()
+        # Compute cosine similarity between predictions and target embeddings
+        similarities = torch.matmul(predictions, target_embeddings.t())  # Shape (N, num_classes)
+
+        # Get the indices of the top-k most similar target embeddings for each prediction
+        top_k_preds = similarities.topk(self.top_k, dim=1, largest=True, sorted=True)[1]  # Indices of top-k predictions
+        
+        # Compare the top-k predictions with the true indices
+        correct = top_k_preds.eq(true_indices.view(-1, 1).expand_as(top_k_preds))
+        
+        # Calculate the number of correct predictions in the top-k
+        correct_k = correct[:, :self.top_k].reshape(-1).float().sum(0, keepdim=True)
+        
+        # Compute the accuracy as the ratio of correct predictions
+        accuracy = correct_k / true_indices.size(0)
+        
+        return accuracy
+    
+    def linear_probing_accuracy(self, logits: torch.Tensor, true_labels: torch.Tensor) -> torch.Tensor:
+        """
+        Compute top-k accuracy for linear probing classification using logits.
+
+        Parameters
+        ----------
+        logits : torch.Tensor
+            Logits output by the linear classifier, shape (N, num_classes), 
+            where N is the number of examples, and num_classes is the number of classes.
+        
+        true_labels : torch.Tensor
+            Ground truth label indices, shape (N,).
+        
+        k : int
+            The value of k for which to compute the top-k accuracy.
+        
+        Returns
+        -------
+        torch.Tensor
+            The top-k accuracy as a tensor.
+        """
+        # Get the indices of the top-k predictions
+        top_k_preds = logits.topk(self.top_k, dim=1, largest=True, sorted=True)[1]  # Indices of top-k predictions
+
+        # Compare the top-k predictions with the true labels
+        correct = top_k_preds.eq(true_labels.view(-1, 1).expand_as(top_k_preds))
+        
+        # Calculate the number of correct predictions in the top-k
+        correct_k = correct[:, :self.top_k].reshape(-1).float().sum(0, keepdim=True)
+        
+        # Compute the accuracy as the ratio of correct predictions
+        accuracy = correct_k / true_labels.size(0)
+        
+        return accuracy
     
