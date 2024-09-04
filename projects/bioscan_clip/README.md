@@ -66,7 +66,7 @@ mmlearn_run 'hydra.searchpath=[pkg://projects.bioscan_clip.configs]' +experiment
 <summary><b>Results</b></summary>
 Here are the results we obtained from running the pretraining with the `bioscan_1m.yaml` configuration file:
 
-| Taxonomy | Macro top-1 accuracy (Seen) | Macro top-1 accuracy (Unseen) | Micro top-1 accuracy (Seen) | Micro top-1 accuracy (Unseen) |
+| Taxonomy | Micro top-1 accuracy (Seen) | Micro top-1 accuracy (Unseen) | Macro top-1 accuracy (Seen) | Macro top-1 accuracy (Unseen) |
 |---|---|---|---|---|
 | Order | 98.7 (+0.6) | 97.6 (+0.8) | 98.3 (-19.8) | 58.8 (+11.6) |
 | Family | 84.6 (+4.6) | 79.0 (+2.9) | 56.3 (+18.6) | 35.2 (+4.8) |
