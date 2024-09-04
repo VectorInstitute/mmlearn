@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     group="modules/encoders",
     provider="mmlearn",
     model_name_or_path="openai/clip-vit-base-patch16",
+    hydra_convert="object",  # required for `peft_config` to be converted to a `PeftConfig` object
 )
 class HFCLIPTextEncoder(nn.Module):
     """Wrapper around the `CLIPTextModel` from HuggingFace.
@@ -103,7 +104,8 @@ class HFCLIPTextEncoder(nn.Module):
         """
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT],
-            attention_mask=inputs.get("attention_mask"),
+            attention_mask=inputs.get("attention_mask")
+            or inputs.get(Modalities.TEXT.attention_mask),
             position_ids=inputs.get("position_ids"),
             output_attentions=inputs.get("output_attentions"),
             return_dict=True,
@@ -123,6 +125,7 @@ class HFCLIPTextEncoder(nn.Module):
     group="modules/encoders",
     provider="mmlearn",
     model_name_or_path="openai/clip-vit-base-patch16",
+    hydra_convert="object",
 )
 class HFCLIPVisionEncoder(nn.Module):
     """Wrapper around the `CLIPVisionModel` from HuggingFace.
@@ -247,6 +250,7 @@ class HFCLIPVisionEncoder(nn.Module):
     group="modules/encoders",
     provider="mmlearn",
     model_name_or_path="openai/clip-vit-base-patch16",
+    hydra_convert="object",
 )
 class HFCLIPTextEncoderWithProjection(nn.Module):
     """Wrapper around the `CLIPTextModelWithProjection` from HuggingFace.
@@ -323,7 +327,9 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
             The text embeddings. Will be a tuple with a single element.
         """
         input_ids = inputs[Modalities.TEXT]
-        attention_mask = inputs.get("attention_mask")
+        attention_mask = inputs.get("attention_mask") or inputs.get(
+            Modalities.TEXT.attention_mask
+        )
         position_ids = inputs.get("position_ids")
 
         if self.use_all_token_embeddings:
@@ -350,6 +356,7 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
     group="modules/encoders",
     provider="mmlearn",
     model_name_or_path="openai/clip-vit-base-patch16",
+    hydra_convert="object",
 )
 class HFCLIPVisionEncoderWithProjection(nn.Module):
     """Wrapper around the `CLIPVisionModelWithProjection` class from HuggingFace.
@@ -463,7 +470,7 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
         return (self.model.visual_projection(pooled_output),)
 
 
-@store(group="modules/encoders", provider="mmlearn")
+@store(group="modules/encoders", provider="mmlearn", hydra_convert="object")
 class PubMedBERTForCLIPTextEncoding(nn.Module):
     """BiomedNLP's PubMedBERT model for CLIP text encoding.
 
@@ -561,7 +568,8 @@ class PubMedBERTForCLIPTextEncoding(nn.Module):
         """
         output = self.model(
             input_ids=inputs[Modalities.TEXT],
-            attention_mask=inputs.get("attention_mask"),
+            attention_mask=inputs.get("attention_mask")
+            or inputs.get(Modalities.TEXT.attention_mask),
             inputs_embeds=inputs.get("inputs_embeds"),
             output_attentions=inputs.get("output_attentions"),
             output_hidden_states=True,
