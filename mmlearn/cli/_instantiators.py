@@ -86,16 +86,23 @@ def instantiate_sampler(
     Sampler or None
         The instantiated sampler or None if no sampler has been instantiated.
     """
+    if distributed_sampler_kwargs is None:
+        distributed_sampler_kwargs = {}
+
     sampler: Optional[Sampler] = None
     if cfg is not None:
-        sampler = hydra.utils.instantiate(
-            cfg,
-            dataset=dataset,
-            **distributed_sampler_kwargs
-            if requires_distributed_sampler
-            or "CombinedDatasetRatioSampler" in cfg._target_
-            else {},
+        kwargs = (
+            {"data_source": dataset}
+            if "data_source" in cfg.keys()  # noqa: SIM118
+            else {"dataset": dataset}
         )
+        if (
+            requires_distributed_sampler
+            or "CombinedDatasetRatioSampler" in cfg._target_
+        ):
+            kwargs.update(distributed_sampler_kwargs)
+
+        sampler = hydra.utils.instantiate(cfg, **kwargs)
         assert isinstance(
             sampler, Sampler
         ), f"Expected a `torch.utils.data.Sampler` object but got {type(sampler)}."
