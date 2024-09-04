@@ -14,6 +14,7 @@ import lightning.pytorch.trainer as lightning_trainer
 import torch.nn.modules.loss as torch_losses
 import torch.optim as torch_optim
 import torch.utils.data
+import torch.utils.data.distributed
 from hydra.conf import HelpConf, HydraConf, JobConf, RunDir, SweepDir
 from hydra.core.config_store import ConfigStore
 from hydra.main import _UNSPECIFIED_
@@ -89,9 +90,6 @@ class MMLearnConf:
     defaults: List[Any] = field(
         default_factory=lambda: [
             "_self_",  # See https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/default_composition_order for more information
-            {"datasets@datasets.train": MISSING if SI("job_type") == "train" else None},
-            {"datasets@datasets.val": None},
-            {"datasets@datasets.test": MISSING if II("job_type") == "eval" else None},
             {"task": MISSING},
             {"override hydra/launcher": "submitit_slurm"},
         ]
@@ -383,12 +381,21 @@ register_external_modules(
     ignore_prefix="_",
 )
 
-register_external_modules(
-    torch.utils.data,
+# manually include samplers whose first argument is a dataset object
+external_store(
+    torch.utils.data.RandomSampler,
     group="dataloader/sampler",
     provider="torch",
-    base_cls=torch.utils.data.Sampler,
-    hydra_convert="all",
+)
+external_store(
+    torch.utils.data.SequentialSampler,
+    group="dataloader/sampler",
+    provider="torch",
+)
+external_store(
+    torch.utils.data.distributed.DistributedSampler,
+    group="dataloader/sampler",
+    provider="torch",
 )
 
 # NOTE: as of v2.3.3, the `device` filled for StochasticWeightAveraging has a default
