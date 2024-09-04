@@ -1,11 +1,14 @@
 """Utilities for loading components from the HuggingFace `transformers` library."""
 
+import logging
 from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 
 from lightning_utilities.core.imports import RequirementCache
 from torch import nn
 from transformers.models.auto.auto_factory import AutoConfig, _BaseAutoModelClass
 
+
+logger = logging.getLogger(__name__)
 
 _PEFT_AVAILABLE = RequirementCache("peft>=0.12.0")
 
@@ -72,4 +75,12 @@ def _wrap_peft_model(model: nn.Module, peft_config: "PeftConfig") -> "PeftModel"
         raise ModuleNotFoundError(str(_PEFT_AVAILABLE))
     from peft import get_peft_model
 
-    return get_peft_model(model, peft_config)
+    peft_model = get_peft_model(model, peft_config)
+    trainable_params, all_param = peft_model.get_nb_trainable_parameters()
+
+    logger.info(
+        f"Parameter-efficient finetuning {peft_model.base_model.model.__class__.__name__} "
+        f"with {trainable_params:,d} trainable parameters out of {all_param:,d} total parameters. "
+        f"Trainable%: {100 * trainable_params / all_param:.4f}"
+    )
+    return peft_model
