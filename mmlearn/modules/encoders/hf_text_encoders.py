@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from peft import PeftConfig
 
 
-@store(group="modules/encoders", provider="mmlearn")
+@store(group="modules/encoders", provider="mmlearn", hydra_convert="object")
 class HFTextEncoder(nn.Module):
     """Wrapper around huggingface models in the `AutoModelForTextEncoding` class.
 
@@ -66,7 +66,6 @@ class HFTextEncoder(nn.Module):
         super().__init__()
         if model_config_kwargs is None:
             model_config_kwargs = {}
-        model_config_kwargs["use_return_dict"] = True
         model_config_kwargs["output_hidden_states"] = True
         model_config_kwargs["add_pooling_layer"] = False
         model = hf_utils.load_huggingface_model(
@@ -157,7 +156,8 @@ class HFTextEncoder(nn.Module):
         """
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT],
-            attention_mask=inputs.get("attention_mask"),
+            attention_mask=inputs.get("attention_mask")
+            or inputs.get(Modalities.TEXT.attention_mask),
             position_ids=inputs.get("position_ids"),
             output_attentions=inputs.get("output_attentions"),
             return_dict=True,

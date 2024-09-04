@@ -38,6 +38,7 @@ class Modality(str):
 
     _default_properties = {
         "target": "{}_target",
+        "attention_mask": "{}_attention_mask",
         "mask": "{}_mask",
         "embedding": "{}_embedding",
         "masked_embedding": "{}_masked_embedding",

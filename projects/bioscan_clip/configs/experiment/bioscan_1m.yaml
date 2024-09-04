@@ -1,0 +1,127 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.train: BIOSCAN-1M
+  - /datasets@datasets.val.keys_split: BIOSCAN-1M
+  - /datasets@datasets.val.seen_split: BIOSCAN-1M
+  - /datasets@datasets.val.unseen_split: BIOSCAN-1M
+  - /datasets@datasets.test.keys_split: BIOSCAN-1M
+  - /datasets@datasets.test.seen_split: BIOSCAN-1M
+  - /datasets@datasets.test.unseen_split: BIOSCAN-1M
+  - /modules/encoders@task.encoders.text: bert-small-lora
+  - /modules/encoders@task.encoders.rgb: timm-vit-lora
+  - /modules/encoders@task.encoders.dna: barcode-bert-lora
+  - /modules/layers@task.heads.text: MLP # the other modalities have projection heads in their encoders
+  - /modules/layers@task.postprocessors.norm_and_logit_scale.norm: L2Norm
+  - /modules/layers@task.postprocessors.norm_and_logit_scale.logit_scale: LearnableLogitScaling
+  - /modules/losses@task.loss: CLIPLoss
+  - /modules/optimizers@task.optimizer: AdamW
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: OneCycleLR
+  - /eval_task@task.evaluation_tasks.tax_cls.task: TaxonomicClassification
+  - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
+  - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
+  - /trainer/callbacks@trainer.callbacks.model_summary: ModelSummary
+  - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - override /task: ContrastivePretraining
+  - _self_
+
+seed: 0
+
+datasets:
+  train:
+    split: no_split_and_seen_train
+  val:
+    keys_split:
+      split: all_keys
+      for_training: False
+    seen_split:
+      split: val_seen
+      for_training: False
+    unseen_split:
+      split: val_unseen
+      for_training: False
+  test:
+    keys_split:
+      split: all_keys
+      for_training: False
+    seen_split:
+      split: val_seen
+      for_training: False
+    unseen_split:
+      split: val_unseen
+      for_training: False
+
+dataloader:
+  train:
+    batch_size: 400
+    num_workers: 4
+  val:
+    batch_size: 400
+    num_workers: 4
+  test:
+    batch_size: 128
+    num_workers: 4
+
+task:
+  heads:
+    text:
+      in_dim: 512
+      out_dim: ${task.encoders.rgb.projection_dim}
+  postprocessors:
+    norm_and_logit_scale:
+      norm:
+        dim: -1
+      logit_scale:
+        learnable: True
+  modality_module_mapping:
+    text:
+      postprocessor_key: norm_and_logit_scale
+    rgb:
+      postprocessor_key: norm_and_logit_scale
+    dna:
+      postprocessor_key: norm_and_logit_scale
+  optimizer:
+    lr: 1.0e-3
+    eps: 1.0e-6
+  lr_scheduler:
+    scheduler:
+      max_lr: ${task.optimizer.lr}
+      total_steps: 20_264 # make sure to change this if dataset size, batch_size, max_epochs or accumulate_grad_batches changes
+      pct_start: 0.3
+      anneal_strategy: cos
+      cycle_momentum: False
+    extras:
+      interval: step
+  loss:
+    gather_with_grad: True
+  evaluation_tasks:
+    tax_cls:
+      run_on_validation: true
+      run_on_test: true
+
+trainer:
+  max_epochs: 15
+  precision: 16-mixed
+  deterministic: False
+  benchmark: True
+  log_every_n_steps: 100
+  check_val_every_n_epoch: 1
+  callbacks:
+    model_checkpoint:
+      monitor: val/loss
+      save_top_k: 1
+      save_last: True
+      every_n_epochs: 1
+    model_summary:
+      max_depth: 2
+
+strict_loading: False
+
+tags:
+  - ${experiment_name}
+  - contrastive pretraining
+  - rgb
+  - text
+  - dna
+  - bioscan_1m
+  - bioscan_clip
