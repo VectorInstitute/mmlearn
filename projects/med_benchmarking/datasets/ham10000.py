@@ -1,6 +1,5 @@
 """HAM10000 Dataset."""
 
-import logging
 import os
 import pandas as pd
 from PIL import Image

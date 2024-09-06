@@ -39,8 +39,6 @@ logger = logging.getLogger(__package__)
 def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
     """Entry point for training or evaluation."""
     cfg_copy = copy.deepcopy(cfg)  # copy of the config for logging
-    
-    print(OmegaConf.to_yaml(cfg))
 
     L.seed_everything(cfg.seed, workers=True)
     torch.set_float32_matmul_precision("high")

@@ -85,8 +85,8 @@ task:
           - query_modality: rgb
             target_modality: text
             top_k: [10, 200]
-      run_on_validation: true
-      run_on_test: false
+      run_on_validation: false
+      run_on_test: true
 
 trainer:
   max_epochs: 20

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import logging
 from typing import Any, Dict, List, Tuple, Union
 from hydra_zen import store
 
@@ -103,25 +102,12 @@ class Classification(EvaluationHooks):
                         example[Modalities.TEXT] = tokens
                         
                 return example
-            
-            
-        # TODO - This should go in dataloader
-        # label_mapping = {
-        #     "nv": "melanocytic nevus",
-        #     "mel": "melanoma",
-        #     "bkl": "benign keratosis",
-        #     "bcc": "basal cell carcinoma",
-        #     "akiec": "actinic keratosis",
-        #     "vasc": "vascular lesion",
-        #     "df": "dermatofibroma"
-        # }
         
         if self.tokenizer is None:
             raise ValueError("Tokenizer must be set in the dataset to generate tokenized label descriptions")
-        print("HOLA")
+
         self.target_embeddings = {}
         for name, label_mapping in label_mappings.items():
-            # Create descriptive text for each label
             self.descriptions = ["This image has a sign of " + label for label in label_mapping.values()]
             
             dataset = LabelDescriptionDataset(self.descriptions, self.tokenizer)
@@ -134,8 +120,8 @@ class Classification(EvaluationHooks):
         for metric_collection in self.metrics.values():
             for metric_name, metric in metric_collection.items():
                 if hasattr(metric, 'set_all_target_embeddings'):
-                    # If the method exists, call it
                     metric.set_all_target_embeddings(self.target_embeddings)
+                    
     def evaluation_step(
         self,
         trainer: Trainer,
@@ -149,12 +135,10 @@ class Classification(EvaluationHooks):
         
         outputs: Dict[Union[str, Modality], Any] = pl_module(batch)
         
-        print("HIIIIII")
         for (query_modality, mode), metric in self.metrics.items():
             output_embeddings = outputs[query_modality.embedding] # Input image embedding
             label_index = batch[query_modality.target] # True label index
             names = batch["name"]
-            print(f"names: ------------------- {names}")
             
             metric.update(output_embeddings, label_index, names)
     
@@ -168,8 +152,6 @@ class Classification(EvaluationHooks):
         """
         results = {}
         for (query_modality, mode), metric in self.metrics.items():
-            # if mode == "zero_shot":
-            #     metric.set_target_embeddings(self.target_embedding)
             results.update(metric.compute())
             metric.reset()
         return results

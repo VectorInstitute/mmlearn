@@ -18,6 +18,7 @@ from torch import nn
 from mmlearn.datasets.core import Modalities, find_matching_indices
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.losses import CLIPLoss
+from mmlearn.tasks.classification import Classification
 from mmlearn.tasks.hooks import EvaluationHooks
 
 
@@ -598,7 +599,10 @@ class ContrastivePretraining(L.LightningModule):
                 if (eval_type == "val" and task_spec.run_on_validation) or (
                     eval_type == "test" and task_spec.run_on_test
                 ):
-                    task_spec.task.on_evaluation_epoch_start(self, self.test_loader)
+                    if isinstance(task_spec.task, Classification):
+                        task_spec.task.on_evaluation_epoch_start(self, self.test_loader)
+                    else:
+                        task_spec.task.on_evaluation_epoch_start(self)
 
     def _shared_eval_step(
         self,

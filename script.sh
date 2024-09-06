@@ -54,4 +54,5 @@ mmlearn_run --multirun hydra.launcher.mem_gb=32 hydra.launcher.gres=gpu:4 hydra.
 
 
 # To Pretrain:
-mmlearn_run --multirun hydra.launcher.mem_gb=32 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=100 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=pretrain experiment_name=pretrain
+mmlearn_run --multirun hydra.launcher.mem_gb=16 hydra.launcher.partition=t4v1 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=60 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=pretrain experiment_name=pretrain
+mmlearn_run --multirun hydra.launcher.mem_gb=16 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=120 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=pretrain experiment_name=pretrain
