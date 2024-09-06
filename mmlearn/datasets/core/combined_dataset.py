@@ -102,3 +102,11 @@ class CombinedDataset(Dataset[Example]):
     def __len__(self) -> int:
         """Return the total number of examples in the combined dataset."""
         return self.cumulative_sizes[-1]
+    
+    
+    def label_mapping(self):
+        label_mappings = {}
+        for idx, dataset in enumerate(self.datasets):
+            label_mappings[dataset.name()] = dataset.label_mapping
+        
+        return label_mappings

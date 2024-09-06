@@ -140,6 +140,7 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
             model, train_loader, val_loader, ckpt_path=cfg.resume_from_checkpoint
         )
     elif cfg.job_type == JobType.eval:
+        model.set_test_loader(test_dataset)
         trainer.test(model, test_loader, ckpt_path=cfg.resume_from_checkpoint)
 
 

@@ -94,6 +94,7 @@ class HAM10000(Dataset[Example]):
                 Modalities.TEXT: label,
                 Modalities.RGB.target: label_index,
                 EXAMPLE_INDEX_KEY: idx,
+                "name": self.name()
             }
         )
         
@@ -123,3 +124,6 @@ class HAM10000(Dataset[Example]):
             "df": "dermatofibroma"
         }
         return label_mapping
+    
+    def name(self):
+        return "HAM10000"

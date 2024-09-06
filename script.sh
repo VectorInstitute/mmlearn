@@ -42,9 +42,16 @@ mmlearn_run --multirun hydra.launcher.mem_gb=32 hydra.launcher.gres=gpu:4 hydra.
 
 
 mmlearn_run --multirun hydra.launcher.mem_gb=32 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=60 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=baseline experiment_name=roco job_type=eval +datasets/tokenizers@datasets.test.tokenizer=HFCLIPTokenizer +datasets/transforms@datasets.test.transform=med_clip_vision_transform datasets.test.transform.job_type=eval dataloader.test.batch_size=32 dataloader.test.num_workers=4 strict_loading=False datasets.test.split=test datasets@datasets.test=ROCO
+
+# To test:
 mmlearn_run --multirun hydra.launcher.mem_gb=16 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=60 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=baseline experiment_name=roco job_type=eval +datasets/tokenizers@datasets.test.tokenizer=HFCLIPTokenizer +datasets/transforms@datasets.test.transform=med_clip_vision_transform datasets.test.transform.job_type=eval dataloader.test.batch_size=16 dataloader.test.num_workers=2 strict_loading=False datasets@datasets.test=HAM10000 +datasets/tokenizers@task.evaluation_tasks.classification.task.tokenizer=HFCLIPTokenizer
+mmlearn_run --multirun hydra.launcher.mem_gb=16 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=60 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=zeroshot experiment_name=roco job_type=eval +datasets/tokenizers@datasets.test.tokenizer=HFCLIPTokenizer +datasets/transforms@datasets.test.transform=med_clip_vision_transform datasets.test.transform.job_type=eval dataloader.test.batch_size=16 dataloader.test.num_workers=2 strict_loading=False datasets@datasets.test=HAM10000 +datasets/tokenizers@task.evaluation_tasks.classification.task.tokenizer=HFCLIPTokenizer
 # python /h/negin/mmlearn/outputs/temp.py
 
 
-
 mmlearn_run --multirun hydra.launcher.mem_gb=32 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=60 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=baseline experiment_name=roco job_type=eval +datasets/tokenizers@datasets.test.tokenizer=HFCLIPTokenizer +datasets/transforms@datasets.test.transform=med_clip_vision_transform datasets.test.transform.job_type=eval dataloader.test.batch_size=32 dataloader.test.num_workers=4 strict_loading=False datasets@datasets.test=HAM10000
+
+
+
+# To Pretrain:
+mmlearn_run --multirun hydra.launcher.mem_gb=32 hydra.launcher.gres=gpu:4 hydra.launcher.cpus_per_task=8 hydra.launcher.tasks_per_node=4 hydra.launcher.nodes=1 hydra.launcher.stderr_to_stdout=true hydra.launcher.timeout_min=100 '+hydra.launcher.additional_parameters={export: ALL}' 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=pretrain experiment_name=pretrain

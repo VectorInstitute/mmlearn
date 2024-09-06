@@ -331,6 +331,9 @@ class ContrastivePretraining(L.LightningModule):
 
         return output
 
+    def set_test_loader(self, test_loader):
+        self.test_loader = test_loader.label_mapping()
+
     def forward(
         self, inputs: Dict[Union[str, Modality], Any]
     ) -> Dict[str, torch.Tensor]:
@@ -595,7 +598,7 @@ class ContrastivePretraining(L.LightningModule):
                 if (eval_type == "val" and task_spec.run_on_validation) or (
                     eval_type == "test" and task_spec.run_on_test
                 ):
-                    task_spec.task.on_evaluation_epoch_start(self)
+                    task_spec.task.on_evaluation_epoch_start(self, self.test_loader)
 
     def _shared_eval_step(
         self,
