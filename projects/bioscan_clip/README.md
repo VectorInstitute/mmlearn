@@ -64,15 +64,16 @@ mmlearn_run 'hydra.searchpath=[pkg://projects.bioscan_clip.configs]' +experiment
 
 <details>
 <summary><b>Results</b></summary>
+
 Here are the results we obtained from running the pretraining with the `bioscan_1m.yaml` configuration file:
 
 | Taxonomy | Micro top-1 accuracy (Seen) | Micro top-1 accuracy (Unseen) | Macro top-1 accuracy (Seen) | Macro top-1 accuracy (Unseen) |
 |---|---|---|---|---|
-| Order | 98.7 (+0.6) | 97.6 (+0.8) | 98.3 (-19.8) | 58.8 (+11.6) |
-| Family | 84.6 (+4.6) | 79.0 (+2.9) | 56.3 (+18.6) | 35.2 (+4.8) |
-| Genus | 58.5 (+10.3) | 43.5 (+7.8) | 30.1 (+14.9) | 11.7 (+3.6) |
-| Species | 42.0 (+7.5) | 30.1 (+2.6) | 17.4 (+11.5) | 3.9 (+1.0) |
+| Order | 98.7 (+0.6) | 97.6 (+0.7) | 98.3 (-6.2) | 58.8 (+11.7) |
+| Family | 84.6 (+5.0) | 79.0 (+2.8) | 56.3 (+21.4) | 35.2 (+5.1) |
+| Genus | 58.5 (+10.1) | 43.5 (+5.4) | 30.1 (+15.9) | 11.7 (+3.9) |
+| Species | 42.0 (+8.6) | 30.1 (-2.8) | 17.4 (+12.1) | 3.9 (+1.2) |
 
-The numbers in parentheses represent the difference in accuracy between the original results and the results obtained with
-the `bioscan_1m.yaml` configuration file.
+We ran the experiment with 3 different random seeds (0, 42 and 1337). The numbers in parentheses represent the difference
+in accuracy between the results in the paper and the *average* results obtained with our implementation.
 </details>
