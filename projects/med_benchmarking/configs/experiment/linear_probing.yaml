@@ -1,0 +1,144 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.train.roco: ROCO
+  - /datasets/tokenizers@datasets.train.roco.tokenizer: HFCLIPTokenizer
+  - /datasets/transforms@datasets.train.roco.transform: med_clip_vision_transform
+  - /datasets@datasets.train.quilt: Quilt
+  - /datasets/tokenizers@datasets.train.quilt.tokenizer: HFCLIPTokenizer
+  - /datasets/transforms@datasets.train.quilt.transform: med_clip_vision_transform
+  - /datasets@datasets.train.mimiciv: MIMICIVCXR
+  - /datasets/tokenizers@datasets.train.mimiciv.tokenizer: HFCLIPTokenizer
+  - /datasets/transforms@datasets.train.mimiciv.transform: med_clip_vision_transform
+  - /datasets@datasets.train.pmcoa: PMCOA
+  - /datasets/tokenizers@datasets.train.pmcoa.tokenizer: HFCLIPTokenizer
+  - /datasets/transforms@datasets.train.pmcoa.transform: med_clip_vision_transform
+  - /datasets@datasets.val.pmcoa: PMCOA
+  - /datasets/tokenizers@datasets.val.pmcoa.tokenizer: HFCLIPTokenizer
+  - /datasets/transforms@datasets.val.pmcoa.transform: med_clip_vision_transform
+  - /modules/encoders@task.encoders.text: HFCLIPTextEncoderWithProjection
+  - /modules/encoders@task.encoders.rgb: HFCLIPVisionEncoderWithProjection
+  - /modules/layers@task.postprocessors.norm_and_logit_scale.norm: L2Norm
+  - /modules/layers@task.postprocessors.norm_and_logit_scale.logit_scale: LearnableLogitScaling
+  - /modules/losses@task.loss: CLIPLoss
+  - /modules/optimizers@task.optimizer: AdamW
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+  # - /eval_task@task.evaluation_tasks.retrieval.task: ZeroShotCrossModalRetrieval
+  - /eval_task@task.evaluation_tasks.classification.task: Classification
+  - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
+  - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
+  - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
+  # - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - /modules/layers@task.heads.rgb: MLP
+  - /modules/layers@task.heads.text: MLP
+  - override /task: ContrastivePretraining
+  - _self_
+
+seed: 0
+
+datasets:
+  val:
+    pmcoa:
+      split: valid
+      transform:
+        job_type: eval
+
+dataloader:
+  train:
+    batch_size: 32
+    num_workers: 4
+  val:
+    batch_size: 32
+    num_workers: 4
+
+task:
+  postprocessors:
+    norm_and_logit_scale:
+      norm:
+        dim: -1
+      logit_scale:
+        learnable: True
+  heads:
+    rgb:
+      in_dim: 512
+      out_dim: 7
+    text:
+      in_dim: 512
+      out_dim: 7
+  modality_module_mapping:
+    text:
+      postprocessor_key: norm_and_logit_scale
+    rgb:
+      postprocessor_key: norm_and_logit_scale
+  optimizer:
+    betas:
+    - 0.9
+    - 0.98
+    lr: 5.0e-5
+    weight_decay: 0.1
+    eps: 1.0e-6
+  lr_scheduler:
+    scheduler:
+      T_max: 107_555 # make sure to change this if max_epochs or accumulate_grad_batches is changed
+    extras:
+      interval: step
+  loss:
+    gather_with_grad: True
+  evaluation_tasks:
+    classification:
+      task:
+        task_specs:
+          # - query_modality: text
+          #   target_modality: rgb
+          #   top_k: [10, 200]
+          # - query_modality: rgb
+          #   target_modality: text
+          - top_k: [5, 2]
+            metric_name: ClassificationF1Score
+            mode: ZERO_SHOT
+            query_modality: rgb
+          - top_k: [1]
+            metric_name: ClassificationAUC
+            mode: ZERO_SHOT
+            query_modality: rgb
+          - top_k: [1, 6]
+            metric_name: ClassificationAccuracy
+            mode: ZERO_SHOT
+            query_modality: rgb
+      run_on_validation: false
+      run_on_test: true
+
+    
+
+trainer:
+  max_epochs: 20
+  precision: 16-mixed
+  deterministic: False
+  benchmark: True
+  sync_batchnorm: False # set to True if using DDP with batchnorm
+  log_every_n_steps: 100
+  accumulate_grad_batches: 4
+  check_val_every_n_epoch: 1
+  callbacks:
+    model_checkpoint:
+      monitor: val/loss
+      save_top_k: 1
+      save_last: True
+      every_n_epochs: 1
+    early_stopping:
+      monitor: val/loss
+      patience: 5
+      mode: min
+
+tags:
+  - ${experiment_name}
+  - contrastive pretraining
+  - rgb
+  - text
+  - clip
+  - roco
+  - quilt
+  - mimiciv
+  - pmc_oa
+  - medmultimodal
+

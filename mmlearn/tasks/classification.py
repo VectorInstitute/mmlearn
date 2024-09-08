@@ -15,7 +15,7 @@ from mmlearn.datasets.core.modalities import Modality
 from typing import Callable, Optional, Literal
 from torch.utils.data import Dataset, DataLoader
 from enum import Enum
-
+from mmlearn.constants import NAME_KEY
 
 
 class Mode(str, Enum):

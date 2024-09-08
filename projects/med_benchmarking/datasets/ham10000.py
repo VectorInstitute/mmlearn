@@ -12,7 +12,7 @@ from omegaconf import MISSING
 from mmlearn.conf import external_store
 from mmlearn.datasets.core.example import Example
 from mmlearn.datasets.core import Modalities
-from mmlearn.constants import EXAMPLE_INDEX_KEY, LABEL_KEY
+from mmlearn.constants import EXAMPLE_INDEX_KEY, NAME_KEY
 
 
 @external_store(group="datasets", root_dir=os.getenv("HAM10000_ROOT_DIR", MISSING))
@@ -44,17 +44,6 @@ class HAM10000(Dataset[Example]):
         self.root_dir = root_dir
         self.metadata = pd.read_csv(os.path.join(root_dir, 'HAM10000_metadata.csv'))
 
-        self.label_mapping = {
-            "nv": "melanocytic nevus",
-            "mel": "melanoma",
-            "bkl": "benign keratosis",
-            "bcc": "basal cell carcinoma",
-            "akiec": "actinic keratosis",
-            "vasc": "vascular lesion",
-            "df": "dermatofibroma"
-        }
-        self.index_to_label = {index: label for index, label in enumerate(self.label_mapping.values())}
-
         if processor is None and transform is None:
             self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
         elif processor is None:
@@ -73,8 +62,8 @@ class HAM10000(Dataset[Example]):
         """Return the idx'th data sample as an Example instance."""
         entry = self.metadata.iloc[idx]
         image_path = os.path.join(self.root_dir, "skin_cancer", entry["image_id"] + ".jpg")
-        label_index = list(self.label_mapping.keys()).index(entry["dx"])
-        label = list(self.label_mapping.values())[label_index]
+        label_index = list(self.get_label_mapping().keys()).index(entry["dx"])
+        label = list(self.get_label_mapping().values())[label_index]
         tokens = self.tokenizer(label) if self.tokenizer is not None else None
         
 
