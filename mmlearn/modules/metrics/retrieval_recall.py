@@ -95,7 +95,6 @@ class RetrievalRecallAtK(Metric):
         self._to_sync = self.sync_on_compute
         self._should_unsync = False
 
-
     def _is_distributed(self) -> bool:
         if self.distributed_available_fn is not None:
             distributed_available = self.distributed_available_fn

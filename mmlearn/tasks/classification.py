@@ -4,8 +4,9 @@ from hydra_zen import store
 
 import torch
 from pytorch_lightning import LightningModule, Trainer
-from torchmetrics import MetricCollection
+from torchmetrics import Metric, MetricCollection
 
+import mmlearn
 from mmlearn.datasets.core.example import Example, collate_example_list
 from mmlearn.modules.metrics.classification_accuracy import ClassificationAccuracy
 from mmlearn.tasks.hooks import EvaluationHooks
@@ -24,6 +25,7 @@ class Mode(str, Enum):
 @dataclass
 class ClassificationTaskSpec:
     """Specification for a classification task."""
+    metric_name: str
     query_modality: str
     top_k: List[int]
     mode: Mode
@@ -45,28 +47,33 @@ class Classification(EvaluationHooks):
                  tokenizer: Optional[Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]] = None,):
         super().__init__()
         self.task_specs = task_specs
-        self.metrics: Dict[str, ClassificationAccuracy] = {}
+        self.metrics: Dict[str, Metric] = {}
 
+        self.metrics = {}
+        
         for spec in self.task_specs:
             assert Modalities.has_modality(spec.query_modality)
             query_modality = Modalities.get_modality(spec.query_modality)
             mode = Mode(spec.mode)
-            
-            self.metrics[(query_modality, mode)] = MetricCollection(
-                {
-                    f"{query_modality}_{mode}_C@{k}": ClassificationAccuracy(
-                        top_k= k,
-                        mode = Mode(spec.mode)
+            metric_name = spec.metric_name
+            metric_class = getattr(mmlearn.modules.metrics, metric_name)
+            self.metrics.update({
+                (query_modality, mode, metric_name): MetricCollection(
+                    {
+                        f"{query_modality}_{mode}_C_{metric_name}@{k}": metric_class(
+                            top_k=k,
+                            mode=Mode(spec.mode)
+                        )
+                        for k in spec.top_k
+                    }
                 )
-                    for k in spec.top_k
-                }
-            )
+            })
             
                  
         self.tokenizer = tokenizer
         
             
-    def on_evaluation_epoch_start(self, pl_module: LightningModule, label_mappings) -> None:
+    def on_evaluation_epoch_start(self, pl_module: LightningModule, all_dataset_info) -> None:
         """Move the metrics to the device of the Lightning module."""
         
         for metric in self.metrics.values():
@@ -105,22 +112,23 @@ class Classification(EvaluationHooks):
         
         if self.tokenizer is None:
             raise ValueError("Tokenizer must be set in the dataset to generate tokenized label descriptions")
-
+        
+        # Set the label embeddings
         self.target_embeddings = {}
-        for name, label_mapping in label_mappings.items():
-            self.descriptions = ["This image has a sign of " + label for label in label_mapping.values()]
+        for name, dataset_info in all_dataset_info.items():
+            descriptions = ["This image has a sign of " + label for label in dataset_info.get_label_mapping().values()]
             
-            dataset = LabelDescriptionDataset(self.descriptions, self.tokenizer)
+            dataset = LabelDescriptionDataset(descriptions, self.tokenizer)
             batch_size = len(dataset)
             dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False, collate_fn=collate_example_list)
             batch = next(iter(dataloader))
             batch = {key: value.to(pl_module.device) if torch.is_tensor(value) else value for key, value in batch.items()}
-            self.target_embeddings[name] = pl_module(batch)[Modalities.get_modality(Modalities.TEXT).embedding]
+            all_dataset_info[name].set_label_embedding(pl_module(batch)[Modalities.get_modality(Modalities.TEXT).embedding])
     
         for metric_collection in self.metrics.values():
             for metric_name, metric in metric_collection.items():
-                if hasattr(metric, 'set_all_target_embeddings'):
-                    metric.set_all_target_embeddings(self.target_embeddings)
+                if hasattr(metric, 'set_all_dataset_info'):
+                    metric.set_all_dataset_info(all_dataset_info)
                     
     def evaluation_step(
         self,
@@ -135,10 +143,10 @@ class Classification(EvaluationHooks):
         
         outputs: Dict[Union[str, Modality], Any] = pl_module(batch)
         
-        for (query_modality, mode), metric in self.metrics.items():
+        for (query_modality, mode, metric_name), metric in self.metrics.items():
             output_embeddings = outputs[query_modality.embedding] # Input image embedding
             label_index = batch[query_modality.target] # True label index
-            names = batch["name"]
+            names = batch[NAME_KEY]
             
             metric.update(output_embeddings, label_index, names)
     
@@ -151,7 +159,7 @@ class Classification(EvaluationHooks):
             A reference to the Lightning module being evaluated.
         """
         results = {}
-        for (query_modality, mode), metric in self.metrics.items():
+        for (query_modality, mode, metric_name), metric in self.metrics.items():
             results.update(metric.compute())
             metric.reset()
         return results

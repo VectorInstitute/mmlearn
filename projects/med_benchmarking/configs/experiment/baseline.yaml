@@ -94,7 +94,16 @@ task:
           # - query_modality: rgb
           #   target_modality: text
           - top_k: [5, 2]
-            mode: LINEAR_PROBING
+            metric_name: ClassificationF1Score
+            mode: ZERO_SHOT
+            query_modality: rgb
+          - top_k: [1]
+            metric_name: ClassificationAUC
+            mode: ZERO_SHOT
+            query_modality: rgb
+          - top_k: [1, 6]
+            metric_name: ClassificationAccuracy
+            mode: ZERO_SHOT
             query_modality: rgb
       run_on_validation: false
       run_on_test: true

@@ -23,7 +23,7 @@ from lightning.pytorch.loggers.wandb import _WANDB_AVAILABLE
 from omegaconf import II, MISSING, SI, DictConfig
 
 from mmlearn.datasets.core.example import collate_example_list
-_WANDB_AVAILABLE = False
+
 
 def _get_default_ckpt_dir() -> Any:
     """Get the default checkpoint directory."""

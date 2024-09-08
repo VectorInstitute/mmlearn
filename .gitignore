@@ -132,4 +132,5 @@ outputs/
 
 *.sh
 mmlearn_negin/
+versions/
 .github/

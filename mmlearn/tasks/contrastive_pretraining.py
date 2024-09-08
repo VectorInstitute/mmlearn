@@ -332,8 +332,8 @@ class ContrastivePretraining(L.LightningModule):
 
         return output
 
-    def set_test_loader(self, test_loader):
-        self.test_loader = test_loader.label_mapping()
+    def set_all_dataset_info(self, test_loader):
+        self.all_dataset_info = test_loader.create_all_dataset_info()
 
     def forward(
         self, inputs: Dict[Union[str, Modality], Any]
@@ -600,7 +600,7 @@ class ContrastivePretraining(L.LightningModule):
                     eval_type == "test" and task_spec.run_on_test
                 ):
                     if isinstance(task_spec.task, Classification):
-                        task_spec.task.on_evaluation_epoch_start(self, self.test_loader)
+                        task_spec.task.on_evaluation_epoch_start(self, self.all_dataset_info)
                     else:
                         task_spec.task.on_evaluation_epoch_start(self)
 

@@ -93,7 +93,7 @@ class HAM10000(Dataset[Example]):
                 Modalities.TEXT: label,
                 Modalities.RGB.target: label_index,
                 EXAMPLE_INDEX_KEY: idx,
-                "name": self.name()
+                NAME_KEY: self.name()
             }
         )
         
@@ -112,7 +112,7 @@ class HAM10000(Dataset[Example]):
         """Return the length of the dataset."""
         return len(self.metadata)
     
-    def label_mapping(self):
+    def get_label_mapping(self):
         label_mapping = {
             "nv": "melanocytic nevus",
             "mel": "melanoma",

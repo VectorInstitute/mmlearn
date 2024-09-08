@@ -8,6 +8,7 @@ import numpy as np
 from torch.utils._pytree import tree_flatten
 from torch.utils.data import Dataset, IterableDataset
 
+from mmlearn.datasets.core.dataset_info import DatasetInfo
 from mmlearn.datasets.core.example import Example
 
 
@@ -104,9 +105,11 @@ class CombinedDataset(Dataset[Example]):
         return self.cumulative_sizes[-1]
     
     
-    def label_mapping(self):
-        label_mappings = {}
-        for idx, dataset in enumerate(self.datasets):
-            label_mappings[dataset.name()] = dataset.label_mapping
-        
-        return label_mappings
+    def create_all_dataset_info(self):
+        all_dataset_info = {}
+        for _, dataset in enumerate(self.datasets):
+            label_mapping = dataset.get_label_mapping()
+            dataset_info = DatasetInfo(class_count=len(label_mapping), label_mapping=label_mapping)
+            all_dataset_info[dataset.name()] = dataset_info
+    
+        return all_dataset_info

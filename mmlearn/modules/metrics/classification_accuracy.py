@@ -60,7 +60,7 @@ class ClassificationAccuracy(Metric):
         self.predictions.append(preds)
         self.true_indices.append(true_indices)
         target_embeddings = torch.tensor([])
-        target_embeddings = [self.all_target_embeddings[name] for name in names]
+        target_embeddings = [self.all_dataset_info[name].get_label_embedding() for name in names]
 
         # Convert the list of embeddings to a tensor of shape (N, embedding_dim)
         self.target_embeddings = self.target_embeddings + target_embeddings
@@ -71,8 +71,8 @@ class ClassificationAccuracy(Metric):
 
         return distributed_available() if callable(distributed_available) else False  # type: ignore[no-any-return]
 
-    def set_all_target_embeddings(self, all_target_embeddings):
-        self.all_target_embeddings = all_target_embeddings
+    def set_all_dataset_info(self, all_dataset_info):
+        self.all_dataset_info = all_dataset_info
     
     def compute(self) -> torch.Tensor:
         """
@@ -98,7 +98,6 @@ class ClassificationAccuracy(Metric):
             target_embeddings = torch.cat(gather_all_tensors(target_embeddings), dim=0)
             
         if self.mode == "zero_shot":
-            # make target_embeddings a self method
             return self.zero_shot_accuracy(predictions, true_indices, target_embeddings)
         elif self.mode == "linear_probing":
             return self.linear_probing_accuracy(predictions, true_indices)
@@ -125,30 +124,23 @@ class ClassificationAccuracy(Metric):
             The top-k zero-shot accuracy as a tensor.
         """
 
-        # Initialize list to store similarities for each sample
         similarities = []
         
-        # Loop over each sample to compute cosine similarity individually
         for i in range(predictions.shape[0]):
-            # Compute cosine similarity for the i-th sample: shape (1, num_classes)
             sim = torch.matmul(predictions[i].view(1, -1), target_embeddings[i].transpose(0, 1))
             similarities.append(sim)
-        
-        # Concatenate all similarity results: shape (N, num_classes)
+
         similarities = torch.cat(similarities, dim=0)
 
         # Get the indices of the top-k most similar target embeddings for each prediction
-        top_k_preds = similarities.topk(self.top_k, dim=1, largest=True, sorted=True)[1]  # Indices of top-k predictions
-        
-        # Compare the top-k predictions with the true indices
+        top_k_preds = similarities.topk(self.top_k, dim=1, largest=True, sorted=True)[1]
         correct = top_k_preds.eq(true_indices.view(-1, 1).expand_as(top_k_preds))
         
         # Calculate the number of correct predictions in the top-k
         correct_k = correct[:, :self.top_k].reshape(-1).float().sum(0, keepdim=True)
         
-        # Compute the accuracy as the ratio of correct predictions
         accuracy = correct_k / true_indices.size(0)
-        
+
         return accuracy
 
     
@@ -173,16 +165,11 @@ class ClassificationAccuracy(Metric):
         torch.Tensor
             The top-k accuracy as a tensor.
         """
-        # Get the indices of the top-k predictions
         top_k_preds = logits.topk(self.top_k, dim=1, largest=True, sorted=True)[1]  # Indices of top-k predictions
 
-        # Compare the top-k predictions with the true labels
         correct = top_k_preds.eq(true_labels.view(-1, 1).expand_as(top_k_preds))
-        
-        # Calculate the number of correct predictions in the top-k
         correct_k = correct[:, :self.top_k].reshape(-1).float().sum(0, keepdim=True)
         
-        # Compute the accuracy as the ratio of correct predictions
         accuracy = correct_k / true_labels.size(0)
         
         return accuracy
