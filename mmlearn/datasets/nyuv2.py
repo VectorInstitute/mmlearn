@@ -3,11 +3,10 @@
 import os
 from typing import Callable, List, Literal, Optional
 
-import cv2
 import numpy as np
 import torch
 from hydra_zen import MISSING, store
-from PIL import Image
+from lightning_utilities.core.imports import RequirementCache
 from PIL.Image import Image as PILImage
 from torch.utils.data import Dataset
 from torchvision.transforms.v2.functional import to_pil_image
@@ -15,6 +14,11 @@ from torchvision.transforms.v2.functional import to_pil_image
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
+
+
+_OPENCV_AVAILABLE = RequirementCache("opencv-python>=4.10.0.84")
+if _OPENCV_AVAILABLE:
+    import cv2  # noqa: F401
 
 
 _LABELS = [
@@ -56,7 +60,7 @@ def depth_normalize(
     torch.Tensor
         Normalized depth image.
     """
-    depth_image = np.array(Image.open(depth_file))
+    depth_image = np.array(PILImage.open(depth_file))
     depth = np.array(depth_image).astype(np.float32)
     depth_in_meters = depth / 1000.0
 
@@ -100,6 +104,10 @@ class NYUv2Dataset(Dataset[Example]):
         depth_transform: Optional[Callable[[PILImage], torch.Tensor]] = None,
     ) -> None:
         super().__init__()
+        if not _OPENCV_AVAILABLE:
+            raise ImportError(
+                "NYUv2 dataset requires `opencv-python` which is not installed.",
+            )
         self._validate_args(root_dir, split, rgb_transform, depth_transform)
         self.return_type = return_type
 

@@ -5,14 +5,15 @@ import os
 import torch
 import torch.nn.functional as F  # noqa: N812
 from hydra_zen import MISSING, store
+from lightning_utilities.core.imports import RequirementCache
 from torch.utils.data.dataset import Dataset
-from torchaudio.datasets import LIBRISPEECH
 
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
 
 
+_TORCHAUDIO_AVAILABLE = RequirementCache("torchaudio>=2.4.0")
 SAMPLE_RATE = 16000
 
 
@@ -80,6 +81,12 @@ class LibriSpeech(Dataset[Example]):
     def __init__(self, root_dir: str, split: str = "train-clean-100") -> None:
         """Initialize LibriSpeech dataset."""
         super().__init__()
+        if not _TORCHAUDIO_AVAILABLE:
+            raise ImportError(
+                "LibriSpeech dataset requires `torchaudio` which is not installed."
+            )
+        from torchaudio.datasets import LIBRISPEECH
+
         self.dataset = LIBRISPEECH(
             root=root_dir,
             url=split,
