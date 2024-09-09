@@ -1,6 +1,7 @@
 """Hydra/Hydra-zen-based configurations."""
 
 import functools
+import warnings
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -445,6 +446,11 @@ if _WANDB_AVAILABLE:
         name="WandbLogger",
         group="trainer/logger",
         provider="lightning",
+    )
+else:
+    warnings.warn(
+        "wandb is not available. Skipping registration of 'trainer/logger/WandbLogger'.",
+        stacklevel=1,
     )
 
 
