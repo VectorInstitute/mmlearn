@@ -156,8 +156,9 @@ class HFTextEncoder(nn.Module):
         """
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT],
-            attention_mask=inputs.get("attention_mask")
-            or inputs.get(Modalities.TEXT.attention_mask),
+            attention_mask=inputs.get(
+                "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
+            ),
             position_ids=inputs.get("position_ids"),
             output_attentions=inputs.get("output_attentions"),
             return_dict=True,

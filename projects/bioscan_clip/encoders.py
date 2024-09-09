@@ -140,8 +140,9 @@ class BarcodeBERT(nn.Module):
         """Run the forward pass."""
         outputs = self.model(
             input_ids=inputs[Modalities.DNA],
-            attention_mask=inputs.get("attention_mask")
-            or inputs.get(Modalities.DNA.attention_mask),
+            attention_mask=inputs.get(
+                "attention_mask", inputs.get(Modalities.DNA.attention_mask, None)
+            ),
             position_ids=inputs.get("position_ids"),
             output_attentions=inputs.get("output_attentions"),
             return_dict=True,
