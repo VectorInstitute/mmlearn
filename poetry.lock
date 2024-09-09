@@ -4762,4 +4762,4 @@ vision = ["opencv-python", "timm"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9, <3.13"
-content-hash = "87250518e69011482ca924c0b136104dde900e8ebedcd0b759e0970415d4766b"
+content-hash = "c6e8af55185386eddb82750de9a824946d31bdf13cb5ff9fb6add0383ee560e5"
