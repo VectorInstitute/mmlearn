@@ -12,6 +12,7 @@ from projects.med_benchmarking.datasets.mimiciv_cxr import MIMICIVCXR
 from projects.med_benchmarking.datasets.pmcoa import PMCOA
 from projects.med_benchmarking.datasets.quilt import Quilt
 from projects.med_benchmarking.datasets.roco import ROCO
+from projects.med_benchmarking.datasets.ham10000 import HAM10000
 
 
 _MedVQAConf = builds(

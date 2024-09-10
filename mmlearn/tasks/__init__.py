@@ -2,9 +2,11 @@
 
 from mmlearn.tasks.contrastive_pretraining import ContrastivePretraining
 from mmlearn.tasks.zero_shot_retrieval import ZeroShotCrossModalRetrieval
+from mmlearn.tasks.classification import Classification
 
 
 __all__ = [
     "ContrastivePretraining",
     "ZeroShotCrossModalRetrieval",
+    "Classification",
 ]
