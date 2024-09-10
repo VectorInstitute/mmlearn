@@ -327,8 +327,8 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
             The text embeddings. Will be a tuple with a single element.
         """
         input_ids = inputs[Modalities.TEXT]
-        attention_mask = inputs.get("attention_mask") or inputs.get(
-            Modalities.TEXT.attention_mask
+        attention_mask: Optional[torch.Tensor] = inputs.get(
+            "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
         )
         position_ids = inputs.get("position_ids")
 
@@ -568,8 +568,9 @@ class PubMedBERTForCLIPTextEncoding(nn.Module):
         """
         output = self.model(
             input_ids=inputs[Modalities.TEXT],
-            attention_mask=inputs.get("attention_mask")
-            or inputs.get(Modalities.TEXT.attention_mask),
+            attention_mask=inputs.get(
+                "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
+            ),
             inputs_embeds=inputs.get("inputs_embeds"),
             output_attentions=inputs.get("output_attentions"),
             output_hidden_states=True,
