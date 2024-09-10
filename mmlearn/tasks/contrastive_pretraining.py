@@ -19,6 +19,7 @@ from mmlearn.datasets.core import Modalities, find_matching_indices
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.losses import CLIPLoss
 from mmlearn.tasks.hooks import EvaluationHooks
+from mmlearn.tasks.classification import Classification
 
 
 _unsupported_modality_error = (
@@ -595,7 +596,10 @@ class ContrastivePretraining(L.LightningModule):
                 if (eval_type == "val" and task_spec.run_on_validation) or (
                     eval_type == "test" and task_spec.run_on_test
                 ):
-                    task_spec.task.on_evaluation_epoch_start(self)
+                    if isinstance(task_spec.task, Classification):
+                        task_spec.task.on_evaluation_epoch_start(self, self.all_dataset_info)
+                    else:
+                        task_spec.task.on_evaluation_epoch_start(self)
 
     def _shared_eval_step(
         self,
@@ -663,3 +667,6 @@ class ContrastivePretraining(L.LightningModule):
                     if results:
                         for key, value in results.items():
                             self.log(f"{eval_type}/{key}", value)
+                            
+    def set_all_dataset_info(self, test_loader):
+        self.all_dataset_info = test_loader.create_all_dataset_info()
