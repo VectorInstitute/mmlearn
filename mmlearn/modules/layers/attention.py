@@ -165,52 +165,6 @@ class DropPath(nn.Module):
         return drop_path(x, self.drop_prob, self.training)
 
 
-class MLP(nn.Module):
-    """
-    Multi-layer Perceptron (MLP).
-
-    A simple feedforward neural network with one hidden layer and an activation function.
-
-    Parameters
-    ----------
-    in_features : int
-        Number of input features.
-    hidden_features : Optional[int], optional
-        Number of hidden features. If None, defaults to in_features. Default is None.
-    out_features : Optional[int], optional
-        Number of output features. If None, defaults to in_features. Default is None.
-    act_layer : Callable[..., nn.Module], optional
-        Activation function to use. Default is nn.GELU.
-    drop : float, optional
-        Dropout probability. Default is 0.0.
-    """
-
-    def __init__(
-        self,
-        in_features: int,
-        hidden_features: Optional[int] = None,
-        out_features: Optional[int] = None,
-        act_layer: Callable[..., nn.Module] = nn.GELU,
-        drop: float = 0.0
-    ) -> None:
-        super().__init__()
-        out_features = out_features or in_features
-        hidden_features = hidden_features or in_features
-        self.fc1 = nn.Linear(in_features, hidden_features)
-        self.act = act_layer()
-        self.fc2 = nn.Linear(hidden_features, out_features)
-        self.drop = nn.Dropout(drop)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass through the MLP."""
-        x = self.fc1(x)
-        x = self.act(x)
-        x = self.drop(x)
-        x = self.fc2(x)
-        x = self.drop(x)
-        return x
-
-
 class Attention(nn.Module):
     """
     Multi-head Self-Attention Mechanism.
