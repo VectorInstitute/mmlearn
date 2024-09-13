@@ -67,7 +67,7 @@ task:
     eps: 1.0e-6
   lr_scheduler:
     scheduler:
-      T_max: 107_555 # make sure to change this if max_epochs or accumulate_grad_batches is changed
+      T_max: 107_559 # make sure to change this if max_epochs or accumulate_grad_batches is changed
     extras:
       interval: step
   loss:
