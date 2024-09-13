@@ -1,3 +1,5 @@
+# @package _global_
+
 defaults:
   - /datasets@datasets.train.roco: ROCO
   - /datasets/tokenizers@datasets.train.roco.tokenizer: HFCLIPTokenizer
@@ -25,6 +27,7 @@ defaults:
   - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
   - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
   - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
+  - /datasets/tokenizers@task.evaluation_tasks.classification.task.tokenizer: HFCLIPTokenizer
   - /trainer/logger@trainer.logger.wandb: WandbLogger
   - override /task: ContrastivePretraining
   - _self_
@@ -54,12 +57,6 @@ task:
       logit_scale:
         learnable: True
   heads:
-    # rgb:
-    #   in_dim: 512
-    #   out_dim: 7
-    # text:
-    #   in_dim: 512
-    #   out_dim: 7
   modality_module_mapping:
     text:
       postprocessor_key: norm_and_logit_scale
@@ -82,23 +79,16 @@ task:
   evaluation_tasks:
     classification:
       task:
+        mode: "zeroshot"
         task_specs:
-          # - query_modality: text
-          #   target_modality: rgb
-          #   top_k: [10, 200]
-          # - query_modality: rgb
-          #   target_modality: text
-          - top_k: [5, 2]
-            metric_name: ClassificationF1Score
-            mode: ZERO_SHOT
+          - top_k: [5, 2, 1]
+            metric_name: Accuracy # metric_name should be the exact same name as torch.metrics functions
             query_modality: rgb
           - top_k: [1]
-            metric_name: ClassificationAUC
-            mode: ZERO_SHOT
+            metric_name: AUROC
             query_modality: rgb
-          - top_k: [1, 6]
-            metric_name: ClassificationAccuracy
-            mode: ZERO_SHOT
+          - top_k: [1]
+            metric_name: F1Score
             query_modality: rgb
       run_on_validation: false
       run_on_test: true
