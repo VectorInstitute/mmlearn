@@ -6,7 +6,7 @@ from peft import LoraConfig
 import torch
 
 from mmlearn.conf import external_store
-from mmlearn.modules.encoders.hf_text_encoders import HFTextEncoder
+from mmlearn.modules.encoders.text import HFTextEncoder
 
 from projects.bioscan_clip.encoders import TimmViT, BarcodeBERT
 from projects.bioscan_clip.dataset import BIOSCANInsectDataset
