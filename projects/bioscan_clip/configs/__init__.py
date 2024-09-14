@@ -7,8 +7,9 @@ import torch
 
 from mmlearn.conf import external_store
 from mmlearn.modules.encoders.hf_text_encoders import HFTextEncoder
+from mmlearn.modules.encoders.vision import TimmViT
 
-from projects.bioscan_clip.encoders import TimmViT, BarcodeBERT
+from projects.bioscan_clip.encoders import BarcodeBERT
 from projects.bioscan_clip.dataset import BIOSCANInsectDataset
 from projects.bioscan_clip.eval_task import TaxonomicClassification
 from projects.bioscan_clip.dna_tokenizer import DNAProcessor
