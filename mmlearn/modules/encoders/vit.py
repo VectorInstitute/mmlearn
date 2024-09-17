@@ -1,14 +1,17 @@
 import math
 from functools import partial
-from typing import Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
-from src.masks.utils import apply_masks
-from src.utils.tensors import repeat_interleave_batch, trunc_normal_
 from torch import nn
 
-from mmlearn.mmlearn.modules.layers.embedding import get_2d_sincos_pos_embed
-from projects.mmlearn.mmlearn.modules.layers.transformer_block import Block, PatchEmbed
+from mmlearn.datasets.processors.masking import apply_masks
+from mmlearn.datasets.processors.transforms import (
+    repeat_interleave_batch,
+    trunc_normal_,
+)
+from mmlearn.modules.layers.embedding import get_2d_sincos_pos_embed
+from mmlearn.modules.layers.transformer_block import Block, PatchEmbed
 
 
 class VisionTransformerPredictor(nn.Module):
@@ -34,7 +37,7 @@ class VisionTransformerPredictor(nn.Module):
         Ratio of the hidden dimension in the MLP.
     qkv_bias : bool, optional, default=True
         If True, add a learnable bias to the query, key, and value projections.
-    qk_scale : Optional[float], optional
+    qk_scale : Optional[float], optional, default=None
         Override the default qk scale factor.
     drop_rate : float, optional, default=0.0
         Dropout rate for the transformer blocks.
@@ -65,8 +68,9 @@ class VisionTransformerPredictor(nn.Module):
         drop_path_rate: float = 0.0,
         norm_layer: Callable[..., nn.Module] = nn.LayerNorm,
         init_std: float = 0.02,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
+        """Initialize the Vision Transformer Predictor module."""
         super().__init__()
         self.predictor_embed = nn.Linear(embed_dim, predictor_embed_dim, bias=True)
         self.mask_token = nn.Parameter(torch.zeros(1, 1, predictor_embed_dim))
@@ -231,7 +235,7 @@ class VisionTransformer(nn.Module):
 
     def __init__(
         self,
-        img_size: List[int] = None,
+        img_size: Optional[List[int]] = None,
         patch_size: int = 16,
         in_chans: int = 3,
         embed_dim: int = 768,
@@ -247,8 +251,9 @@ class VisionTransformer(nn.Module):
         drop_path_rate: float = 0.0,
         norm_layer: Callable[..., nn.Module] = nn.LayerNorm,
         init_std: float = 0.02,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
+        """Initialize the Vision Transformer module."""
         super().__init__()
         self.num_features = self.embed_dim = embed_dim
         self.num_heads = num_heads
@@ -329,7 +334,8 @@ class VisionTransformer(nn.Module):
         self,
         x: torch.Tensor,
         masks: Optional[Union[torch.Tensor, List[torch.Tensor]]] = None,
-    ) -> torch.Tensor:
+        return_hidden_states: bool = False,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]:
         """Forward pass through the Vision Transformer."""
         if masks is not None and not isinstance(masks, list):
             masks = [masks]
@@ -345,13 +351,24 @@ class VisionTransformer(nn.Module):
         if masks is not None:
             x = apply_masks(x, masks)
 
-        # -- Forward propagation
+        # -- Initialize a list to store hidden states
+        hidden_states: Optional[List[torch.Tensor]] = (
+            [] if return_hidden_states else None
+        )
+
+        # -- Forward propagation through blocks
         for _i, blk in enumerate(self.blocks):
             x = blk(x)
+            if return_hidden_states and hidden_states is not None:
+                hidden_states.append(x)
 
+        # -- Apply normalization if present
         if self.norm is not None:
             x = self.norm(x)
 
+        # -- Return both final output and hidden states if requested
+        if return_hidden_states:
+            return x, hidden_states
         return x
 
     def interpolate_pos_encoding(
@@ -390,7 +407,7 @@ class VisionTransformer(nn.Module):
         return torch.cat((class_emb.unsqueeze(0), pos_embed), dim=1)
 
 
-def vit_predictor(**kwargs) -> VisionTransformerPredictor:
+def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
     """
     Create a VisionTransformerPredictor model.
 
@@ -404,7 +421,7 @@ def vit_predictor(**kwargs) -> VisionTransformerPredictor:
     )
 
 
-def vit_tiny(patch_size: int = 16, **kwargs) -> VisionTransformer:
+def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with tiny configuration.
 
@@ -425,7 +442,7 @@ def vit_tiny(patch_size: int = 16, **kwargs) -> VisionTransformer:
     )
 
 
-def vit_small(patch_size: int = 16, **kwargs) -> VisionTransformer:
+def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with small configuration.
 
@@ -446,7 +463,7 @@ def vit_small(patch_size: int = 16, **kwargs) -> VisionTransformer:
     )
 
 
-def vit_base(patch_size: int = 16, **kwargs) -> VisionTransformer:
+def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with base configuration.
 
@@ -467,7 +484,7 @@ def vit_base(patch_size: int = 16, **kwargs) -> VisionTransformer:
     )
 
 
-def vit_large(patch_size: int = 16, **kwargs) -> VisionTransformer:
+def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with large configuration.
 
@@ -488,7 +505,7 @@ def vit_large(patch_size: int = 16, **kwargs) -> VisionTransformer:
     )
 
 
-def vit_huge(patch_size: int = 16, **kwargs) -> VisionTransformer:
+def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with huge configuration.
 
@@ -509,7 +526,7 @@ def vit_huge(patch_size: int = 16, **kwargs) -> VisionTransformer:
     )
 
 
-def vit_giant(patch_size: int = 16, **kwargs) -> VisionTransformer:
+def vit_giant(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with giant configuration.
 
