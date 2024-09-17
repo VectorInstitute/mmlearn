@@ -3,4 +3,4 @@
 from mmlearn.modules.metrics.retrieval_recall import RetrievalRecallAtK
 
 
-__all__ = ["RetrievalRecallAtK",]
+__all__ = ["RetrievalRecallAtK"]

@@ -2,14 +2,14 @@
 
 import bisect
 from collections.abc import Iterator
-from typing import Iterable, Union
+from typing import Any, Dict, Iterable, Union
 
 import numpy as np
 from torch.utils._pytree import tree_flatten
 from torch.utils.data import Dataset, IterableDataset
 
-from mmlearn.datasets.core.example import Example
 from mmlearn.datasets.core.dataset_info import DatasetInfo
+from mmlearn.datasets.core.example import Example
 
 
 class CombinedDataset(Dataset[Example]):
@@ -106,12 +106,24 @@ class CombinedDataset(Dataset[Example]):
     def __len__(self) -> int:
         """Return the total number of examples in the combined dataset."""
         return self.cumulative_sizes[-1]
-    
-    def create_all_dataset_info(self):
+
+    def create_all_dataset_info(self) -> Dict[str, Any]:
+        """
+        Create a dictionary containing information about all datasets.
+
+        This method iterates over all datasets in `self.datasets` and
+        populates a dictionary with relevant dataset information.
+
+        Returns
+        -------
+            dict: A dictionary containing dataset information for each dataset.
+        """
         all_dataset_info = {}
         for _, dataset in enumerate(self.datasets):
             label_mapping = dataset.get_label_mapping()
-            dataset_info = DatasetInfo(class_count=len(label_mapping), label_mapping=label_mapping)
+            dataset_info = DatasetInfo(
+                class_count=len(label_mapping), label_mapping=label_mapping
+            )
             all_dataset_info[dataset.name()] = dataset_info
 
         return all_dataset_info

@@ -41,7 +41,7 @@ class HAM10000(Dataset[Example]):
     ) -> None:
         """Initialize the dataset."""
         self.root_dir = root_dir
-        self.metadata = pd.read_csv(os.path.join(root_dir, 'HAM10000_metadata.csv'))
+        self.metadata = pd.read_csv(os.path.join(root_dir, "HAM10000_metadata.csv"))
 
         if processor is None and transform is None:
             self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
@@ -60,11 +60,12 @@ class HAM10000(Dataset[Example]):
     def __getitem__(self, idx: int) -> Example:
         """Return the idx'th data sample as an Example instance."""
         entry = self.metadata.iloc[idx]
-        image_path = os.path.join(self.root_dir, "skin_cancer", entry["image_id"] + ".jpg")
+        image_path = os.path.join(
+            self.root_dir, "skin_cancer", entry["image_id"] + ".jpg"
+        )
         label_index = list(self.get_label_mapping().keys()).index(entry["dx"])
         label = list(self.get_label_mapping().values())[label_index]
         tokens = self.tokenizer(label) if self.tokenizer is not None else None
-
 
         with Image.open(image_path) as img:
             image = img.convert("RGB")
@@ -81,7 +82,7 @@ class HAM10000(Dataset[Example]):
                 Modalities.TEXT: label,
                 Modalities.RGB.target: label_index,
                 EXAMPLE_INDEX_KEY: idx,
-                NAME_KEY: self.name()
+                NAME_KEY: self.name(),
             }
         )
 
@@ -101,17 +102,15 @@ class HAM10000(Dataset[Example]):
         return len(self.metadata)
 
     def get_label_mapping(self):
-        label_mapping = {
+        return {
             "nv": "melanocytic nevus",
             "mel": "melanoma",
             "bkl": "benign keratosis",
             "bcc": "basal cell carcinoma",
             "akiec": "actinic keratosis",
             "vasc": "vascular lesion",
-            "df": "dermatofibroma"
+            "df": "dermatofibroma",
         }
-        return label_mapping
 
     def name(self):
         return "HAM10000"
-    

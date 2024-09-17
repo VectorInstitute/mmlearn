@@ -9,7 +9,12 @@ from lightning.pytorch.utilities.rank_zero import rank_zero_warn
 class EvaluationHooks:
     """Hooks for evaluation."""
 
-    def on_evaluation_epoch_start(self, pl_module: pl.LightningModule) -> None:
+    def on_evaluation_epoch_start(
+        self,
+        pl_module: pl.LightningModule,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Prepare the evaluation loop.
 
         Parameters

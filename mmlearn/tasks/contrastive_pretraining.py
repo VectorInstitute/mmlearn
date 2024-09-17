@@ -14,12 +14,13 @@ from hydra_zen import store
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
+from torch.utils.data import Dataset
 
 from mmlearn.datasets.core import Modalities, find_matching_indices
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.losses import CLIPLoss
-from mmlearn.tasks.hooks import EvaluationHooks
 from mmlearn.tasks.classification import Classification
+from mmlearn.tasks.hooks import EvaluationHooks
 
 
 _unsupported_modality_error = (
@@ -597,7 +598,9 @@ class ContrastivePretraining(L.LightningModule):
                     eval_type == "test" and task_spec.run_on_test
                 ):
                     if isinstance(task_spec.task, Classification):
-                        task_spec.task.on_evaluation_epoch_start(self, self.all_dataset_info)
+                        task_spec.task.on_evaluation_epoch_start(
+                            self, self.all_dataset_info
+                        )
                     else:
                         task_spec.task.on_evaluation_epoch_start(self)
 
@@ -667,6 +670,18 @@ class ContrastivePretraining(L.LightningModule):
                     if results:
                         for key, value in results.items():
                             self.log(f"{eval_type}/{key}", value)
-                            
-    def set_all_dataset_info(self, test_loader):
+
+    def set_all_dataset_info(self, test_loader: Dataset) -> None:
+        """
+        Set the dataset information using the provided test loader.
+
+        This method uses the `create_all_dataset_info` method of the test loader
+        to populate the `all_dataset_info` attribute.
+
+        Parameters
+        ----------
+        test_loader : TestLoader
+            An object that provides the `create_all_dataset_info` method to
+            generate dataset information.
+        """
         self.all_dataset_info = test_loader.create_all_dataset_info()
