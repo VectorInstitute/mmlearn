@@ -1,3 +1,14 @@
+"""
+This module implements various Vision Transformer (ViT) models.
+
+The Vision Transformer (ViT) architecture is applying Transformer-like models 
+directly to image patches, instead of using traditional CNN architectures.
+
+Includes:
+- VisionTransformerPredictor
+- VisionTransformer model variations (tiny, small, base, large, huge, giant)
+"""
+
 import math
 from functools import partial
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
