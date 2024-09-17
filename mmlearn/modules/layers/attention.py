@@ -18,7 +18,7 @@ class Attention(nn.Module):
         Number of attention heads.
     qkv_bias : bool, optional, default=False
         If True, adds a learnable bias to the query, key, value projections.
-    qk_scale : Optional[float], optional
+    qk_scale : Optional[float], optional, default=None
         Override the default scale factor for the dot-product attention.
     attn_drop : float, optional, default=0.0
         Dropout probability for the attention weights.

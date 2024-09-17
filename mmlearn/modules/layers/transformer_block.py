@@ -51,9 +51,9 @@ class DropPath(nn.Module):
         Probability of dropping paths. Default is None.
     """
 
-    def __init__(self, drop_prob: Optional[float] = None) -> None:
+    def __init__(self, drop_prob: float) -> None:
         super(DropPath, self).__init__()
-        self.drop_prob = drop_prob
+        self.drop_prob = drop_prob if drop_prob is not None else 0.0
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass through DropPath module."""
