@@ -118,12 +118,13 @@ class TimmViT(nn.Module):
             The output of the model.
         """
         x = inputs[Modalities.RGB]
-        _, intermediates = self.model.forward_intermediates(x)
+        last_hidden_state, hidden_states = self.model.forward_intermediates(
+            x, output_fmt="NLC"
+        )
+        last_hidden_state = self.model.forward_head(last_hidden_state)
 
         return BaseModelOutput(
-            last_hidden_state=intermediates[-1],
-            hidden_states=intermediates,
-            attentions=None,
+            last_hidden_state=last_hidden_state, hidden_states=hidden_states
         )
 
     def get_intermediate_layers(
