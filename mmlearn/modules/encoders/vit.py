@@ -1,5 +1,5 @@
 """
-This module implements various Vision Transformer (ViT) models.
+Implement various Vision Transformer (ViT) models.
 
 The Vision Transformer (ViT) architecture is applying Transformer-like models 
 directly to image patches, instead of using traditional CNN architectures.
