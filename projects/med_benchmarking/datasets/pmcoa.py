@@ -1,15 +1,16 @@
 """PMC-OA dataset."""
 
 import os
-from typing import Any, Callable, Dict, Literal, Optional, Tuple
+from typing import Any, Callable, Dict, Literal, Optional, Tuple, Union
 
-import jsonlines
-import pandas as pd
 import torch
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
+import pyarrow.json as pj
+from pyarrow import csv
+import pyarrow as pa
 
 from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
@@ -30,7 +31,7 @@ class PMCOA(Dataset[Example]):
         caption_key: str = "caption",
         csv_separator: str = ",",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[Callable[[str], torch.Tensor]] = None,
+        tokenizer: Optional[Callable[[str], Union[torch.Tensor, dict]]] = None,
         mask_generator: Optional[
             Callable[
                 [Dict[str, torch.Tensor], Any],
@@ -104,13 +105,13 @@ class PMCOA(Dataset[Example]):
     def __getitem__(self, idx: int) -> Example:
         """Return items in the dataset."""
         image_path = os.path.join(
-            self.root_dir, self.image_dir, self.image_filenames[idx]
+            self.root_dir, self.image_dir, self.image_filenames[idx].as_py()
         )
 
         with Image.open(image_path) as img:
             images = self.transform(img)
 
-        caption = str(self.captions[idx])
+        caption = self.captions[idx].as_py()
         example = Example(
             {
                 Modalities.RGB: images,
@@ -141,19 +142,18 @@ class PMCOA(Dataset[Example]):
 
     def _csv_loader(
         self, input_filename: str, img_key: str, caption_key: str, sep: str
-    ) -> Tuple[Any, Any]:
+    ) -> Tuple[pa.ChunkedArray, pa.ChunkedArray]:
         """Load images, captions from CSV data."""
-        df = pd.read_csv(input_filename, sep=sep)
-        images, captions = df[img_key].tolist(), df[caption_key].tolist()
-        return images, captions
+        table = csv.read_csv(
+            input_filename,
+            parse_options=csv.ParseOptions(delimiter=sep, newlines_in_values=True),
+        )
+        return table[img_key], table[caption_key]
 
     def _jsonl_loader(
         self, input_filename: str, img_key: str, caption_key: str
-    ) -> Tuple[Any, Any]:
+    ) -> Tuple[pa.ChunkedArray, pa.ChunkedArray]:
         """Load images, captions from JSON data."""
-        images, captions = [], []
-        with jsonlines.open(input_filename) as reader:
-            for obj in reader:
-                images.append(obj[img_key])
-                captions.append(obj[caption_key])
-        return images, captions
+        parse_options = pj.ParseOptions(newlines_in_values=True)
+        table = pj.read_json(input_filename, parse_options=parse_options)
+        return table[img_key], table[caption_key]

@@ -2,7 +2,7 @@
 
 import ast
 import os
-from typing import Callable, List, Literal, Optional
+from typing import Callable, List, Literal, Optional, Union
 
 import pandas as pd
 import torch
@@ -47,7 +47,7 @@ class Quilt(Dataset[Example]):
         split: Literal["train", "val"] = "train",
         subset: Optional[List[str]] = None,
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[Callable[[str], torch.Tensor]] = None,
+        tokenizer: Optional[Callable[[str], Union[torch.Tensor, dict]]] = None,
         processor: Optional[
             Callable[[Image.Image, str], tuple[torch.Tensor, torch.Tensor]]
         ] = None,
@@ -128,17 +128,17 @@ class Quilt(Dataset[Example]):
         try:
             with Image.open(
                 os.path.join(
-                    self.root_dir, "quilt_1m", self.data_df["image_path"].iloc[idx]
+                    self.root_dir, "quilt_1m", self.data_df.loc[idx, "image_path"]
                 )
             ) as img:
                 image = img.convert("RGB")
         except Exception as e:
-            print(f"ERROR: {e} on {self.data_df['image_path'].iloc[idx]}")
+            print(f"ERROR: {e} on {self.data_df.loc[idx, 'image_path']}")
 
         if self.transform is not None:
             image = self.transform(image)
 
-        caption = self.data_df["caption"].iloc[idx]
+        caption = self.data_df.loc[idx, "caption"]
         tokens = self.tokenizer(caption) if self.tokenizer is not None else None
 
         if self.processor is not None:
@@ -150,9 +150,9 @@ class Quilt(Dataset[Example]):
                 Modalities.TEXT: caption,
                 EXAMPLE_INDEX_KEY: idx,
                 "qid": self.data_df.index[idx],
-                "magnification": self.data_df["magnification"].iloc[idx],
-                "height": self.data_df["height"].iloc[idx],
-                "width": self.data_df["width"].iloc[idx],
+                "magnification": self.data_df.loc[idx, "magnification"],
+                "height": self.data_df.loc[idx, "height"],
+                "width": self.data_df.loc[idx, "width"],
             }
         )
 
@@ -169,7 +169,7 @@ class Quilt(Dataset[Example]):
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
-        return len(self.data_df.index)
+        return len(self.data_df)
 
 
 def _safe_eval(x: str) -> list[str]:
