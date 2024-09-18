@@ -2,7 +2,7 @@
 
 import math
 import random
-from typing import Any, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from hydra_zen import store
@@ -225,3 +225,42 @@ class BlockwiseImagePatchMaskGenerator:
             mask_count += delta
 
         return mask
+
+
+def apply_masks(
+    x: torch.Tensor, masks: Union[torch.Tensor, List[torch.Tensor]]
+) -> torch.Tensor:
+    """
+    Apply masks to the input tensor by selecting the patches to keep based on the masks.
+
+    Parameters
+    ----------
+    x : torch.Tensor
+        Input tensor of shape (B, N, D), where B is the batch size, N is the number
+        of patches, and D is the feature dimension.
+    masks : Union[torch.Tensor, List[torch.Tensor]]
+        A list of tensors containing the indices of patches to keep for each sample.
+        Each mask tensor has shape (B, N), where B is the batch size and N is the number
+        of patches.
+
+    Returns
+    -------
+    torch.Tensor
+        The masked tensor where only the patches indicated by the masks are kept.
+        The output tensor has shape (B', N', D), where B' is the new batch size
+        (which may be different due to concatenation) and N' is the
+        reduced number of patches.
+
+    Notes
+    -----
+    - The masks should indicate which patches to keep (1 for keep, 0 for discard).
+    - The function uses `torch.gather` to select the patches specified by the masks.
+    """
+    all_x = []
+    for m in masks:
+        # Expand the mask to match the feature dimension and gather the relevant patches
+        mask_keep = m.unsqueeze(-1).repeat(1, 1, x.size(-1))
+        all_x.append(torch.gather(x, dim=1, index=mask_keep))
+
+    # Concatenate along the batch dimension
+    return torch.cat(all_x, dim=0)
