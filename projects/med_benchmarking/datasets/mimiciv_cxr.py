@@ -3,7 +3,7 @@
 import json
 import logging
 import os
-from typing import Callable, Literal, Optional, get_args
+from typing import Callable, Literal, Optional, Union, get_args
 
 import numpy as np
 import pandas as pd
@@ -69,7 +69,7 @@ class MIMICIVCXR(Dataset):
         split: Literal["train", "validate", "test"],
         labeler: Literal["chexpert", "negbio", "double_image", "single_image"],
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[Callable[[str], torch.Tensor]] = None,
+        tokenizer: Optional[Callable[[str], Union[torch.Tensor, dict]]] = None,
         include_report: bool = False,
     ) -> None:
         """Initialize the dataset."""
@@ -103,20 +103,18 @@ class MIMICIVCXR(Dataset):
         self._labeler = labeler
 
         if self._labeler in ["double_image", "single_image"]:
-            df = pd.read_csv(data_path)
-            df = df.dropna(subset=["caption"])  # some captions are missing
-            self.entries = df.to_dict("records")
+            self.data_df = pd.read_csv(data_path)
+            self.data_df = self.data_df.dropna(
+                subset=["caption"]
+            )  # some captions are missing
         else:
-            with open(data_path, "rb") as file:
-                entries = json.load(file)
+            self.data_df = pd.read_json(data_path)
 
             # remove entries with no label if reports are not requested either
-            old_num = len(entries)
-            entries_df = pd.DataFrame(entries)
-            entries_df = entries_df[entries_df["label"].apply(len) > 0]
-            self.entries = entries_df.to_dict("records")
+            old_num = len(self.data_df)
+            entries_df = self.data_df[self.data_df["label"].apply(len) > 0]
             logger.info(
-                f"{old_num - len(entries)} datapoints removed due to lack of a label."
+                f"{old_num - len(self.data_df)} datapoints removed due to lack of a label."
             )
 
         if transform is not None:
@@ -128,7 +126,7 @@ class MIMICIVCXR(Dataset):
 
     def __getitem__(self, idx: int) -> Example:
         """Return all the images and the label vector of the idx'th study."""
-        entry = self.entries[idx]
+        entry = self.data_df.iloc[idx]
         img_path = entry["image_path"]
 
         with Image.open(
@@ -171,7 +169,7 @@ class MIMICIVCXR(Dataset):
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
-        return len(self.entries)
+        return len(self.data_df)
 
 
 class CreateJSONFiles(object):

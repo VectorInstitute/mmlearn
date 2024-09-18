@@ -1,10 +1,10 @@
 """ROCO Dataset."""
 
-import json
 import os
 from typing import Callable, Dict, Literal, Optional, Union
 
 import torch
+import pandas as pd
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
@@ -55,9 +55,7 @@ class ROCO(Dataset[Example]):
     ) -> None:
         """Initialize the dataset."""
         data_path = os.path.join(root_dir, group + split + "_dataset.json")
-        with open(data_path, encoding="utf-8") as file:
-            entries = [json.loads(line) for line in file.readlines()]
-        self.entries = entries
+        self.data_df = pd.read_json(data_path, lines=True)
 
         if processor is None and transform is None:
             self.transform = ToTensor()
@@ -80,14 +78,13 @@ class ROCO(Dataset[Example]):
         image and free text caption are returned. Otherwise, the image, free-
         text caption, and caption tokens are returned.
         """
-        entry = self.entries[idx]
-        with Image.open(entry["image_path"]) as img:
+        with Image.open(self.data_df.loc[idx, "image_path"]) as img:
             image = img.convert("RGB")
 
         if self.transform is not None:
             image = self.transform(image)
 
-        caption = entry["caption"]
+        caption = self.data_df.loc[idx, "caption"]
         tokens = self.tokenizer(caption) if self.tokenizer is not None else None
 
         if self.processor is not None:
@@ -114,4 +111,4 @@ class ROCO(Dataset[Example]):
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
-        return len(self.entries)
+        return len(self.data_df)
