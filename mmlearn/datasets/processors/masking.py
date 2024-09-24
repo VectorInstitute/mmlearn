@@ -3,7 +3,7 @@
 import math
 import random
 from dataclasses import dataclass
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from hydra_zen import store
@@ -284,7 +284,6 @@ class IJEPAMaskGenerator:
         Minimum number of patches to keep.
     allow_overlap : bool, default=False
         Whether to allow overlap between encoder and predictor masks.
-
     """
 
     input_size: Tuple[int, int] = (224, 224)
@@ -292,12 +291,17 @@ class IJEPAMaskGenerator:
     min_keep: int = 4
     allow_overlap: bool = False
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize the mask generator."""
         self.height = self.input_size[0] // self.patch_size
         self.width = self.input_size[1] // self.patch_size
 
-    def _sample_block_size(self, generator, scale: Tuple[float, float], aspect_ratio: Tuple[float, float]):
+    def _sample_block_size(
+        self,
+        generator: torch.Generator,
+        scale: Tuple[float, float],
+        aspect_ratio: Tuple[float, float],
+    ) -> Tuple[int, int]:
         """Sample the size of the mask block based on scale and aspect ratio."""
         _rand = torch.rand(1, generator=generator).item()
         min_s, max_s = scale
@@ -315,16 +319,20 @@ class IJEPAMaskGenerator:
 
         return h, w
 
-    def _sample_block_mask(self, b_size, acceptable_regions=None):
+    def _sample_block_mask(
+        self,
+        b_size: Tuple[int, int],
+        acceptable_regions: Optional[torch.Tensor] = None,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Sample a mask block."""
         h, w = b_size
-        top = torch.randint(0, self.height - h, (1,))
-        left = torch.randint(0, self.width - w, (1,))
+        top = torch.randint(0, self.height - h, (1,)).item()
+        left = torch.randint(0, self.width - w, (1,)).item()
         mask = torch.zeros((self.height, self.width), dtype=torch.int32)
-        mask[top:top+h, left:left+w] = 1
+        mask[top : top + h, left : left + w] = 1
 
         mask_complement = torch.ones((self.height, self.width), dtype=torch.int32)
-        mask_complement[top:top+h, left:left+w] = 0
+        mask_complement[top : top + h, left : left + w] = 0
 
         return mask.flatten(), mask_complement.flatten()
 
@@ -335,8 +343,8 @@ class IJEPAMaskGenerator:
         pred_mask_scale: Tuple[float, float] = (0.2, 0.8),
         aspect_ratio: Tuple[float, float] = (0.3, 3.0),
         nenc: int = 1,
-        npred: int = 2
-    ) -> dict[str, Any]:
+        npred: int = 2,
+    ) -> Dict[str, Any]:
         """Generate encoder and predictor masks for a single example.
 
         Parameters
@@ -356,15 +364,21 @@ class IJEPAMaskGenerator:
 
         Returns
         -------
-        dict[str, Any]
+        Dict[str, Any]
             A dictionary of the input example, encoder masks, and predictor masks.
         """
-        seed = torch.randint(0, 2**32, (1,)).item()  # Sample random seed for reproducibility
+        seed = torch.randint(
+            0, 2**32, (1,)
+        ).item()  # Sample random seed for reproducibility
         g = torch.Generator().manual_seed(seed)
 
         # Sample block sizes
-        p_size = self._sample_block_size(generator=g, scale=pred_mask_scale, aspect_ratio=aspect_ratio)
-        e_size = self._sample_block_size(generator=g, scale=enc_mask_scale, aspect_ratio=(1.0, 1.0))
+        p_size = self._sample_block_size(
+            generator=g, scale=pred_mask_scale, aspect_ratio=aspect_ratio
+        )
+        e_size = self._sample_block_size(
+            generator=g, scale=enc_mask_scale, aspect_ratio=(1.0, 1.0)
+        )
 
         # Generate predictor masks
         masks_pred, masks_enc = [], []
