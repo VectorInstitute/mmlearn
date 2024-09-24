@@ -1,4 +1,4 @@
-"""Saving the necessary imformstion about a dataset for evaluation tasks."""
+"""Saving the necessary information about a dataset for evaluation tasks."""
 
 from typing import Any, Dict, Optional
 
