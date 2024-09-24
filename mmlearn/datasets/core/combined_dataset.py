@@ -119,11 +119,11 @@ class CombinedDataset(Dataset[Example]):
             dict: A dictionary containing dataset information for each dataset.
         """
         all_dataset_info = {}
-        for _, dataset in enumerate(self.datasets):
+        for i, dataset in enumerate(self.datasets):
             label_mapping = dataset.get_label_mapping()
             dataset_info = DatasetInfo(
                 class_count=len(label_mapping), label_mapping=label_mapping
             )
-            all_dataset_info[dataset.name()] = dataset_info
+            all_dataset_info[str(i)] = dataset_info
 
         return all_dataset_info
