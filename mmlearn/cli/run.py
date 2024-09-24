@@ -12,6 +12,7 @@ from lightning.pytorch.trainer import Trainer
 from omegaconf import OmegaConf
 from pytorch_lightning.utilities import rank_zero_only
 from torch.utils.data import DataLoader
+from transformers.utils.import_utils import is_torch_tf32_available
 
 from mmlearn.cli._instantiators import (
     instantiate_callbacks,
@@ -41,7 +42,11 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
     cfg_copy = copy.deepcopy(cfg)  # copy of the config for logging
 
     L.seed_everything(cfg.seed, workers=True)
-    torch.set_float32_matmul_precision("high")
+
+    if is_torch_tf32_available():
+        torch.backends.cuda.matmul.allow_tf32 = True
+        if "16-mixed" in cfg.trainer.precision:
+            cfg.trainer.precision = "bf16-mixed"
 
     # setup trainer first so that we can get some variables for distributed training
     callbacks = instantiate_callbacks(cfg.trainer.get("callbacks"))
