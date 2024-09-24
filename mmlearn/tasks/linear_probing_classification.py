@@ -2,21 +2,15 @@
 
 import inspect
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Union
 
 import torch
 import torchmetrics
 from hydra_zen import store
 from pytorch_lightning import LightningModule, Trainer
-from torch.nn import functional
-from torch.utils.data import DataLoader, Dataset
 from torchmetrics import Metric, MetricCollection
-from transformers.tokenization_utils_base import PreTrainedTokenizerBase
-import random
 
 from mmlearn.datasets.core import Modalities
-from mmlearn.datasets.core.data_collator import collate_example_list
-from mmlearn.datasets.core.example import Example
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.tasks.hooks import EvaluationHooks
 
@@ -50,7 +44,6 @@ class LinearProbingClassification(EvaluationHooks):
         super().__init__()
         self.task_specs = task_specs
         self.metrics: Dict[Any, Metric] = {}
-
 
     def on_evaluation_epoch_start(
         self, pl_module: LightningModule, all_dataset_info: Dict[str, Any]
@@ -120,9 +113,7 @@ class LinearProbingClassification(EvaluationHooks):
         ), metric in self.metrics.items():
             output_embeddings = outputs[query_modality.embedding]  # Predictions
             label_index = batch[query_modality.target]  # True labels
-            names = batch[
-                "dataset_index"
-            ]
+            names = batch["dataset_index"]
 
             # Filter indices where dataset name is part of the metric_name
             matching_indices = [
