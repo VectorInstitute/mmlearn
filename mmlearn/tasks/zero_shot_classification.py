@@ -72,30 +72,25 @@ class ZeroShotClassification(EvaluationHooks):
                 for label in dataset_info.get_label_mapping().values()
             ]
 
-            processed_descriptions = []
-            for description in descriptions:
-                batch = {}
-                tokens = self.tokenizer(description)
+            tokens_batch = [self.tokenizer(description) for description in descriptions]
 
-                batch.update(
-                    {
-                        key: value.unsqueeze(0).to(pl_module.device)
-                        if torch.is_tensor(value)
-                        else value
-                        for key, value in tokens.items()
-                    }
+            batch = {
+                key: torch.stack([d[key].clone().detach() for d in tokens_batch]).to(
+                    pl_module.device
                 )
-                batch[Modalities.RGB] = torch.rand(1, 3, 224, 224).to(pl_module.device)
+                for key in tokens_batch[0]
+            }
 
-                with torch.no_grad():
-                    processed_example = pl_module(batch)
-                    embedding = processed_example[
-                        Modalities.get_modality(Modalities.TEXT).embedding
-                    ]
-                    processed_descriptions.append(embedding)
+            # Because model needs to also get Modalities.RGB
+            batch[Modalities.RGB] = torch.rand(len(descriptions), 3, 224, 224).to(
+                pl_module.device
+            )
+
+            with torch.no_grad():
+                processed_example = pl_module(batch)
 
             all_dataset_info[name].set_label_embedding(
-                torch.stack(processed_descriptions).squeeze(1)
+                processed_example[Modalities.get_modality(Modalities.TEXT).embedding]
             )
 
         self.all_dataset_info = all_dataset_info
