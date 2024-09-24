@@ -23,7 +23,7 @@ defaults:
   - /modules/losses@task.loss: CLIPLoss
   - /modules/optimizers@task.optimizer: AdamW
   - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
-  - /eval_task@task.evaluation_tasks.classification.task: Classification
+  - /eval_task@task.evaluation_tasks.classification.task: LinearProbingClassification
   - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
   - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
   - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
@@ -86,7 +86,6 @@ task:
   evaluation_tasks:
     classification:
       task:
-        mode: "linear_probing"
         task_specs:
           - top_k: [5, 2, 1]
             metric_name: Accuracy # metric_name should be the exact same name as torch.metrics functions

@@ -1,23 +1,19 @@
 """Zero-shot and linear probing classification evaluation task."""
 
 import inspect
+import random
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Literal, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 import torchmetrics
 from hydra_zen import store
 from pytorch_lightning import LightningModule, Trainer
 from torch.nn import functional
-from torch.utils.data import DataLoader, Dataset
 from torchmetrics import Metric, MetricCollection
-from transformers.tokenization_utils_base import PreTrainedTokenizerBase
-import random
 
-from mmlearn.constants import NAME_KEY, MEDICAL_TEMPLATES
+from mmlearn.constants import MEDICAL_TEMPLATES
 from mmlearn.datasets.core import Modalities
-from mmlearn.datasets.core.data_collator import collate_example_list
-from mmlearn.datasets.core.example import Example
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.tasks.hooks import EvaluationHooks
 
@@ -64,73 +60,43 @@ class ZeroShotClassification(EvaluationHooks):
         for metric in self.metrics.values():
             metric.to(pl_module.device)
 
-        if self.mode == "zeroshot":
+        if self.tokenizer is None:
+            raise ValueError(
+                "Tokenizer must be set in the dataset to generate tokenized label descriptions"
+            )
 
-            class LabelDescriptionDataset(Dataset):
-                def __init__(
-                    self, descriptions: List[str], tokenizer: PreTrainedTokenizerBase
-                ) -> None:
-                    self.descriptions = descriptions
-                    self.tokenizer = tokenizer
+        # Set the label embeddings
+        for name, dataset_info in all_dataset_info.items():
+            descriptions = [
+                random.choice(MEDICAL_TEMPLATES)(label)
+                for label in dataset_info.get_label_mapping().values()
+            ]
 
-                def __len__(self) -> int:
-                    return len(self.descriptions)
+            processed_descriptions = []
+            for description in descriptions:
+                batch = {}
+                tokens = self.tokenizer(description)
 
-                def __getitem__(self, idx: int) -> Example:
-                    description = self.descriptions[idx]
-                    tokens = self.tokenizer(description)
-
-                    example = Example(
-                        {
-                            Modalities.RGB: torch.rand(3, 224, 224),
-                            Modalities.TEXT: description,
-                        }
-                    )
-
-                    if tokens is not None:
-                        if isinstance(tokens, dict):  # output of HFTokenizer
-                            assert (
-                                Modalities.TEXT in tokens
-                            ), f"Missing key `{Modalities.TEXT}` in tokens."
-                            example.update(tokens)
-                        else:
-                            example[Modalities.TEXT] = tokens
-
-                    return example
-
-            if self.tokenizer is None:
-                raise ValueError(
-                    "Tokenizer must be set in the dataset to generate tokenized label descriptions"
-                )
-
-            # Set the label embeddings
-            for name, dataset_info in all_dataset_info.items():
-                descriptions = [
-                    random.choice(MEDICAL_TEMPLATES)(label)
-                    for label in dataset_info.get_label_mapping().values()
-                ]
-
-                processed_descriptions = []
-                for description in descriptions:
-                    tokens = self.tokenizer(description, return_tensors='pt')
-                    example = {
-                        Modalities.RGB: torch.rand(3, 224, 224),  # Simulated RGB data
-                        Modalities.TEXT: description,             # Raw text description
+                batch.update(
+                    {
+                        key: value.unsqueeze(0).to(pl_module.device)
+                        if torch.is_tensor(value)
+                        else value
+                        for key, value in tokens.items()
                     }
-
-                    # Add tokenized output directly assuming it's a dictionary from the tokenizer
-                    example.update({key: value.to(pl_module.device) for key, value in tokens.items()})
-
-                    # Process each example through the model individually
-                    with torch.no_grad():  # Assuming we're in evaluation mode and don't need gradients
-                        processed_example = pl_module(example)
-                        embedding = processed_example[Modalities.get_modality(Modalities.TEXT).embedding]
-                        processed_descriptions.append(embedding)
-            
-            
-                all_dataset_info[name].set_label_embedding(
-                    torch.stack(processed_descriptions)
                 )
+                batch[Modalities.RGB] = torch.rand(1, 3, 224, 224).to(pl_module.device)
+
+                with torch.no_grad():
+                    processed_example = pl_module(batch)
+                    embedding = processed_example[
+                        Modalities.get_modality(Modalities.TEXT).embedding
+                    ]
+                    processed_descriptions.append(embedding)
+
+            all_dataset_info[name].set_label_embedding(
+                torch.stack(processed_descriptions).squeeze(1)
+            )
 
         self.all_dataset_info = all_dataset_info
 
@@ -138,7 +104,6 @@ class ZeroShotClassification(EvaluationHooks):
             for spec in self.task_specs:
                 assert Modalities.has_modality(spec.query_modality)
                 query_modality = Modalities.get_modality(spec.query_modality)
-                mode = self.mode
                 metric_name = spec.metric_name
                 metric = getattr(torchmetrics, metric_name)
                 num_classes = all_dataset_info[dataset_name].get_class_count()
@@ -147,12 +112,11 @@ class ZeroShotClassification(EvaluationHooks):
                     {
                         (
                             query_modality,
-                            mode,
                             metric_name,
                             dataset_name,
                         ): MetricCollection(
                             {
-                                f"{query_modality}_{mode}_C_{metric_name}@{k}_{dataset_name}": (
+                                f"{query_modality}_C_{metric_name}@{k}_{dataset_name}": (
                                     metric(
                                         **(
                                             {
@@ -167,7 +131,7 @@ class ZeroShotClassification(EvaluationHooks):
                                                 "num_classes": num_classes,
                                             }
                                         )
-                                    ).to("cuda")
+                                    ).to(pl_module.device)
                                 )
                                 for k in spec.top_k
                             }
@@ -191,18 +155,15 @@ class ZeroShotClassification(EvaluationHooks):
         for (
             query_modality,
             _,
-            _,
             dataset_name,
         ), metric in self.metrics.items():
             output_embeddings = outputs[query_modality.embedding]  # Predictions
             label_index = batch[query_modality.target]  # True labels
-            names = batch[
-                NAME_KEY
-            ]  # List of dataset names for each element in the batch
+            names = batch["dataset_index"]
 
             # Filter indices where dataset name is part of the metric_name
             matching_indices = [
-                i for i, name in enumerate(names) if name in dataset_name
+                i for i, name in enumerate(names) if str(name.item()) in dataset_name
             ]
 
             if not matching_indices:
@@ -211,26 +172,22 @@ class ZeroShotClassification(EvaluationHooks):
             output_embeddings_filtered = output_embeddings[matching_indices]
             label_index_filtered = label_index[matching_indices]
 
-            if self.mode == "zeroshot":
-                target_embeddings_filtered = [
-                    self.all_dataset_info[name].get_label_embedding()
-                    for i, name in enumerate(names)
-                    if i in matching_indices
-                ]
-                target_embeddings_filtered = torch.stack(
-                    target_embeddings_filtered
-                )  # Stack to tensor (N_filtered, num_classes, embedding_dim)
+            target_embeddings_filtered = [
+                self.all_dataset_info[str(name.item())].get_label_embedding()
+                for i, name in enumerate(names)
+                if i in matching_indices
+            ]
+            target_embeddings_filtered = torch.stack(
+                target_embeddings_filtered
+            )  # Stack to tensor (N_filtered, num_classes, embedding_dim)
 
-                # Calculate similarities
-                predictions_expanded = output_embeddings_filtered.unsqueeze(
-                    1
-                )  # Shape: (N_filtered, 1, embedding_dim)
-                logits = functional.cosine_similarity(
-                    predictions_expanded, target_embeddings_filtered, dim=-1
-                )  # Logits
-
-            elif self.mode == "linear_probing":
-                logits = output_embeddings_filtered
+            # Calculate similarities
+            predictions_expanded = output_embeddings_filtered.unsqueeze(
+                1
+            )  # Shape: (N_filtered, 1, embedding_dim)
+            logits = functional.cosine_similarity(
+                predictions_expanded, target_embeddings_filtered, dim=-1
+            )  # Logits
 
             metric.update(logits, label_index_filtered)
 
@@ -244,7 +201,6 @@ class ZeroShotClassification(EvaluationHooks):
         """
         results = {}
         for (
-            _,
             _,
             _,
             _,

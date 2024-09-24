@@ -19,8 +19,9 @@ from torch.utils.data import Dataset
 from mmlearn.datasets.core import Modalities, find_matching_indices
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.losses import CLIPLoss
-from mmlearn.tasks.classification import Classification
 from mmlearn.tasks.hooks import EvaluationHooks
+from mmlearn.tasks.linear_probing_classification import LinearProbingClassification
+from mmlearn.tasks.zero_shot_classification import ZeroShotClassification
 
 
 _unsupported_modality_error = (
@@ -597,7 +598,10 @@ class ContrastivePretraining(L.LightningModule):
                 if (eval_type == "val" and task_spec.run_on_validation) or (
                     eval_type == "test" and task_spec.run_on_test
                 ):
-                    if isinstance(task_spec.task, Classification):
+                    if isinstance(
+                        task_spec.task,
+                        (ZeroShotClassification, LinearProbingClassification),
+                    ):
                         task_spec.task.on_evaluation_epoch_start(
                             self, self.all_dataset_info
                         )

@@ -12,7 +12,7 @@ from omegaconf import MISSING
 from mmlearn.conf import external_store
 from mmlearn.datasets.core.example import Example
 from mmlearn.datasets.core import Modalities
-from mmlearn.constants import EXAMPLE_INDEX_KEY, NAME_KEY
+from mmlearn.constants import EXAMPLE_INDEX_KEY
 
 
 @external_store(group="datasets", root_dir=os.getenv("HAM10000_ROOT_DIR", MISSING))
@@ -82,7 +82,6 @@ class HAM10000(Dataset[Example]):
                 Modalities.TEXT: label,
                 Modalities.RGB.target: label_index,
                 EXAMPLE_INDEX_KEY: idx,
-                NAME_KEY: self.name(),
             }
         )
 

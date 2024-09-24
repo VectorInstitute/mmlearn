@@ -12,8 +12,8 @@ from torch.nn import functional
 from torch.utils.data import DataLoader, Dataset
 from torchmetrics import Metric, MetricCollection
 from transformers.tokenization_utils_base import PreTrainedTokenizerBase
+import random
 
-from mmlearn.constants import NAME_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.data_collator import collate_example_list
 from mmlearn.datasets.core.example import Example
@@ -31,7 +31,7 @@ class ClassificationTaskSpec:
 
 
 @store(group="eval_task", provider="mmlearn")
-class Classification(EvaluationHooks):
+class LinearProbingClassification(EvaluationHooks):
     """
     Zero-shot classification evaluation task.
 
@@ -46,17 +46,11 @@ class Classification(EvaluationHooks):
     def __init__(
         self,
         task_specs: List[ClassificationTaskSpec],
-        tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
-        ] = None,
-        mode: Literal["zeroshot", "linear_probing"] = "zeroshot",
     ):
         super().__init__()
-        self.mode = mode
         self.task_specs = task_specs
         self.metrics: Dict[Any, Metric] = {}
 
-        self.tokenizer = tokenizer
 
     def on_evaluation_epoch_start(
         self, pl_module: LightningModule, all_dataset_info: Dict[str, Any]
@@ -65,76 +59,12 @@ class Classification(EvaluationHooks):
         for metric in self.metrics.values():
             metric.to(pl_module.device)
 
-        if self.mode == "zeroshot":
-
-            class LabelDescriptionDataset(Dataset):
-                def __init__(
-                    self, descriptions: List[str], tokenizer: PreTrainedTokenizerBase
-                ) -> None:
-                    self.descriptions = descriptions
-                    self.tokenizer = tokenizer
-
-                def __len__(self) -> int:
-                    return len(self.descriptions)
-
-                def __getitem__(self, idx: int) -> Example:
-                    description = self.descriptions[idx]
-                    tokens = self.tokenizer(description)
-
-                    example = Example(
-                        {
-                            Modalities.RGB: torch.rand(3, 224, 224),
-                            Modalities.TEXT: description,
-                        }
-                    )
-
-                    if tokens is not None:
-                        if isinstance(tokens, dict):  # output of HFTokenizer
-                            assert (
-                                Modalities.TEXT in tokens
-                            ), f"Missing key `{Modalities.TEXT}` in tokens."
-                            example.update(tokens)
-                        else:
-                            example[Modalities.TEXT] = tokens
-
-                    return example
-
-            if self.tokenizer is None:
-                raise ValueError(
-                    "Tokenizer must be set in the dataset to generate tokenized label descriptions"
-                )
-
-            # Set the label embeddings
-            for name, dataset_info in all_dataset_info.items():
-                descriptions = [
-                    "This image has a sign of " + label
-                    for label in dataset_info.get_label_mapping().values()
-                ]
-
-                dataset = LabelDescriptionDataset(descriptions, self.tokenizer)
-                batch_size = len(dataset)
-                dataloader = DataLoader(
-                    dataset,
-                    batch_size=batch_size,
-                    shuffle=False,
-                    collate_fn=collate_example_list,
-                )
-                batch = next(iter(dataloader))
-                batch = {
-                    key: value.to(pl_module.device) if torch.is_tensor(value) else value
-                    for key, value in batch.items()
-                }
-                all_dataset_info[name].set_label_embedding(
-                    pl_module(batch)[Modalities.get_modality(Modalities.TEXT).embedding]
-                )
-
         self.all_dataset_info = all_dataset_info
 
         for dataset_name in list(all_dataset_info.keys()):
             for spec in self.task_specs:
                 assert Modalities.has_modality(spec.query_modality)
                 query_modality = Modalities.get_modality(spec.query_modality)
-                mode = self.mode
                 metric_name = spec.metric_name
                 metric = getattr(torchmetrics, metric_name)
                 num_classes = all_dataset_info[dataset_name].get_class_count()
@@ -143,12 +73,11 @@ class Classification(EvaluationHooks):
                     {
                         (
                             query_modality,
-                            mode,
                             metric_name,
                             dataset_name,
                         ): MetricCollection(
                             {
-                                f"{query_modality}_{mode}_C_{metric_name}@{k}_{dataset_name}": (
+                                f"{query_modality}_C_{metric_name}@{k}_{dataset_name}": (
                                     metric(
                                         **(
                                             {
@@ -163,7 +92,7 @@ class Classification(EvaluationHooks):
                                                 "num_classes": num_classes,
                                             }
                                         )
-                                    ).to("cuda")
+                                    ).to(pl_module.device)
                                 )
                                 for k in spec.top_k
                             }
@@ -187,46 +116,24 @@ class Classification(EvaluationHooks):
         for (
             query_modality,
             _,
-            _,
             dataset_name,
         ), metric in self.metrics.items():
             output_embeddings = outputs[query_modality.embedding]  # Predictions
             label_index = batch[query_modality.target]  # True labels
             names = batch[
-                NAME_KEY
-            ]  # List of dataset names for each element in the batch
+                "dataset_index"
+            ]
 
             # Filter indices where dataset name is part of the metric_name
             matching_indices = [
-                i for i, name in enumerate(names) if name in dataset_name
+                i for i, name in enumerate(names) if str(name.item()) in dataset_name
             ]
 
             if not matching_indices:
                 continue
 
-            output_embeddings_filtered = output_embeddings[matching_indices]
+            logits = output_embeddings[matching_indices]
             label_index_filtered = label_index[matching_indices]
-
-            if self.mode == "zeroshot":
-                target_embeddings_filtered = [
-                    self.all_dataset_info[name].get_label_embedding()
-                    for i, name in enumerate(names)
-                    if i in matching_indices
-                ]
-                target_embeddings_filtered = torch.stack(
-                    target_embeddings_filtered
-                )  # Stack to tensor (N_filtered, num_classes, embedding_dim)
-
-                # Calculate similarities
-                predictions_expanded = output_embeddings_filtered.unsqueeze(
-                    1
-                )  # Shape: (N_filtered, 1, embedding_dim)
-                logits = functional.cosine_similarity(
-                    predictions_expanded, target_embeddings_filtered, dim=-1
-                )  # Logits
-
-            elif self.mode == "linear_probing":
-                logits = output_embeddings_filtered
 
             metric.update(logits, label_index_filtered)
 
@@ -240,7 +147,6 @@ class Classification(EvaluationHooks):
         """
         results = {}
         for (
-            _,
             _,
             _,
             _,
