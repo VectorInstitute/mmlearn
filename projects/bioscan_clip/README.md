@@ -69,11 +69,12 @@ Here are the results we obtained from running the pretraining with the `bioscan_
 
 | Taxonomy | Micro top-1 accuracy (Seen) | Micro top-1 accuracy (Unseen) | Macro top-1 accuracy (Seen) | Macro top-1 accuracy (Unseen) |
 |---|---|---|---|---|
-| Order | 98.7 (+0.6) | 97.6 (+0.7) | 98.3 (-6.2) | 58.8 (+11.7) |
-| Family | 84.6 (+5.0) | 79.0 (+2.8) | 56.3 (+21.4) | 35.2 (+5.1) |
-| Genus | 58.5 (+10.1) | 43.5 (+5.4) | 30.1 (+15.9) | 11.7 (+3.9) |
-| Species | 42.0 (+8.6) | 30.1 (-2.8) | 17.4 (+12.1) | 3.9 (+1.2) |
+| Order | 98.7 / 99.4 (+0.7) | 97.6 / 98.3 (+0.7) | 98.3 / 92.6 (-5.7) | 58.8 / 69.1 (+10.3) |
+| Family | 84.6 / 89.9 (+5.3) | 79.0 / 81.5 (+2.5) | 56.3 / 76.5 (+20.2) | 35.2 / 40.3 (+5.1) |
+| Genus | 58.5 / 68.4 (+9.9) | 43.5 / 48.6 (+5.1) | 30.1 / 45.6 (+15.5) | 11.7 / 15.7 (+4.0) |
+| Species | 42.0 / 50.1 (+8.1) | 30.1 / 28.2 (-1.9) | 17.4 / 29.5 (+12.1) | 3.9 / 5.2 (+1.3) |
 
-We ran the experiment with 3 different random seeds (0, 42 and 1337). The numbers in parentheses represent the difference
-in accuracy between the results in the paper and the *average* results obtained with our implementation.
+We ran the experiment with 5 different random seeds (0, 42, 1337, 1 and 1234). The results in the table are in the format
+`original results / average of our results (difference between ours and the original)`. Note that our results are an *average*
+of 5 runs.
 </details>
