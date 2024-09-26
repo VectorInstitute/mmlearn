@@ -65,16 +65,21 @@ mmlearn_run 'hydra.searchpath=[pkg://projects.bioscan_clip.configs]' +experiment
 <details>
 <summary><b>Results</b></summary>
 
-Here are the results we obtained from running the pretraining with the `bioscan_1m.yaml` configuration file:
+We ran two different variations of the pretraining experiment. The first variation applies LoRA only to the query and value
+embeddings. The second variation applies LoRA to both the query, key and value embeddings. For each variation, we ran the
+experiment with 5 different random seeds (0, 42, 1337, 1 and 1234). The table below shows the results of the taxonomic
+classification evaluation task on the BIOSCAN-1M dataset, comparing the original results from the paper with the average
+results we obtained from our experiments.
 
 | Taxonomy | Micro top-1 accuracy (Seen) | Micro top-1 accuracy (Unseen) | Macro top-1 accuracy (Seen) | Macro top-1 accuracy (Unseen) |
 |---|---|---|---|---|
-| Order | 98.7 / 99.4 (+0.7) | 97.6 / 98.3 (+0.7) | 98.3 / 92.6 (-5.7) | 58.8 / 69.1 (+10.3) |
-| Family | 84.6 / 89.9 (+5.3) | 79.0 / 81.5 (+2.5) | 56.3 / 76.5 (+20.2) | 35.2 / 40.3 (+5.1) |
-| Genus | 58.5 / 68.4 (+9.9) | 43.5 / 48.6 (+5.1) | 30.1 / 45.6 (+15.5) | 11.7 / 15.7 (+4.0) |
-| Species | 42.0 / 50.1 (+8.1) | 30.1 / 28.2 (-1.9) | 17.4 / 29.5 (+12.1) | 3.9 / 5.2 (+1.3) |
+| Order | 98.7 / 99.3 / 99.4 | 97.6 / 98.3 / 98.3 | 98.3 / 94.6 / 92.6 | 58.8 / 58.8 / 68.3 / 69.1 |
+| Family | 84.6 / 90.0 / 89.9 | 79.0 / 81.8 / 81.5 | 56.3 / 56.3 / 75.4 / 76.5 | 35.2 / 35.2 / 40.6 / 40.3 |
+| Genus | 58.5 / 68.4 (+9.9) | 43.5 / 48.6 / 48.6 | 30.1 / 30.1 / 44.0 / 45.6 | 11.7 / 15.5 / 15.7 |
+| Species | 42.0 / 49.1 / 50.1 | 30.1 / 28.7 / 28.2 | 17.4 / 17.4 / 27.8 / 29.5 | 3.9 / 3.9 / 5.1 / 5.2 |
 
-We ran the experiment with 5 different random seeds (0, 42, 1337, 1 and 1234). The results in the table are in the format
-`original results / average of our results (difference between ours and the original)`. Note that our results are an *average*
-of 5 runs.
+There are 3 values for each metric in the table. The first value is the original result from the paper. The second value is the
+average result we obtained from running the experiment with LoRA applied only to the query and value embeddings. The third value is
+the average result we obtained from running the experiment with LoRA applied to both the query, key and value embeddings. The difference
+
 </details>
