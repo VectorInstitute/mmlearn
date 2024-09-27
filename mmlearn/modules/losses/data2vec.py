@@ -15,7 +15,7 @@ class Data2VecLoss(nn.Module):
 
     Parameters
     ----------
-    loss_beta : float, optional, default=0
+    beta : float, optional, default=0
         Specifies the beta parameter for smooth L1 loss. If 0, MSE loss is used.
     loss_scale : float or None, optional, default=None
         Scaling factor for the loss. If None, uses 1 / sqrt(embedding_dim).
@@ -26,13 +26,13 @@ class Data2VecLoss(nn.Module):
 
     def __init__(
         self,
-        loss_beta: float = 0,
+        beta: float = 0,
         loss_scale: Optional[float] = None,
         reduction: str = "none",
     ) -> None:
         """Initialize the loss."""
         super().__init__()
-        self.loss_beta = loss_beta
+        self.beta = beta
         self.loss_scale = loss_scale
         if reduction not in ["none", "mean", "sum"]:
             raise ValueError(f"Unsupported reduction mode: {reduction}")
@@ -64,10 +64,10 @@ class Data2VecLoss(nn.Module):
         x = x.view(-1, x.size(-1)).float()
         y = y.view(-1, y.size(-1))
 
-        if self.loss_beta == 0:
+        if self.beta == 0:
             loss = mse_loss(x, y, reduction="none")
         else:
-            loss = smooth_l1_loss(x, y, reduction="none", beta=self.loss_beta)
+            loss = smooth_l1_loss(x, y, reduction="none", beta=self.beta)
 
         if self.loss_scale is not None:
             scale = self.loss_scale
