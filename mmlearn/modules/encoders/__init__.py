@@ -1,13 +1,13 @@
 """Encoders."""
 
-from mmlearn.modules.encoders.clip_encoders import (
+from mmlearn.modules.encoders.clip import (
     HFCLIPTextEncoder,
     HFCLIPTextEncoderWithProjection,
     HFCLIPVisionEncoder,
     HFCLIPVisionEncoderWithProjection,
     PubMedBERTForCLIPTextEncoding,
 )
-from mmlearn.modules.encoders.hf_text_encoders import HFTextEncoder
+from mmlearn.modules.encoders.text import HFTextEncoder
 
 
 __all__ = [
