@@ -73,13 +73,13 @@ results we obtained from our experiments.
 
 | Taxonomy | Micro top-1 accuracy (Seen) | Micro top-1 accuracy (Unseen) | Macro top-1 accuracy (Seen) | Macro top-1 accuracy (Unseen) |
 |---|---|---|---|---|
-| Order | 98.7 / 99.3 / 99.4 | 97.6 / 98.3 / 98.3 | 98.3 / 94.6 / 92.6 | 58.8 / 58.8 / 68.3 / 69.1 |
-| Family | 84.6 / 90.0 / 89.9 | 79.0 / 81.8 / 81.5 | 56.3 / 56.3 / 75.4 / 76.5 | 35.2 / 35.2 / 40.6 / 40.3 |
-| Genus | 58.5 / 68.4 (+9.9) | 43.5 / 48.6 / 48.6 | 30.1 / 30.1 / 44.0 / 45.6 | 11.7 / 15.5 / 15.7 |
-| Species | 42.0 / 49.1 / 50.1 | 30.1 / 28.7 / 28.2 | 17.4 / 17.4 / 27.8 / 29.5 | 3.9 / 3.9 / 5.1 / 5.2 |
+| Order | 98.7 / 99.3 / 99.4 | 97.6 / 98.3 / 98.3 | 98.3 / 94.6 / 92.6 | 58.8 / 68.3 / 69.1 |
+| Family | 84.6 / 90.0 / 89.9 | 79.0 / 81.8 / 81.5 | 56.3 / 75.4 / 76.5 | 35.2 / 40.6 / 40.3 |
+| Genus | 58.5 / 67.6 / 68.4 | 43.5 / 48.6 / 48.6 | 30.1 / 44.0 / 45.6 | 11.7 / 15.5 / 15.7 |
+| Species | 42.0 / 49.1 / 50.1 | 30.1 / 28.7 / 28.2 | 17.4 / 27.8 / 29.5 | 3.9 / 5.1 / 5.2 |
 
 There are 3 values for each metric in the table. The first value is the original result from the paper. The second value is the
 average result we obtained from running the experiment with LoRA applied only to the query and value embeddings. The third value is
-the average result we obtained from running the experiment with LoRA applied to both the query, key and value embeddings. The difference
+the average result we obtained from running the experiment with LoRA applied to both the query, key and value embeddings.
 
 </details>
