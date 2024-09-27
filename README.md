@@ -102,9 +102,11 @@ mmlearn_run 'hydra.searchpath=[pkg://path.to.config.directory]' +experiment=<nam
 ```
 Hydra will compose the experiment configuration from all the configurations in the specified directory as well as all the
 configurations in the `mmlearn` package. *Note the dot-separated path to the directory containing the experiment configuration
-files.* Do not use `file://path/to/config/directory` notation since adding a searchpath with the `file://` notation does not run
-the `__init__.py` file in `path/to/config/directory`, hence the configs defined in `__init__.py` will not be added to hydra's
-external store.
+files.*
+One can add a path to `hydra.searchpath` either as a package (`pkg://path.to.config.directory`) or as a file system 
+(`file://path/to/config/directory`). However, new configs in `mmlearn` are added to hydra's external store inside 
+`path/to/config/directory/__init__.py` which is only interpreted when the config directory is added as a package.
+Hence, please refrain from using the `file://` notation.
 
 Hydra also allows for overriding configurations parameters from the command line. To see the available options and other information, run:
 ```bash
