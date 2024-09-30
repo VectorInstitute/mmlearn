@@ -5,9 +5,8 @@ from typing import Callable, Dict, List, Tuple
 
 EXAMPLE_INDEX_KEY = "example_index"
 
-# Original dictionary
 data = {
-    "vindr_mammo": [
+    "VinDrMammo": [
         "a x-ray image showing {c}",
         "mammography image of {c}",
         "mammogram showing {c}",
@@ -19,7 +18,7 @@ data = {
         "pathology tissue showing {c}",
         "presence of {c} tissue on image",
     ],
-    "pad_ufes_20": [
+    "PadUfes20": [
         "a histopathology slide showing {c}",
         "histopathology image of {c}",
         "pathology tissue showing {c}",
@@ -134,6 +133,24 @@ data = {
         "lung-right",
         "pancreas",
         "spleen",
+    ],
+    "lc25000_colon": [
+        "a histopathology slide showing {c}",
+        "histopathology image of {c}",
+        "pathology tissue showing {c}",
+        "presence of {c} tissue on image",
+    ],
+    "lc25000_lung": [
+        "a histopathology slide showing {c}",
+        "histopathology image of {c}",
+        "pathology tissue showing {c}",
+        "presence of {c} tissue on image",
+    ],
+    "sicap": [
+        "a histopathology slide showing {c}",
+        "histopathology image of {c}",
+        "pathology tissue showing {c}",
+        "presence of {c} tissue on image",
     ],
 }
 

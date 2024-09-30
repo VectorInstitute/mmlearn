@@ -15,6 +15,7 @@ from mmlearn.datasets.core.example import Example
 from mmlearn.datasets.core import Modalities
 from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
 
+
 @external_store(group="datasets", root_dir=os.getenv("SICAP_ROOT_DIR", MISSING))
 class SICAP(Dataset[Example]):
     """SICAP dataset for zero-shot classification.
@@ -71,7 +72,11 @@ class SICAP(Dataset[Example]):
         self.image_paths = self.data["image_name"].values
         self.labels = self.data["labels"].values
         self.image_dir = image_dir
-        self.transform = transform if transform is not None else Compose([Resize(224), CenterCrop(224), ToTensor()])
+        self.transform = (
+            transform
+            if transform is not None
+            else Compose([Resize(224), CenterCrop(224), ToTensor()])
+        )
         self.tokenizer = tokenizer
         self.processor = processor
 
@@ -86,7 +91,7 @@ class SICAP(Dataset[Example]):
 
         label_index = self.labels[idx]
         label = list(self.cat_to_num_map.keys())[label_index]
-        description = random.choice(TEMPLATES[self.__clas__.__name__])(label)
+        description = random.choice(TEMPLATES[self.__class__.__name__])(label)
         tokens = self.tokenizer(description) if self.tokenizer is not None else None
 
         # Apply transform
@@ -110,7 +115,9 @@ class SICAP(Dataset[Example]):
         # Add tokens to the example if available
         if tokens is not None:
             if isinstance(tokens, dict):  # If using a Hugging Face tokenizer
-                assert Modalities.TEXT in tokens, f"Missing key `{Modalities.TEXT}` in tokens."
+                assert (
+                    Modalities.TEXT in tokens
+                ), f"Missing key `{Modalities.TEXT}` in tokens."
                 example.update(tokens)
             else:
                 example[Modalities.TEXT] = tokens
@@ -125,4 +132,3 @@ class SICAP(Dataset[Example]):
             "G4": "cribriform ill-formed fused papillary patterns",
             "G5": "isolated nest cells without lumen roseting patterns",
         }
-

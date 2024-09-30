@@ -14,10 +14,11 @@ from mmlearn.datasets.core import Modalities
 from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
 from datasets import load_from_disk
 
+
 @external_store(group="datasets", root_dir=os.getenv("LC25000_ROOT_DIR", MISSING))
 class LC25000(Dataset[Example]):
     """LC25000 dataset for zero-shot classification.
-    
+
     Parameters
     ----------
     root_dir : str
@@ -56,7 +57,11 @@ class LC25000(Dataset[Example]):
         else:
             raise ValueError(f"Dataset does not exist")
 
-        self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()]) if transform is None else transform
+        self.transform = (
+            Compose([Resize(224), CenterCrop(224), ToTensor()])
+            if transform is None
+            else transform
+        )
         self.tokenizer = tokenizer
         self.processor = processor
         self.data = dataset
@@ -103,11 +108,10 @@ class LC25000(Dataset[Example]):
     def name(self):
         if self.organ == "lung":
             return "LC25000_lung"
-        elif self.organ == "colon":
+        if self.organ == "colon":
             return "LC25000_colon"
-        else:
-            raise ValueError(f"Unknown organ: {self.organ}")
-    
+        raise ValueError(f"Unknown organ: {self.organ}")
+
     def get_label_mapping(self):
         """Return label mapping based on the organ (lung or colon)."""
         if self.organ == "lung":
@@ -116,11 +120,9 @@ class LC25000(Dataset[Example]):
                 1: "lung squamous cell carcinoma",
                 2: "lung benign tissue",
             }
-        elif self.organ == "colon":
+        if self.organ == "colon":
             return {
                 0: "colon adenocarcinoma",
                 1: "colon benign tissue",
             }
-        else:
-            raise ValueError(f"Unknown organ: {self.organ}")
-
+        raise ValueError(f"Unknown organ: {self.organ}")

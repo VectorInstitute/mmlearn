@@ -1,4 +1,5 @@
 """PadUfes20 Dataset."""
+
 import os
 import pickle
 import pandas as pd
@@ -56,11 +57,13 @@ class PadUfes20(Dataset[Example]):
         cache_path = f"cache/PadUfes20_{split}.pkl"
         if os.path.exists(cache_path):
             print(f"!!! Using cached dataset for {split}")
-            self.metadata = pickle.load(open(cache_path, "rb"))
+            with open(cache_path, "rb") as f:
+                self.metadata = pickle.load(f)
         else:
             os.makedirs("cache/", exist_ok=True)
             self.metadata = self._load_and_process_metadata()
-            pickle.dump(self.metadata.to_dict("records"), open(cache_path, "wb"))
+            with open(cache_path, "wb") as f:
+                pickle.dump(self.metadata.to_dict("records"), f)
 
         if processor is None and transform is None:
             self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
@@ -79,7 +82,9 @@ class PadUfes20(Dataset[Example]):
         df = pd.read_csv(os.path.join(self.root_dir, "metadata.csv"))
         df = df[["img_id", "diagnostic"]]
         df["label"] = df["diagnostic"].apply(self._build_label)
-        df["path"] = df["img_id"].apply(lambda imgid: os.path.join(self.root_dir, "Dataset", imgid))
+        df["path"] = df["img_id"].apply(
+            lambda imgid: os.path.join(self.root_dir, "Dataset", imgid)
+        )
         df.drop(columns=["img_id", "diagnostic"], inplace=True)
 
         # Split into train and test
@@ -90,14 +95,7 @@ class PadUfes20(Dataset[Example]):
 
     def _build_label(self, str_label: str) -> int:
         """Convert diagnostic string label to integer label."""
-        classes = {
-            "BCC": 0,
-            "MEL": 1,
-            "SCC": 2,
-            "ACK": 3,
-            "NEV": 4,
-            "SEK": 5
-        }
+        classes = {"BCC": 0, "MEL": 1, "SCC": 2, "ACK": 3, "NEV": 4, "SEK": 5}
         return classes[str_label]
 
     def __getitem__(self, idx: int) -> Example:
@@ -140,7 +138,7 @@ class PadUfes20(Dataset[Example]):
     def __len__(self) -> int:
         """Return the length of the dataset."""
         return len(self.metadata)
-    
+
     def get_label_mapping() -> Dict[str, str]:
         """Return the label mapping for the PadUfes20 dataset."""
         return {

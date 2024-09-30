@@ -18,9 +18,9 @@ from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
 
 
 @external_store(group="datasets", root_dir=os.getenv("VINDR_MAMMO_ROOT_DIR", MISSING))
-class VinDr_Mammo(Dataset[Example]):
+class VinDrMammo(Dataset[Example]):
     """VinDr-Mammo dataset for breast lesion classification.
-    
+
     Parameters
     ----------
     root_dir : str
@@ -53,7 +53,8 @@ class VinDr_Mammo(Dataset[Example]):
         cache_path = f"cache/{split}_dataset.pkl"
         if os.path.exists(cache_path):
             print(f"Using cached dataset: {cache_path}")
-            self.entries = pickle.load(open(cache_path, "rb"))
+            with open(cache_path, "rb") as f:
+                self.entries = pickle.load(f)
         else:
             raise FileNotFoundError(f"Dataset cache not found at {cache_path}")
 
@@ -102,7 +103,9 @@ class VinDr_Mammo(Dataset[Example]):
 
         if tokens is not None:
             if isinstance(tokens, dict):
-                assert Modalities.TEXT in tokens, f"Missing key `{Modalities.TEXT}` in tokens."
+                assert (
+                    Modalities.TEXT in tokens
+                ), f"Missing key `{Modalities.TEXT}` in tokens."
                 example.update(tokens)
             else:
                 example[Modalities.TEXT] = tokens
@@ -112,7 +115,6 @@ class VinDr_Mammo(Dataset[Example]):
     def __len__(self) -> int:
         """Return the length of the dataset."""
         return len(self.entries)
-
 
     def get_label_mapping(self):
         """Return the label mapping for the VinDr-Mammo dataset."""
@@ -128,4 +130,3 @@ class VinDr_Mammo(Dataset[Example]):
             8: "Nipple Retraction",
             9: "Suspicious Lymph Node",
         }
-    

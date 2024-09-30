@@ -18,7 +18,7 @@ from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
 @external_store(group="datasets", root_dir=os.getenv("MEDMNISTPLUS_ROOT_DIR", MISSING))
 class MedMNISTPlus(Dataset[Example]):
     """MedMNISTPlus dataset for zero-shot classification.
-    
+
     Parameters
     ----------
     root_dir : str
@@ -43,11 +43,13 @@ class MedMNISTPlus(Dataset[Example]):
         ] = None,
     ) -> None:
         """Initialize the dataset."""
-        assert split in ["train", "val", "test"], f"split {split} is not supported in dataset {name}."
+        assert split in [
+            "train",
+            "val",
+            "test",
+        ], f"split {split} is not supported in dataset {name}."
         if name is None:
-            raise ValueError(
-                "Variable name must be given to dataset"
-            )
+            raise ValueError("Variable name must be given to dataset")
         self.dataset_name = name
         file_name = name + "_224.npz"
         # Load the dataset
@@ -117,11 +119,11 @@ class MedMNISTPlus(Dataset[Example]):
     def name(self):
         """Return the name of the dataset."""
         return self.dataset_name
-    
+
     def get_label_mapping(self):
         """Return the label mapping based on the dataset name."""
         if self.dataset_name.lower() == "pathmnist":
-            return {
+            return_value = {
                 0: "adipose",
                 1: "background",
                 2: "debris",
@@ -133,7 +135,7 @@ class MedMNISTPlus(Dataset[Example]):
                 8: "colorectal adenocarcinoma epithelium",
             }
         elif self.dataset_name.lower() == "chestmnist":
-            return {
+            return_value = {
                 0: "atelectasis",
                 1: "cardiomegaly",
                 2: "effusion",
@@ -150,7 +152,7 @@ class MedMNISTPlus(Dataset[Example]):
                 13: "hernia",
             }
         elif self.dataset_name.lower() == "dermamnist":
-            return {
+            return_value = {
                 0: "actinic keratoses and intraepithelial carcinoma",
                 1: "basal cell carcinoma",
                 2: "benign keratosis-like lesions",
@@ -160,19 +162,19 @@ class MedMNISTPlus(Dataset[Example]):
                 6: "vascular lesions",
             }
         elif self.dataset_name.lower() == "octmnist":
-            return {
+            return_value = {
                 0: "choroidal neovascularization",
                 1: "diabetic macular edema",
                 2: "drusen",
                 3: "normal",
             }
         elif self.dataset_name.lower() == "pneumoniamnist":
-            return {
+            return_value = {
                 0: "normal",
                 1: "pneumonia",
             }
         elif self.dataset_name.lower() == "retinamnist":
-            return {
+            return_value = {
                 0: "no apparent retinopathy",
                 1: "mild NPDR, non-proliferative diabetic retinopathy",
                 2: "moderate NPDR, non-proliferative diabetic retinopathy",
@@ -180,12 +182,12 @@ class MedMNISTPlus(Dataset[Example]):
                 4: "PDR, proliferative diabetic retinopathy",
             }
         elif self.dataset_name.lower() == "breastmnist":
-            return {
+            return_value = {
                 0: "malignant",
                 1: "normal, benign",
             }
         elif self.dataset_name.lower() == "bloodmnist":
-            return {
+            return_value = {
                 0: "basophil",
                 1: "eosinophil",
                 2: "erythroblast",
@@ -196,7 +198,7 @@ class MedMNISTPlus(Dataset[Example]):
                 7: "platelet",
             }
         elif self.dataset_name.lower() == "tissuemnist":
-            return {
+            return_value = {
                 0: "Collecting Duct, Connecting Tubule",
                 1: "Distal Convoluted Tubule",
                 2: "Glomerular endothelial cells",
@@ -206,8 +208,12 @@ class MedMNISTPlus(Dataset[Example]):
                 6: "Proximal Tubule Segments",
                 7: "Thick Ascending Limb",
             }
-        elif self.dataset_name.lower() == "organsmnist" or self.dataset_name.lower() == "organcmnist" or self.dataset_name.lower() == "organamnist":
-            return {
+        elif (
+            self.dataset_name.lower() == "organsmnist"
+            or self.dataset_name.lower() == "organcmnist"
+            or self.dataset_name.lower() == "organamnist"
+        ):
+            return_value = {
                 0: "bladder",
                 1: "femur-left",
                 2: "femur-right",
@@ -222,5 +228,4 @@ class MedMNISTPlus(Dataset[Example]):
             }
         else:
             raise ValueError(f"Dataset {self.dataset_name} is not supported.")
-
-
+        return return_value
