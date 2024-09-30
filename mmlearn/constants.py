@@ -1,57 +1,166 @@
 """Constants."""
 
+from typing import Callable, Dict, List, Tuple
+
+
 EXAMPLE_INDEX_KEY = "example_index"
-MEDICAL_TEMPLATES = (
-    lambda c: f"a low-quality image of a {c} condition.",
-    lambda c: f"an x-ray showing {c}.",
-    lambda c: f"a photograph of many cases of {c}.",
-    lambda c: f"an MRI scan of a {c}.",
-    lambda c: f"a poorly illuminated image of the {c}.",
-    lambda c: f"a digital rendering of a {c}.",
-    lambda c: f"a diagram depicting {c}.",
-    lambda c: f"a close-up image of the {c}.",
-    lambda c: f"a photo of a {c} biopsy sample.",
-    lambda c: f"a medical illustration of the {c}.",
-    lambda c: f"a bright scan of the {c}.",
-    lambda c: f"an ultrasound image showing {c}.",
-    lambda c: f"a photo of a healthy {c}.",
-    lambda c: f"a photo of an abnormal {c}.",
-    lambda c: f"a detailed scan of the {c}.",
-    lambda c: f"a clinical image of the {c}.",
-    lambda c: f"a histology slide of {c}.",
-    lambda c: f"an annotated image of a {c}.",
-    lambda c: f"a photograph of a {c} in a medical setting.",
-    lambda c: f"a comparison image of normal and abnormal {c}.",
-    lambda c: f"a photo of the {c} from a different angle.",
-    lambda c: f"an infographic about {c}.",
-    lambda c: f"a photo of a medical device related to {c}.",
-    lambda c: f"a photo of the surgical site for {c}.",
-    lambda c: f"a chart showing the progression of {c}.",
-    lambda c: f"a CT scan revealing {c}.",
-    lambda c: f"a visualization of {c} treatment options.",
-    lambda c: f"a photo of a patient with {c}.",
-    lambda c: f"an artistic representation of {c}.",
-    lambda c: f"a photo of {c} symptoms.",
-    lambda c: f"a diagram showing the anatomy related to {c}.",
-    lambda c: f"a photo of the {c} during examination.",
-    lambda c: f"a rendering of the {c} with labels.",
-    lambda c: f"a photo of a {c} case study.",
-    lambda c: f"a photo of a specimen related to {c}.",
-    lambda c: f"a training image for {c} recognition.",
-    lambda c: f"a photo showing the impact of {c}.",
-    lambda c: f"a clinical test result indicating {c}.",
-    lambda c: f"a summary chart of {c} findings.",
-    lambda c: f"a photo depicting the causes of {c}.",
-    lambda c: f"a photo of an examination tool used for {c}.",
-    lambda c: f"a visual representation of {c} statistics.",
-    lambda c: f"a photo of {c} during a procedure.",
-    lambda c: f"a research image highlighting {c}.",
-    lambda c: f"a photo of {c} under a microscope.",
-    lambda c: f"a digital scan of {c}.",
-    lambda c: f"a photo documenting {c} symptoms.",
-    lambda c: f"an overview diagram of {c}.",
-    lambda c: f"a side-by-side comparison of {c} images.",
-    lambda c: f"a photo of a training session on {c}.",
-    lambda c: f"a clinical image illustrating {c} treatment.",
-    lambda c: f"a photo of a model representing {c}.",
-)
+
+# Original dictionary
+data = {
+    "vindr_mammo": [
+        "a x-ray image showing {c}",
+        "mammography image of {c}",
+        "mammogram showing {c}",
+        "presence of {c} on mammogram",
+    ],
+    "HAM10000": [
+        "a histopathology slide showing {c}",
+        "histopathology image of {c}",
+        "pathology tissue showing {c}",
+        "presence of {c} tissue on image",
+    ],
+    "pad_ufes_20": [
+        "a histopathology slide showing {c}",
+        "histopathology image of {c}",
+        "pathology tissue showing {c}",
+        "presence of {c} tissue on image",
+    ],
+    "pathmnist": [
+        "adipose",
+        "background",
+        "debris",
+        "lymphocytes",
+        "mucus",
+        "smooth muscle",
+        "normal colon mucosa",
+        "cancer-associated stroma",
+        "colorectal adenocarcinoma epithelium",
+    ],
+    "chestmnist": [
+        "atelectasis",
+        "cardiomegaly",
+        "effusion",
+        "infiltration",
+        "mass",
+        "nodule",
+        "pneumonia",
+        "pneumothorax",
+        "consolidation",
+        "edema",
+        "emphysema",
+        "fibrosis",
+        "pleural",
+        "hernia",
+    ],
+    "dermamnist": [
+        "actinic keratoses and intraepithelial carcinoma",
+        "basal cell carcinoma",
+        "benign keratosis-like lesions",
+        "dermatofibroma",
+        "melanoma",
+        "melanocytic nevi",
+        "vascular lesions",
+    ],
+    "octmnist": [
+        "choroidal neovascularization",
+        "diabetic macular edema",
+        "drusen",
+        "normal",
+    ],
+    "pneumoniamnist": ["normal", "pneumonia"],
+    "retinamnist": [
+        "no apparent retinopathy",
+        "mild NPDR, non-proliferative diabetic retinopathy",
+        "moderate NPDR, non-proliferative diabetic retinopathy",
+        "severe NPDR, non-proliferative diabetic retinopathy",
+        "PDR, proliferative diabetic retinopathy",
+    ],
+    "breastmnist": ["malignant", "normal, benign"],
+    "bloodmnist": [
+        "basophil",
+        "eosinophil",
+        "erythroblast",
+        "immature granulocytes(myelocytes, metamyelocytes and promyelocytes)",
+        "lymphocyte",
+        "monocyte",
+        "neutrophil",
+        "platelet",
+    ],
+    "tissuemnist": [
+        "Collecting Duct, Connecting Tubule",
+        "Distal Convoluted Tubule",
+        "Glomerular endothelial cells",
+        "Interstitial endothelial cells",
+        "Leukocytes",
+        "Podocytes",
+        "Proximal Tubule Segments",
+        "Thick Ascending Limb",
+    ],
+    "organamnist": [
+        "bladder",
+        "femur-left",
+        "femur-right",
+        "heart",
+        "kidney-left",
+        "kidney-right",
+        "liver",
+        "lung-left",
+        "lung-right",
+        "pancreas",
+        "spleen",
+    ],
+    "organcmnist": [
+        "bladder",
+        "femur-left",
+        "femur-right",
+        "heart",
+        "kidney-left",
+        "kidney-right",
+        "liver",
+        "lung-left",
+        "lung-right",
+        "pancreas",
+        "spleen",
+    ],
+    "organsmnist": [
+        "bladder",
+        "femur-left",
+        "femur-right",
+        "heart",
+        "kidney-left",
+        "kidney-right",
+        "liver",
+        "lung-left",
+        "lung-right",
+        "pancreas",
+        "spleen",
+    ],
+}
+
+
+def create_lambda(t: str) -> Callable[[str], str]:
+    """Create a lambda that replaces {c} in the template."""
+    return lambda c: t.replace("{c}", str(c))
+
+
+def convert_to_lambda(templates: List[str]) -> Tuple[Callable[[str], str], ...]:
+    """
+    Convert a list of template strings into a tuple of lambda functions.
+
+    Each lambda will accept a variable `c` and replace '{c}' in the template
+    with the value of `c`.
+
+    Args:
+        templates (List[str]): A list of template strings containing '{c}'.
+
+    Returns
+    -------
+        Tuple[Callable[[str], str], ...]: A tuple of lambdas that replace '{c}'
+        with a given value.
+    """
+    return tuple(create_lambda(t) for t in templates)
+
+
+TEMPLATES: Dict[str, Tuple[Callable[[str], str], ...]] = {
+    key: convert_to_lambda(value) for key, value in data.items()
+}

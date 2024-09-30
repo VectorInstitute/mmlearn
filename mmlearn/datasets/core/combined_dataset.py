@@ -121,8 +121,15 @@ class CombinedDataset(Dataset[Example]):
         all_dataset_info = {}
         for i, dataset in enumerate(self.datasets):
             label_mapping = dataset.get_label_mapping()
+            dataset_name = (
+                dataset.name()
+                if hasattr(dataset, "name")
+                else dataset.__class__.__name__
+            )
             dataset_info = DatasetInfo(
-                class_count=len(label_mapping), label_mapping=label_mapping
+                class_count=len(label_mapping),
+                label_mapping=label_mapping,
+                name=dataset_name,
             )
             all_dataset_info[str(i)] = dataset_info
 

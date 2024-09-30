@@ -28,7 +28,7 @@ defaults:
   - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
   - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
   - /datasets/tokenizers@task.evaluation_tasks.classification.task.tokenizer: HFCLIPTokenizer
-  - /trainer/logger@trainer.logger.wandb: WandbLogger
+  # - /trainer/logger@trainer.logger.wandb: WandbLogger
   - override /task: ContrastivePretraining
   - _self_
 
@@ -80,14 +80,7 @@ task:
     classification:
       task:
         task_specs:
-          - top_k: [5, 2, 1]
-            metric_name: Accuracy # metric_name should be the exact same name as torch.metrics functions
-            query_modality: rgb
           - top_k: [1]
-            metric_name: AUROC
-            query_modality: rgb
-          - top_k: [1]
-            metric_name: F1Score
             query_modality: rgb
       run_on_validation: false
       run_on_test: true

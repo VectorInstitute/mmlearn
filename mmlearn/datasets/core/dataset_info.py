@@ -27,6 +27,7 @@ class DatasetInfo:
         class_count: int = 0,
         label_mapping: Optional[Dict[str, Any]] = None,
         label_embedding: Optional[Dict[str, Any]] = None,
+        name: Optional[str] = None,
     ) -> None:
         """Parameters
 
@@ -40,6 +41,7 @@ class DatasetInfo:
         self._class_count = class_count
         self._label_mapping = label_mapping if label_mapping is not None else {}
         self._label_embedding = label_embedding if label_embedding is not None else {}
+        self._name = name
 
     def get_class_count(self) -> int:
         """
@@ -52,20 +54,6 @@ class DatasetInfo:
         """
         return self._class_count
 
-    def set_class_count(self, count: int) -> None:
-        """
-        Set the class count.
-
-        Parameters
-        ----------
-        count : int
-            The count of classes. Must be a non-negative integer.
-        """
-        if isinstance(count, int) and count >= 0:
-            self._class_count = count
-        else:
-            raise ValueError("class_count must be a non-negative integer")
-
     def get_label_mapping(self) -> Dict[str, Any]:
         """
         Return the label mapping.
@@ -76,20 +64,6 @@ class DatasetInfo:
             The dictionary of label mappings.
         """
         return self._label_mapping
-
-    def set_label_mapping(self, mapping: Dict[str, Any]) -> None:
-        """
-        Set the label mapping.
-
-        Parameters
-        ----------
-        mapping : dict
-            A dictionary for label mappings.
-        """
-        if isinstance(mapping, dict):
-            self._label_mapping = mapping
-        else:
-            raise ValueError("label_mapping must be a dictionary")
 
     def get_label_embedding(self) -> Dict[str, Any]:
         """
@@ -114,3 +88,14 @@ class DatasetInfo:
             A dictionary for label embeddings.
         """
         self._label_embedding = embedding
+
+    def get_name(self) -> str:
+        """
+        Return the label embedding.
+
+        Returns
+        -------
+        str
+            name
+        """
+        return self._name or ""

@@ -13,6 +13,10 @@ from projects.med_benchmarking.datasets.pmcoa import PMCOA
 from projects.med_benchmarking.datasets.quilt import Quilt
 from projects.med_benchmarking.datasets.roco import ROCO
 from projects.med_benchmarking.datasets.ham10000 import HAM10000
+from projects.med_benchmarking.datasets.sicap import SICAP
+from projects.med_benchmarking.datasets.lc25000 import LC25000
+from projects.med_benchmarking.datasets.med_mnist_plus import MedMNISTPlus
+from projects.med_benchmarking.datasets.vindr_mammo import VinDr_Mammo
 
 
 _MedVQAConf = builds(

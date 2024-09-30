@@ -20,7 +20,6 @@ from mmlearn.datasets.core import Modalities, find_matching_indices
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.losses import CLIPLoss
 from mmlearn.tasks.hooks import EvaluationHooks
-from mmlearn.tasks.linear_probing_classification import LinearProbingClassification
 from mmlearn.tasks.zero_shot_classification import ZeroShotClassification
 
 
@@ -305,6 +304,7 @@ class ContrastivePretraining(L.LightningModule):
                         f"Expected {eval_task_spec.task} to be an instance of `EvaluationHooks` "
                         f"but got {type(eval_task_spec.task)}."
                     )
+
         self.evaluation_tasks = evaluation_tasks
 
     def encode(
@@ -598,15 +598,7 @@ class ContrastivePretraining(L.LightningModule):
                 if (eval_type == "val" and task_spec.run_on_validation) or (
                     eval_type == "test" and task_spec.run_on_test
                 ):
-                    if isinstance(
-                        task_spec.task,
-                        (ZeroShotClassification, LinearProbingClassification),
-                    ):
-                        task_spec.task.on_evaluation_epoch_start(
-                            self, self.all_dataset_info
-                        )
-                    else:
-                        task_spec.task.on_evaluation_epoch_start(self)
+                    task_spec.task.on_evaluation_epoch_start(self)
 
     def _shared_eval_step(
         self,
@@ -689,3 +681,11 @@ class ContrastivePretraining(L.LightningModule):
             generate dataset information.
         """
         self.all_dataset_info = test_loader.create_all_dataset_info()
+
+        if self.evaluation_tasks is not None:
+            for eval_task_spec in self.evaluation_tasks.values():
+                if isinstance(
+                    eval_task_spec.task,
+                    ZeroShotClassification,
+                ):
+                    eval_task_spec.task.set_all_dataset_info(self.all_dataset_info)

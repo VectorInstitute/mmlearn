@@ -1,18 +1,25 @@
-"""Zero-shot and linear probing classification evaluation task."""
+"""Zero-shot classification evaluation task."""
 
 import inspect
 import random
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
-import torchmetrics
 from hydra_zen import store
 from pytorch_lightning import LightningModule, Trainer
 from torch.nn import functional
-from torchmetrics import Metric, MetricCollection
+from torchmetrics import (
+    AUROC,
+    Accuracy,
+    F1Score,
+    Metric,
+    MetricCollection,
+    Precision,
+    Recall,
+)
 
-from mmlearn.constants import MEDICAL_TEMPLATES
+from mmlearn.constants import TEMPLATES
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.tasks.hooks import EvaluationHooks
@@ -22,7 +29,6 @@ from mmlearn.tasks.hooks import EvaluationHooks
 class ClassificationTaskSpec:
     """Specification for a classification task."""
 
-    metric_name: str
     query_modality: str
     top_k: List[int]
 
@@ -49,26 +55,91 @@ class ZeroShotClassification(EvaluationHooks):
     ):
         super().__init__()
         self.task_specs = task_specs
-        self.metrics: Dict[Any, Metric] = {}
+        for spec in self.task_specs:
+            assert Modalities.has_modality(spec.query_modality)
 
+        if tokenizer is None:
+            raise ValueError(
+                "Tokenizer must be set in the dataset to generate tokenized label descriptions"
+            )
         self.tokenizer = tokenizer
 
-    def on_evaluation_epoch_start(
-        self, pl_module: LightningModule, all_dataset_info: Dict[str, Any]
-    ) -> None:
+    def set_all_dataset_info(self, all_dataset_info: Dict[str, Any]) -> None:
+        """
+        Set the dataset information for the task.
+
+        This method assigns the provided dataset information to the `all_dataset_info`
+        attribute and initializes the necessary metrics for evaluation.
+
+        Args:
+            all_dataset_info (Dict[str, Any], optional): A dictionary containing
+            information about all the datasets. Defaults to None.
+        """
+        self.all_dataset_info = all_dataset_info
+        self._create_metrics()
+
+    def _create_metrics(self) -> None:
+        # creating metrics
+        self.metrics: Dict[Any, Metric] = {}
+        all_metrics = {
+            "accuracy": Accuracy,
+            "f1_score": F1Score,
+            "aucroc": AUROC,
+            "precision": Precision,
+            "recall": Recall,
+        }
+
+        for dataset_index in list(self.all_dataset_info.keys()):
+            for spec in self.task_specs:
+                query_modality = Modalities.get_modality(spec.query_modality)
+                num_classes = self.all_dataset_info[dataset_index].get_class_count()
+                name = self.all_dataset_info[dataset_index].get_name()
+                for metric_name, metric in all_metrics.items():
+                    self.metrics.update(
+                        {
+                            (
+                                query_modality,
+                                metric_name,
+                                dataset_index,
+                            ): MetricCollection(
+                                {
+                                    f"{spec.query_modality}_C_{metric_name}@{k}_{name}": (
+                                        metric(
+                                            **(
+                                                {
+                                                    "top_k": k,
+                                                    "task": "multiclass",
+                                                    "num_classes": num_classes,
+                                                }
+                                                if "top_k"
+                                                in inspect.signature(metric).parameters
+                                                else {
+                                                    "task": "multiclass",
+                                                    "num_classes": num_classes,
+                                                }
+                                            )
+                                        )
+                                    )
+                                    for k in spec.top_k
+                                }
+                            )
+                        }
+                    )
+
+    def on_evaluation_epoch_start(self, pl_module: LightningModule) -> None:
         """Move the metrics to the device of the Lightning module."""
         for metric in self.metrics.values():
             metric.to(pl_module.device)
 
-        if self.tokenizer is None:
-            raise ValueError(
-                "Tokenizer must be set in the dataset to generate tokenized label descriptions"
-            )
-
-        # Set the label embeddings
-        for name, dataset_info in all_dataset_info.items():
+        # Set the label embeddings - It is better if we can do this at initialization
+        templates: Dict[str, Tuple[Callable[[Any], str], ...]] = TEMPLATES
+        for dataset_index, dataset_info in self.all_dataset_info.items():
+            dataset_name = self.all_dataset_info[dataset_index].get_name()
+            selected_template = random.choice(
+                templates[dataset_name]
+            )  # This selects a callable
             descriptions = [
-                random.choice(MEDICAL_TEMPLATES)(label)
+                selected_template(label)
                 for label in dataset_info.get_label_mapping().values()
             ]
 
@@ -81,58 +152,10 @@ class ZeroShotClassification(EvaluationHooks):
                 for key in tokens_batch[0]
             }
 
-            # Because model needs to also get Modalities.RGB
-            batch[Modalities.RGB] = torch.rand(len(descriptions), 3, 224, 224).to(
-                pl_module.device
-            )
-
             with torch.no_grad():
-                processed_example = pl_module(batch)
+                processed_example = pl_module.encode(batch, Modalities.TEXT)
 
-            all_dataset_info[name].set_label_embedding(
-                processed_example[Modalities.get_modality(Modalities.TEXT).embedding]
-            )
-
-        self.all_dataset_info = all_dataset_info
-
-        for dataset_name in list(all_dataset_info.keys()):
-            for spec in self.task_specs:
-                assert Modalities.has_modality(spec.query_modality)
-                query_modality = Modalities.get_modality(spec.query_modality)
-                metric_name = spec.metric_name
-                metric = getattr(torchmetrics, metric_name)
-                num_classes = all_dataset_info[dataset_name].get_class_count()
-                task = "multiclass" if num_classes > 2 else "binary"
-                self.metrics.update(
-                    {
-                        (
-                            query_modality,
-                            metric_name,
-                            dataset_name,
-                        ): MetricCollection(
-                            {
-                                f"{query_modality}_C_{metric_name}@{k}_{dataset_name}": (
-                                    metric(
-                                        **(
-                                            {
-                                                "top_k": k,
-                                                "task": task,
-                                                "num_classes": num_classes,
-                                            }
-                                            if "top_k"
-                                            in inspect.signature(metric).parameters
-                                            else {
-                                                "task": "multiclass",
-                                                "num_classes": num_classes,
-                                            }
-                                        )
-                                    ).to(pl_module.device)
-                                )
-                                for k in spec.top_k
-                            }
-                        )
-                    }
-                )
+            self.all_dataset_info[dataset_index].set_label_embedding(processed_example)
 
     def evaluation_step(
         self,
