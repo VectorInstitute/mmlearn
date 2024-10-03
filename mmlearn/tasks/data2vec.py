@@ -11,19 +11,12 @@ from hydra_zen import store
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
+from transformers.modeling_outputs import BaseModelOutput
 
+from mmlearn.datasets.core.modalities import Modalities, Modality
 from mmlearn.datasets.processors.masking import apply_masks
 from mmlearn.modules.ema import ExponentialMovingAverage
 from mmlearn.modules.losses.data2vec import Data2VecLoss
-
-
-@dataclass
-class ModuleKeySpec:
-    """Module key specification for mapping modules to modalities."""
-
-    encoder_key: Optional[str] = None
-    head_key: Optional[str] = None
-    postprocessor_key: Optional[str] = None
 
 
 @dataclass
@@ -98,7 +91,7 @@ class Data2VecTask(L.LightningModule):
         self.loss_fn = loss or Data2VecLoss()
 
         self.ema = ExponentialMovingAverage(
-            self,
+            self.encoder,
             ema_decay,
             ema_end_decay,
             ema_anneal_end_step,
@@ -109,42 +102,27 @@ class Data2VecTask(L.LightningModule):
         self.compute_test_loss = compute_test_loss
         self.evaluation_tasks = evaluation_tasks
 
-    def encode(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Encode the input values.
-
-        Parameters
-        ----------
-        inputs : torch.Tensor
-            The input values to encode.
-
-        Returns
-        -------
-        torch.Tensor
-            The encoded values.
-        """
-        return self.encoder(inputs)
-
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : torch.Tensor
-            The input values to forward pass.
+        inputs : Dict[Union[str, Modality], Any]
+            The input tensors to encode.
 
         Returns
         -------
-        torch.Tensor
-            The forward pass output.
+        BaseModelOutput
+            The output of the encoder.
         """
-        return self.encode(inputs)
+        return self.encoder(inputs)
 
-    def _compute_loss(self, batch: torch.Tensor) -> torch.Tensor:
+    def _compute_loss(self, batch: Dict[Union[str, Modality], Any]) -> torch.Tensor:
         """Compute the loss for the batch.
 
         Parameters
         ----------
-        batch : torch.Tensor
+        batch : Dict[Union[str, Modality], Any]
             The batch of data to compute the loss for.
 
         Returns
@@ -152,19 +130,44 @@ class Data2VecTask(L.LightningModule):
         torch.Tensor
             The loss for the batch.
         """
-        masked_input = apply_masks(batch, self.mask_generator())
-        student_output = self.encode(masked_input)
-        with torch.no_grad():
-            teacher_output = self.ema.model.encode(batch)
-        return self.loss_fn(student_output, teacher_output)
+        # Generate mask
+        mask = self.mask_generator()
 
-    def training_step(self, batch: torch.Tensor, batch_idx: int) -> torch.Tensor:
+        # Apply mask to input (only supported for RGB modality)
+        masked_input = {
+            k: apply_masks(v, mask) if k == Modalities.RGB else v
+            for k, v in batch.items()
+        }
+
+        # Get student output
+        student_output = self(masked_input)
+        student_hidden_states = student_output.hidden_states
+
+        # Get teacher output (without gradients)
+        with torch.no_grad():
+            teacher_output = self.ema.model(batch)
+            teacher_hidden_states = teacher_output.hidden_states
+
+        # Compute loss
+        loss = 0
+        for student_layer, teacher_layer in zip(
+            student_hidden_states, teacher_hidden_states
+        ):
+            loss += self.loss_fn(student_layer, teacher_layer)
+
+        return loss / len(student_hidden_states)
+
+    def training_step(
+        self, batch: Dict[Union[str, Modality], Any], batch_idx: int
+    ) -> torch.Tensor:
         """Compute the loss for the batch.
 
         Parameters
         ----------
-        batch : torch.Tensor
+        batch : Dict[Union[str, Modality], Any]
             The batch of data to compute the loss for.
+        batch_idx : int
+            The index of the batch.
 
         Returns
         -------
@@ -172,10 +175,8 @@ class Data2VecTask(L.LightningModule):
             The loss for the batch.
         """
         loss = self._compute_loss(batch)
-
         self.log("train/loss", loss, prog_bar=True, sync_dist=True)
-        self.ema.step(self)
-
+        self.ema.step(self.encoder)
         return loss
 
     def on_validation_epoch_start(self) -> None:
@@ -183,13 +184,13 @@ class Data2VecTask(L.LightningModule):
         self._on_eval_epoch_start("val")
 
     def validation_step(
-        self, batch: torch.Tensor, batch_idx: int
+        self, batch: Dict[Union[str, Modality], Any], batch_idx: int
     ) -> Optional[torch.Tensor]:
         """Run a single validation step.
 
         Parameters
         ----------
-        batch : torch.Tensor
+        batch : Dict[Union[str, Modality], Any]
             The batch of data to process.
         batch_idx : int
             The index of the batch.
@@ -209,12 +210,14 @@ class Data2VecTask(L.LightningModule):
         """Prepare for the test epoch."""
         self._on_eval_epoch_start("test")
 
-    def test_step(self, batch: torch.Tensor, batch_idx: int) -> Optional[torch.Tensor]:
+    def test_step(
+        self, batch: Dict[Union[str, Modality], Any], batch_idx: int
+    ) -> Optional[torch.Tensor]:
         """Run a single test step.
 
         Parameters
         ----------
-        batch : torch.Tensor
+        batch : Dict[Union[str, Modality], Any]
             The batch of data to process.
         batch_idx : int
             The index of the batch.
@@ -232,7 +235,7 @@ class Data2VecTask(L.LightningModule):
 
     def _shared_eval_step(
         self,
-        batch: torch.Tensor,
+        batch: Dict[Union[str, Modality], Any],
         batch_idx: int,
         eval_type: Literal["val", "test"],
     ) -> Optional[torch.Tensor]:
@@ -240,7 +243,7 @@ class Data2VecTask(L.LightningModule):
 
         Parameters
         ----------
-        batch : torch.Tensor
+        batch : Dict[Union[str, Modality], Any]
             The batch of data to process.
         batch_idx : int
             The index of the batch.
