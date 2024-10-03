@@ -284,12 +284,27 @@ class IJEPAMaskGenerator:
         Minimum number of patches to keep.
     allow_overlap : bool, default=False
         Whether to allow overlap between encoder and predictor masks.
+    enc_mask_scale : tuple[float, float], default=(0.2, 0.8)
+        Scale range for encoder mask.
+    pred_mask_scale : tuple[float, float], default=(0.2, 0.8)
+        Scale range for predictor mask.
+    aspect_ratio : tuple[float, float], default=(0.3, 3.0)
+        Aspect ratio range for mask blocks.
+    nenc : int, default=1
+        Number of encoder masks to generate.
+    npred : int, default=2
+        Number of predictor masks to generate.
     """
 
     input_size: Tuple[int, int] = (224, 224)
     patch_size: int = 16
     min_keep: int = 4
     allow_overlap: bool = False
+    enc_mask_scale: Tuple[float, float] = (0.2, 0.8)
+    pred_mask_scale: Tuple[float, float] = (0.2, 0.8)
+    aspect_ratio: Tuple[float, float] = (0.3, 3.0)
+    nenc: int = 1
+    npred: int = 2
 
     def __post_init__(self) -> None:
         """Initialize the mask generator."""
@@ -339,11 +354,6 @@ class IJEPAMaskGenerator:
     def __call__(
         self,
         example: torch.Tensor,
-        enc_mask_scale: Tuple[float, float] = (0.2, 0.8),
-        pred_mask_scale: Tuple[float, float] = (0.2, 0.8),
-        aspect_ratio: Tuple[float, float] = (0.3, 3.0),
-        nenc: int = 1,
-        npred: int = 2,
     ) -> Dict[str, Any]:
         """Generate encoder and predictor masks for a single example.
 
@@ -351,16 +361,6 @@ class IJEPAMaskGenerator:
         ----------
         example : torch.Tensor
             The input data example (e.g., image tensor) to process.
-        enc_mask_scale : tuple[float, float], default=(0.2, 0.8)
-            Scale range for encoder mask.
-        pred_mask_scale : tuple[float, float], default=(0.2, 0.8)
-            Scale range for predictor mask.
-        aspect_ratio : tuple[float, float], default=(0.3, 3.0)
-            Aspect ratio range for mask blocks.
-        nenc : int, default=1
-            Number of encoder masks to generate.
-        npred : int, default=2
-            Number of predictor masks to generate.
 
         Returns
         -------
@@ -374,20 +374,20 @@ class IJEPAMaskGenerator:
 
         # Sample block sizes
         p_size = self._sample_block_size(
-            generator=g, scale=pred_mask_scale, aspect_ratio=aspect_ratio
+            generator=g, scale=self.pred_mask_scale, aspect_ratio=self.aspect_ratio
         )
         e_size = self._sample_block_size(
-            generator=g, scale=enc_mask_scale, aspect_ratio=(1.0, 1.0)
+            generator=g, scale=self.enc_mask_scale, aspect_ratio=(1.0, 1.0)
         )
 
         # Generate predictor masks
         masks_pred, masks_enc = [], []
-        for _ in range(npred):
+        for _ in range(self.npred):
             mask_p, _ = self._sample_block_mask(p_size)
             masks_pred.append(mask_p)
 
         # Generate encoder masks
-        for _ in range(nenc):
+        for _ in range(self.nenc):
             mask_e, _ = self._sample_block_mask(e_size)
             masks_enc.append(mask_e)
 
