@@ -353,19 +353,13 @@ class IJEPAMaskGenerator:
 
     def __call__(
         self,
-        example: torch.Tensor,
     ) -> Dict[str, Any]:
         """Generate encoder and predictor masks for a single example.
-
-        Parameters
-        ----------
-        example : torch.Tensor
-            The input data example (e.g., image tensor) to process.
 
         Returns
         -------
         Dict[str, Any]
-            A dictionary of the input example, encoder masks, and predictor masks.
+            A dictionary of encoder masks and predictor masks.
         """
         seed = torch.randint(
             0, 2**32, (1,)
@@ -392,7 +386,6 @@ class IJEPAMaskGenerator:
             masks_enc.append(mask_e)
 
         return {
-            "input": example,
             "encoder_masks": torch.stack(masks_enc),
             "predictor_masks": torch.stack(masks_pred),
         }
