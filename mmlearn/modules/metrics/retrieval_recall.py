@@ -12,6 +12,7 @@ from torchmetrics.utilities.checks import _check_same_shape
 from torchmetrics.utilities.compute import _safe_matmul
 from torchmetrics.utilities.data import dim_zero_cat
 from torchmetrics.utilities.distributed import gather_all_tensors
+from tqdm import tqdm
 
 
 @store(group="modules/metrics", provider="mmlearn")
@@ -159,7 +160,7 @@ class RetrievalRecallAtK(Metric):
             self._batch_size = x.size(0)  # global batch size
 
     def compute(self) -> torch.Tensor:
-        """Compute the metric.
+        """Compute the metric in a RAM-efficient manner.
 
         Returns
         -------
@@ -169,10 +170,11 @@ class RetrievalRecallAtK(Metric):
         x = dim_zero_cat(self.x)
         y = dim_zero_cat(self.y)
 
-        # compute the cosine similarity
+        # normalize embeddings
         x_norm = x / x.norm(dim=-1, p=2, keepdim=True)
         y_norm = y / y.norm(dim=-1, p=2, keepdim=True)
-        similarity = _safe_matmul(x_norm, y_norm)
+
+        # instantiate reduction function
         reduction_mapping: Dict[
             Optional[str], Callable[[torch.Tensor], torch.Tensor]
         ] = {
@@ -181,18 +183,24 @@ class RetrievalRecallAtK(Metric):
             "none": lambda x: x,
             None: lambda x: x,
         }
-        scores: torch.Tensor = reduction_mapping[self.reduction](similarity)
 
+        # concatenate indexes of true pairs
         indexes = dim_zero_cat(self.indexes)
-        positive_pairs = torch.zeros_like(scores, dtype=torch.bool)
-        positive_pairs[torch.arange(len(scores)), indexes] = True
 
         results = []
-        for start in range(0, len(scores), self._batch_size):
+        for start in tqdm(
+            range(0, len(x), self._batch_size), desc=f"Recall@{self.top_k}"
+        ):
             end = start + self._batch_size
-            x = scores[start:end]
-            y = positive_pairs[start:end]
-            result = recall_at_k(x, y, self.top_k)
+            # compute the cosine similarity
+            x_norm_batch = x_norm[start:end]
+            similarity = _safe_matmul(x_norm_batch, y_norm)
+            scores: torch.Tensor = reduction_mapping[self.reduction](similarity)
+            indexes_batch = indexes[start:end]
+            positive_pairs = torch.zeros_like(scores, dtype=torch.bool)
+            positive_pairs[torch.arange(len(scores)), indexes_batch] = True
+            # compute recall_at_k
+            result = recall_at_k(scores, positive_pairs, self.top_k)
             results.append(result)
 
         return _retrieval_aggregate(
