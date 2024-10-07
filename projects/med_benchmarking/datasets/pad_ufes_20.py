@@ -2,17 +2,18 @@
 
 import os
 import pickle
+import random
+from typing import Callable, Dict, Optional, Union
+
 import pandas as pd
+import torch
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor
-from typing import Callable, Optional, Union, Dict
-import torch
-import random
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
-from mmlearn.datasets.core.example import Example
-from mmlearn.datasets.core import Modalities
 from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.datasets.core import Modalities
+from mmlearn.datasets.core.example import Example
 
 
 class PadUfes20(Dataset[Example]):

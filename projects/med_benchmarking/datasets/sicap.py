@@ -1,19 +1,19 @@
 """Sicap Dataset."""
 
 import os
+from typing import Callable, Dict, Literal, Optional, Union
+
 import pandas as pd
+import torch
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor
-from typing import Callable, Optional, Union, Dict
-import torch
-import random
-from omegaconf import MISSING
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
 from mmlearn.conf import external_store
-from mmlearn.datasets.core.example import Example
+from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
-from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.datasets.core.example import Example
 
 
 @external_store(group="datasets", root_dir=os.getenv("SICAP_ROOT_DIR", MISSING))
@@ -41,7 +41,7 @@ class SICAP(Dataset[Example]):
         processor: Optional[
             Callable[[torch.Tensor, str], tuple[torch.Tensor, str]]
         ] = None,
-        split: str = "test",
+        split: Literal["train", "test"] = "test",
     ) -> None:
         """Initialize the dataset."""
         image_dir = os.path.join(root_dir, image_dir)
@@ -80,51 +80,8 @@ class SICAP(Dataset[Example]):
         self.tokenizer = tokenizer
         self.processor = processor
 
-    def __len__(self):
-        """Return the length of the dataset."""
-        return len(self.data)
-
-    def __getitem__(self, idx: int) -> Example:
-        """Return the idx'th data sample as an Example instance."""
-        image_path = os.path.join(self.image_dir, self.image_paths[idx])
-        image = Image.open(image_path).convert("RGB")
-
-        label_index = self.labels[idx]
-        label = list(self.cat_to_num_map.keys())[label_index]
-        description = random.choice(TEMPLATES[self.__class__.__name__])(label)
-        tokens = self.tokenizer(description) if self.tokenizer is not None else None
-
-        # Apply transform
-        if self.transform is not None:
-            image = self.transform(image)
-
-        # Process image and tokens if needed
-        if self.processor is not None:
-            image, tokens = self.processor(image, label)
-
-        # Create an Example instance
-        example = Example(
-            {
-                Modalities.RGB: image,
-                Modalities.TEXT: label,
-                Modalities.RGB.target: label_index,
-                EXAMPLE_INDEX_KEY: idx,
-            }
-        )
-
-        # Add tokens to the example if available
-        if tokens is not None:
-            if isinstance(tokens, dict):  # If using a Hugging Face tokenizer
-                assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
-                example.update(tokens)
-            else:
-                example[Modalities.TEXT] = tokens
-
-        return example
-
-    def get_label_mapping(self):
+    @property
+    def label_mapping(self) -> Dict[str, str]:
         """Return the label mapping."""
         return {
             "NC": "benign glands",
@@ -132,3 +89,36 @@ class SICAP(Dataset[Example]):
             "G4": "cribriform ill-formed fused papillary patterns",
             "G5": "isolated nest cells without lumen roseting patterns",
         }
+
+    @property
+    def zero_shot_prompt_templates(self) -> list[Callable[[str], str]]:
+        """Return the zero-shot prompt templates."""
+        return [
+            "a histopathology slide showing {}.",
+            "histopathology image of {}.",
+            "pathology tissue showing {}.",
+            "presence of {} tissue on image.",
+        ]
+
+    def __len__(self):
+        """Return the length of the dataset."""
+        return len(self.data)
+
+    def __getitem__(self, idx: int) -> Example:
+        """Return the idx'th data sample as an Example instance."""
+        image_path = os.path.join(self.image_dir, self.image_paths[idx])
+        with Image.open(image_path) as img:
+            image = img.convert("RGB")
+
+        label_index = self.labels[idx]
+
+        if self.transform is not None:
+            image = self.transform(image)
+
+        return Example(
+            {
+                Modalities.RGB: image,
+                Modalities.RGB.target: label_index,
+                EXAMPLE_INDEX_KEY: idx,
+            }
+        )

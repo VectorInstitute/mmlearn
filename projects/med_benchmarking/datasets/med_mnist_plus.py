@@ -1,18 +1,18 @@
 import os
+import random
+from typing import Callable, Dict, Optional, Union
+
 import numpy as np
-import pandas as pd
+import torch
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import Compose, Resize, ToTensor
-from typing import Callable, Optional, Union, Dict
-import torch
-import random
-from omegaconf import MISSING
 
 from mmlearn.conf import external_store
-from mmlearn.datasets.core.example import Example
-from mmlearn.datasets.core import Modalities
 from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.datasets.core import Modalities
+from mmlearn.datasets.core.example import Example
 
 
 @external_store(group="datasets", root_dir=os.getenv("MEDMNISTPLUS_ROOT_DIR", MISSING))

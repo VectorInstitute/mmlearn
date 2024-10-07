@@ -1,25 +1,26 @@
 """HAM10000 Dataset."""
 
 import os
+import random
+from typing import Callable, Dict, Optional, Union
+
 import pandas as pd
+import torch
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor
-from typing import Callable, Optional, Union, Dict
-import torch
-import random
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
-from omegaconf import MISSING
 from mmlearn.conf import external_store
-from mmlearn.datasets.core.example import Example
-from mmlearn.datasets.core import Modalities
 from mmlearn.constants import EXAMPLE_INDEX_KEY
-from mmlearn.constants import TEMPLATES
+from mmlearn.datasets.core import Modalities
+from mmlearn.datasets.core.example import Example
 
 
 @external_store(group="datasets", root_dir=os.getenv("HAM10000_ROOT_DIR", MISSING))
 class HAM10000(Dataset[Example]):
     """HAM10000 dataset for zero-shot classification.
+
     Parameters
     ----------
     root_dir : str
@@ -67,7 +68,14 @@ class HAM10000(Dataset[Example]):
         )
         label_index = list(self.get_label_mapping().keys()).index(entry["dx"])
         label = list(self.get_label_mapping().values())[label_index]
-        description = random.choice(TEMPLATES[self.__class__.__name__])(label)
+        description = random.choice(
+            [
+                "a histopathology slide showing {c}",
+                "histopathology image of {c}",
+                "pathology tissue showing {c}",
+                "presence of {c} tissue on image",
+            ]
+        )(label)
         tokens = self.tokenizer(description) if self.tokenizer is not None else None
 
         with Image.open(image_path) as img:
