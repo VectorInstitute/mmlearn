@@ -54,7 +54,7 @@ class ZeroShotClassification(EvaluationHooks):
         for spec in self.task_specs:
             assert Modalities.has_modality(spec.query_modality)
 
-        self.metrics: Dict[tuple[Modality, str], MetricCollection] = {}
+        self.metrics: Dict[tuple[Modality, int], MetricCollection] = {}
         self._embeddings_store: Dict[int, torch.Tensor] = {}
 
     def on_evaluation_epoch_start(self, pl_module: LightningModule) -> None:
@@ -62,19 +62,19 @@ class ZeroShotClassification(EvaluationHooks):
         if pl_module.trainer.validating:
             eval_dataset: CombinedDataset = pl_module.trainer.val_dataloaders.dataset
         elif pl_module.trainer.testing:
-            eval_dataset: CombinedDataset = pl_module.trainer.test_dataloaders.dataset
+            eval_dataset = pl_module.trainer.test_dataloaders.dataset
         else:
             raise ValueError(
                 "ZeroShotClassification task is only supported for validation and testing."
             )
 
-        self.all_dataset_info: dict[int, dict[str, Union[str, dict, int]]] = {}
+        self.all_dataset_info = {}
 
         # create metrics for each dataset/query_modality combination
         if not self.metrics:
             for dataset_index, dataset in enumerate(eval_dataset.datasets):
                 try:
-                    label_mapping: dict = dataset.label_mapping
+                    label_mapping = dataset.label_mapping
                 except AttributeError:
                     raise ValueError(
                         "Dataset must have a `label_mapping` attribute to perform zero-shot classification."
@@ -128,7 +128,8 @@ class ZeroShotClassification(EvaluationHooks):
             ]
 
             batch = move_data_to_device(
-                collate_example_list(tokenized_descriptions), pl_module.device
+                collate_example_list(tokenized_descriptions),  # type: ignore
+                pl_module.device,
             )
 
             with torch.no_grad():
