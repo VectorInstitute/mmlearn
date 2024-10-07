@@ -3,18 +3,19 @@
 import os
 import pickle
 import random
+from typing import Callable, Dict, Optional, Union
+
 import numpy as np
 import torch
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor
-from typing import Callable, Optional, Union, Dict
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
-from omegaconf import MISSING
 from mmlearn.conf import external_store
-from mmlearn.datasets.core.example import Example
+from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
-from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.datasets.core.example import Example
 
 
 @external_store(group="datasets", root_dir=os.getenv("VINDR_MAMMO_ROOT_DIR", MISSING))
@@ -79,7 +80,14 @@ class VinDrMammo(Dataset[Example]):
         image_path = os.path.join(self.root_dir, entry["path"])
         label = entry["label"]
         label = self.get_label_mapping()[label]
-        description = random.choice(TEMPLATES[self.name()])(label)
+        description = random.choice(
+            [
+                "a x-ray image showing {c}",
+                "mammography image of {c}",
+                "mammogram showing {c}",
+                "presence of {c} on mammogram",
+            ]
+        )(label)
         tokens = self.tokenizer(description) if self.tokenizer is not None else None
 
         with Image.open(image_path) as img:

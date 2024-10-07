@@ -14,13 +14,11 @@ from hydra_zen import store
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
-from torch.utils.data import Dataset
 
 from mmlearn.datasets.core import Modalities, find_matching_indices
 from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.losses import CLIPLoss
 from mmlearn.tasks.hooks import EvaluationHooks
-from mmlearn.tasks.zero_shot_classification import ZeroShotClassification
 
 
 _unsupported_modality_error = (
@@ -620,11 +618,11 @@ class ContrastivePretraining(L.LightningModule):
         torch.Tensor or None
             The loss for the batch or None if the loss function is not provided.
         """
-        outputs = self(batch)
         loss: Optional[torch.Tensor] = None
         if (eval_type == "val" and self.compute_validation_loss) or (
             eval_type == "test" and self.compute_test_loss
         ):
+            outputs = self(batch)
             loss = self._compute_loss(batch, batch_idx, outputs)
             if loss is not None:
                 self.log(
@@ -642,7 +640,7 @@ class ContrastivePretraining(L.LightningModule):
                     eval_type == "test" and task_spec.run_on_test
                 ):
                     batch_result = task_spec.task.evaluation_step(
-                        self.trainer, self, batch, batch_idx
+                        self, batch, batch_idx
                     )
                     if batch_result:
                         for key, value in batch_result.items():
@@ -666,26 +664,3 @@ class ContrastivePretraining(L.LightningModule):
                     if results:
                         for key, value in results.items():
                             self.log(f"{eval_type}/{key}", value)
-
-    def set_all_dataset_info(self, test_loader: Dataset) -> None:
-        """
-        Set the dataset information using the provided test loader.
-
-        This method uses the `create_all_dataset_info` method of the test loader
-        to populate the `all_dataset_info` attribute.
-
-        Parameters
-        ----------
-        test_loader : TestLoader
-            An object that provides the `create_all_dataset_info` method to
-            generate dataset information.
-        """
-        self.all_dataset_info = test_loader.create_all_dataset_info()
-
-        if self.evaluation_tasks is not None:
-            for eval_task_spec in self.evaluation_tasks.values():
-                if isinstance(
-                    eval_task_spec.task,
-                    ZeroShotClassification,
-                ):
-                    eval_task_spec.task.set_all_dataset_info(self.all_dataset_info)

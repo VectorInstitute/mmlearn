@@ -134,24 +134,6 @@ data = {
         "pancreas",
         "spleen",
     ],
-    "lc25000_colon": [
-        "a histopathology slide showing {c}",
-        "histopathology image of {c}",
-        "pathology tissue showing {c}",
-        "presence of {c} tissue on image",
-    ],
-    "lc25000_lung": [
-        "a histopathology slide showing {c}",
-        "histopathology image of {c}",
-        "pathology tissue showing {c}",
-        "presence of {c} tissue on image",
-    ],
-    "sicap": [
-        "a histopathology slide showing {c}",
-        "histopathology image of {c}",
-        "pathology tissue showing {c}",
-        "presence of {c} tissue on image",
-    ],
 }
 
 
