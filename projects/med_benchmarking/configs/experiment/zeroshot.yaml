@@ -28,7 +28,7 @@ defaults:
   - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
   - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
   - /datasets/tokenizers@task.evaluation_tasks.classification.task.tokenizer: HFCLIPTokenizer
-  # - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - /trainer/logger@trainer.logger.wandb: WandbLogger
   - override /task: ContrastivePretraining
   - _self_
 
@@ -84,8 +84,7 @@ task:
             query_modality: rgb
       run_on_validation: false
       run_on_test: true
-
-
+  compute_test_loss: False
 
 trainer:
   max_epochs: 20
