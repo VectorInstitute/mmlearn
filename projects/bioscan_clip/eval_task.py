@@ -1,21 +1,22 @@
-import sys
 import logging
+import sys
 from typing import Any, Dict, Optional, Union
 
 import faiss
 import lightning.pytorch as pl
-from lightning.pytorch.utilities import move_data_to_device
 import numpy as np
+import torch
+import torch.distributed as dist
+from lightning.pytorch.utilities import move_data_to_device
 from rich.console import Console
 from rich.table import Table
 from sklearn.preprocessing import normalize
-import torch
-import torch.distributed as dist
 
 from mmlearn.conf import external_store
-from mmlearn.datasets.core.modalities import Modality, Modalities
 from mmlearn.datasets.core import find_matching_indices
+from mmlearn.datasets.core.modalities import Modalities, Modality
 from mmlearn.tasks.hooks import EvaluationHooks
+
 
 logger = logging.getLogger(__name__)
 

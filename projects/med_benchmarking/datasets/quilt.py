@@ -96,7 +96,7 @@ class Quilt(Dataset[Example]):
             self.data_df.apply(
                 lambda row: row["split"] == split and row["subset"] in subset, axis=1
             )
-        ]
+        ].reset_index(drop=True)
 
         # the 'pathology' column is a list of strings
         self.data_df["pathology"] = self.data_df["pathology"].apply(_safe_eval)
