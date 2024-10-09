@@ -3,9 +3,9 @@
 import copy
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-import lightning as L
+import lightning as L  # noqa: N812
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa: N812
 from torch import nn
 
 from mmlearn.datasets.core.modalities import Modalities
@@ -38,7 +38,8 @@ class IJEPAPretraining(L.LightningModule):
     lr_scheduler : Optional[Any], optional
         Learning rate scheduler configuration, by default None.
     ema_momentum : float, optional
-        Momentum for exponential moving average (EMA) of target encoder, by default 0.996.
+        Momentum for exponential moving average (EMA) of target encoder
+        , by default 0.996.
     ema_momentum_end : float, optional
         Final momentum for EMA of target encoder, by default 1.0.
     loss_fn : Optional[Callable], optional
@@ -63,7 +64,7 @@ class IJEPAPretraining(L.LightningModule):
         lr_scheduler: Optional[Any] = None,
         ema_momentum: float = 0.996,
         ema_momentum_end: float = 1.0,
-        loss_fn: Optional[Callable] = None,
+        loss_fn: Optional[Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
         compute_validation_loss: bool = True,
         compute_test_loss: bool = True,
         checkpoint_path: str = "",
@@ -121,13 +122,13 @@ class IJEPAPretraining(L.LightningModule):
 
     def load_checkpoint(
             self,
-            device,
-            checkpoint_path,
-            encoder,
-            predictor,
-            target_encoder,
-            opt,
-            scaler,
+            device : str,
+            checkpoint_path : str,
+            encoder : nn.Module,
+            predictor : nn.Module,
+            target_encoder : nn.Module,
+            opt : Any,
+            scaler : Any,
     ) -> Tuple[nn.Module, nn.Module, nn.Module, Any, Any, int]:
         """Load a pre-trained model from a checkpoint."""
         try:
@@ -211,7 +212,7 @@ class IJEPAPretraining(L.LightningModule):
 
         return loss
 
-    def _update_target_encoder(self):
+    def _update_target_encoder(self) -> None:
         """Update the target encoder using exponential moving average (EMA)."""
         if self.total_steps is None:
             self.total_steps = self.trainer.estimated_stepping_batches
@@ -222,7 +223,7 @@ class IJEPAPretraining(L.LightningModule):
         ):
             param_k.data.mul_(m).add_((1.0 - m) * param_q.data)
 
-    def configure_optimizers(self):
+    def configure_optimizers(self) -> torch.optim.Optimizer:
         """Configure the optimizer and learning rate scheduler."""
         if self.optimizer_config is None:
             raise ValueError("An optimizer configuration must be provided.")
