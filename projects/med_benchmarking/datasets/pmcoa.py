@@ -3,14 +3,14 @@
 import os
 from typing import Any, Callable, Dict, Literal, Optional, Tuple, Union
 
+import pyarrow as pa
+import pyarrow.json as pj
 import torch
 from omegaconf import MISSING
 from PIL import Image
+from pyarrow import csv
 from torch.utils.data import Dataset
 from torchvision import transforms
-import pyarrow.json as pj
-from pyarrow import csv
-import pyarrow as pa
 
 from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY

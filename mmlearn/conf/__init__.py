@@ -151,7 +151,7 @@ class MMLearnConf:
         metadata={"help": "Configuration for torch.jit.compile."},
     )
     hydra: HydraConf = HydraConf(
-        searchpath=["pkg://mmlearn/conf"],
+        searchpath=["pkg://mmlearn.conf"],
         run=RunDir(
             dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}")
         ),

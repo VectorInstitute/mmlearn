@@ -3,8 +3,8 @@
 import os
 from typing import Callable, Dict, Literal, Optional, Union
 
-import torch
 import pandas as pd
+import torch
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset

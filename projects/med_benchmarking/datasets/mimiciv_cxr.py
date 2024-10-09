@@ -104,15 +104,17 @@ class MIMICIVCXR(Dataset):
 
         if self._labeler in ["double_image", "single_image"]:
             self.data_df = pd.read_csv(data_path)
-            self.data_df = self.data_df.dropna(
-                subset=["caption"]
-            )  # some captions are missing
+            self.data_df = self.data_df.dropna(subset=["caption"]).reset_index(
+                drop=True
+            )  # remove entries with no caption
         else:
             self.data_df = pd.read_json(data_path)
 
             # remove entries with no label if reports are not requested either
             old_num = len(self.data_df)
-            entries_df = self.data_df[self.data_df["label"].apply(len) > 0]
+            self.data_df = self.data_df[
+                self.data_df["label"].apply(len) > 0
+            ].reset_index(drop=True)
             logger.info(
                 f"{old_num - len(self.data_df)} datapoints removed due to lack of a label."
             )

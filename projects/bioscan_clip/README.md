@@ -80,6 +80,6 @@ results we obtained from our experiments.
 
 There are 3 values for each metric in the table. The first value is the original result from the paper. The second value is the
 average result we obtained from running the experiment with LoRA applied only to the query and value embeddings. The third value is
-the average result we obtained from running the experiment with LoRA applied to both the query, key and value embeddings.
+the average result we obtained from running the experiment with LoRA applied to all three  query, key, and value matrices.
 
 </details>

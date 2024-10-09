@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0  # Use the ref you want to point at
+    rev: v5.0.0  # Use the ref you want to point at
     hooks:
       - id: trailing-whitespace
       - id: check-ast
@@ -22,7 +22,7 @@ repos:
         args: [--lock]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.1
+    rev: v0.6.9
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -31,13 +31,13 @@ repos:
         types_or: [ python, pyi, jupyter ]
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.23.6
+    rev: v1.26.0
     hooks:
       - id: typos
         args: []
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.1
+    rev: v1.11.2
     hooks:
       - id: mypy
         entry: mypy
@@ -46,7 +46,7 @@ repos:
         exclude: tests|projects
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.8.7
+    rev: 1.9.0
     hooks:
       - id: nbqa-ruff
         args: [--fix, --exit-non-zero-on-fix]
