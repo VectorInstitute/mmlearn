@@ -8,13 +8,10 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from mmlearn.datasets.processors.masking import IJEPAMaskGenerator, apply_masks
-from mmlearn.datasets.processors.transforms import (
-    repeat_interleave_batch,
-    trunc_normal_,
-)
-from mmlearn.modules.encoders.vision import VisionTransformer
 from mmlearn.datasets.core.modalities import Modalities
+from mmlearn.datasets.processors.masking import IJEPAMaskGenerator, apply_masks
+from mmlearn.datasets.processors.transforms import repeat_interleave_batch
+from mmlearn.modules.encoders.vision import VisionTransformer
 
 
 class IJEPAPretraining(L.LightningModule):
