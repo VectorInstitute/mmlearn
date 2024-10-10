@@ -6,6 +6,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import lightning as L  # noqa: N812
 import torch
 import torch.nn.functional as F  # noqa: N812
+from lightning.pytorch.utilities.types import OptimizerLRScheduler
+from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
 
 from mmlearn.datasets.core.modalities import Modalities
@@ -235,35 +237,62 @@ class IJEPAPretraining(L.LightningModule):
         ):
             param_k.data.mul_(m).add_((1.0 - m) * param_q.data)
 
-    def configure_optimizers(self) -> torch.optim.Optimizer:
-        """Configure the optimizer and learning rate scheduler."""
-        if self.optimizer_config is None:
-            raise ValueError("An optimizer configuration must be provided.")
+    def configure_optimizers(self) -> OptimizerLRScheduler:
+        """Configure the optimizer."""
+        # Define parameters for weight decay and non-weight decay groups
+        param_groups = [
+            {
+                "params": (p for n, p in self.encoder.named_parameters()
+                           if ("bias" not in n) and (len(p.shape) != 1)),
+                "weight_decay": self.optimizer_cfg.get("weight_decay", 0.0)
+            },
+            {
+                "params": (p for n, p in self.predictor.named_parameters()
+                           if ("bias" not in n) and (len(p.shape) != 1)),
+                "weight_decay": self.optimizer_cfg.get("weight_decay", 0.0)
+            },
+            {
+                "params": (p for n, p in self.encoder.named_parameters()
+                           if ("bias" in n) or (len(p.shape) == 1)),
+                "weight_decay": 0.0  # No weight decay for bias or 1D params
+            },
+            {
+                "params": (p for n, p in self.predictor.named_parameters()
+                           if ("bias" in n) or (len(p.shape) == 1)),
+                "weight_decay": 0.0  # No weight decay for bias or 1D params
+            }
+        ]
 
-        parameters = list(self.encoder.parameters()) + list(self.predictor.parameters())
+        # Initialize optimizer dynamically from the class attribute
+        if self.optimizer is None:
+            rank_zero_warn("Optimizer not provided. Training will continue without an optimizer.")
+            return None
 
-        optimizer = self.optimizer_config(parameters)
+        optimizer = self.optimizer(param_groups, **self.optimizer_cfg.get("params", {}))
+
         if not isinstance(optimizer, torch.optim.Optimizer):
-            raise TypeError(
-                "Expected optimizer to be an instance of `torch.optim.Optimizer`, "
-                f"but got {type(optimizer)}."
-            )
+            raise TypeError(f"Expected optimizer to be an instance of `torch.optim.Optimizer`, but got {type(optimizer)}.")
 
-        if self.lr_scheduler_config is not None:
-            if isinstance(self.lr_scheduler_config, dict):
-                if "scheduler" not in self.lr_scheduler_config:
-                    raise ValueError(
-                        "Expected 'scheduler' key in the learning rate scheduler dictionary."
-                    )
-                scheduler = self.lr_scheduler_config["scheduler"](optimizer)
-                scheduler_config = {"scheduler": scheduler}
-                if "extras" in self.lr_scheduler_config:
-                    scheduler_config.update(self.lr_scheduler_config["extras"])
-                return {"optimizer": optimizer, "lr_scheduler": scheduler_config}
-            scheduler = self.lr_scheduler_config(optimizer)
-            return [optimizer], [scheduler]
+        # Initialize the learning rate scheduler if available
+        lr_scheduler = None
+        if self.lr_scheduler is not None:
+            if isinstance(self.lr_scheduler, dict):
+                if "scheduler" not in self.lr_scheduler:
+                    raise ValueError("Expected 'scheduler' key in the lr_scheduler dict.")
 
-        return optimizer
+                lr_scheduler = self.lr_scheduler["scheduler"](optimizer)
+                lr_scheduler_dict = {"scheduler": lr_scheduler}
+                if "extras" in self.lr_scheduler:
+                    lr_scheduler_dict.update(self.lr_scheduler["extras"])
+                return {"optimizer": optimizer, "lr_scheduler": lr_scheduler_dict}
+
+            lr_scheduler = self.lr_scheduler(optimizer)
+            if not isinstance(lr_scheduler, torch.optim.lr_scheduler._LRScheduler):
+                raise TypeError(f"Expected lr_scheduler to be an instance of `torch.optim.lr_scheduler._LRScheduler`, but got {type(lr_scheduler)}.")
+
+        # Return optimizer and optionally scheduler
+        return {"optimizer": optimizer, "lr_scheduler": lr_scheduler} if lr_scheduler else {"optimizer": optimizer}
+
 
     def validation_step(
         self, batch: Dict[str, Any], batch_idx: int
