@@ -70,10 +70,10 @@ class LLVIPDataset(Dataset[Example]):
         rgb_image = PILImage.open(rgb_image_path).convert("RGB")
         ir_image = PILImage.open(ir_image_path).convert("L")
 
-        sample = Example(
+        example = Example(
             {
-                Modalities.RGB: self.transform(rgb_image),
-                Modalities.THERMAL: self.transform(ir_image),
+                Modalities.RGB.name: self.transform(rgb_image),
+                Modalities.THERMAL.name: self.transform(ir_image),
                 EXAMPLE_INDEX_KEY: idx,
             },
         )
@@ -85,11 +85,11 @@ class LLVIPDataset(Dataset[Example]):
                 .replace("train", "")
             )
             annot = self._get_bbox(annot_path)
-            sample["annotation"] = {
+            example["annotation"] = {
                 "bboxes": torch.from_numpy(annot["bboxes"]),
                 "labels": torch.from_numpy(annot["labels"]),
             }
-        return sample
+        return example
 
     def _get_bbox(self, filename: str) -> Dict[str, np.ndarray]:
         """Parse the XML file to get bounding boxes and labels.

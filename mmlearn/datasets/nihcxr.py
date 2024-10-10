@@ -95,7 +95,7 @@ class NIHCXR(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
+                Modalities.RGB.name: image,
                 Modalities.RGB.target: label,
                 "qid": entry["qid"],
                 EXAMPLE_INDEX_KEY: idx,

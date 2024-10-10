@@ -10,7 +10,6 @@ from transformers.modeling_outputs import BaseModelOutput
 
 from mmlearn import hf_utils
 from mmlearn.datasets.core import Modalities
-from mmlearn.datasets.core.modalities import Modality
 
 
 if TYPE_CHECKING:
@@ -139,12 +138,12 @@ class HFTextEncoder(nn.Module):
         self.model = model
         self.pooling_layer = pooling_layer
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
+    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str | Modality, Any]
+        inputs : Dict[str, Any]
             The input data. The `input_ids` will be expected under the `Modalities.TEXT`
             key.
 
@@ -155,7 +154,7 @@ class HFTextEncoder(nn.Module):
             and the attention weights, if `output_attentions` is set to `True`.
         """
         outputs = self.model(
-            input_ids=inputs[Modalities.TEXT],
+            input_ids=inputs[Modalities.TEXT.name],
             attention_mask=inputs.get(
                 "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
             ),

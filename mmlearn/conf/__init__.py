@@ -1,6 +1,7 @@
 """Hydra/Hydra-zen-based configurations."""
 
 import functools
+import os
 import warnings
 from dataclasses import dataclass, field
 from enum import Enum
@@ -29,7 +30,7 @@ from mmlearn.datasets.core.data_collator import DefaultDataCollator
 
 def _get_default_ckpt_dir() -> Any:
     """Get the default checkpoint directory."""
-    return SI("/checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID}")
+    return SI("${hydra:runtime.output_dir}/checkpoints")
 
 
 _DataLoaderConf = builds(
