@@ -138,7 +138,7 @@ class MIMICIVCXR(Dataset):
         ) as img:
             image = self.transform(img.convert("RGB"))
 
-        example = Example({Modalities.RGB: image, EXAMPLE_INDEX_KEY: idx})
+        example = Example({Modalities.RGB.name: image, EXAMPLE_INDEX_KEY: idx})
 
         if self._labeler in ["negbio", "chexpert"]:
             example["subject_id"] = entry["subject_id"]
@@ -154,18 +154,18 @@ class MIMICIVCXR(Dataset):
                 if tokenized_report is not None:
                     example[Modalities.TEXT] = tokenized_report
         else:
-            example[Modalities.TEXT] = entry["caption"]
+            example[Modalities.TEXT.name] = entry["caption"]
             tokens = (
                 self.tokenizer(entry["caption"]) if self.tokenizer is not None else None
             )
             if tokens is not None:
                 if isinstance(tokens, dict):  # output of HFTokenizer
                     assert (
-                        Modalities.TEXT in tokens
-                    ), f"Missing key `{Modalities.TEXT}` in tokens."
+                        Modalities.TEXT.name in tokens
+                    ), f"Missing key `{Modalities.TEXT.name}` in tokens."
                     example.update(tokens)
                 else:
-                    example[Modalities.TEXT] = tokens
+                    example[Modalities.TEXT.name] = tokens
 
         return example
 

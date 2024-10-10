@@ -76,10 +76,10 @@ class BarcodeBERT(nn.Module):
         if peft_config is not None:
             self.model = hf_utils._wrap_peft_model(self.model, peft_config)
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
+    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass."""
         outputs = self.model(
-            input_ids=inputs[Modalities.DNA],
+            input_ids=inputs[Modalities.DNA.name],
             attention_mask=inputs.get(
                 "attention_mask", inputs.get(Modalities.DNA.attention_mask, None)
             ),

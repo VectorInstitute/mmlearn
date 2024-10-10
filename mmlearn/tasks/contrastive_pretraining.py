@@ -161,6 +161,17 @@ class ContrastivePretraining(L.LightningModule):
     ) -> None:
         """Initialize the module."""
         super().__init__()
+        self.save_hyperparameters(
+            ignore=[
+                "encoders",
+                "heads",
+                "postprocessors",
+                "modality_module_mapping",
+                "loss",
+                "auxiliary_tasks",
+                "evaluation_tasks",
+            ]
+        )
 
         if modality_module_mapping is None:
             # assume all the module dictionaries use the same keys corresponding
@@ -217,7 +228,7 @@ class ContrastivePretraining(L.LightningModule):
 
         self.encoders = nn.ModuleDict(
             {
-                Modalities.get_modality(modality_key): encoders[encoder_key]
+                Modalities.get_modality(modality_key).name: encoders[encoder_key]
                 for modality_key, encoder_key in modality_encoder_mapping.items()
                 if encoder_key is not None
             }
@@ -226,7 +237,7 @@ class ContrastivePretraining(L.LightningModule):
         if heads is not None:
             self.heads = nn.ModuleDict(
                 {
-                    Modalities.get_modality(modality_key): heads[head_key]
+                    Modalities.get_modality(modality_key).name: heads[head_key]
                     if isinstance(heads[head_key], nn.Module)
                     else nn.Sequential(*heads[head_key].values())
                     for modality_key, head_key in modality_head_mapping.items()
@@ -238,7 +249,7 @@ class ContrastivePretraining(L.LightningModule):
         if postprocessors is not None:
             self.postprocessors = nn.ModuleDict(
                 {
-                    Modalities.get_modality(modality_key): postprocessors[
+                    Modalities.get_modality(modality_key).name: postprocessors[
                         postprocessor_key
                     ]
                     if isinstance(postprocessors[postprocessor_key], nn.Module)
@@ -250,7 +261,7 @@ class ContrastivePretraining(L.LightningModule):
 
         if modality_loss_pairs is None:
             modality_loss_pairs = [
-                LossPairSpec(modalities=(m1.value, m2.value))
+                LossPairSpec(modalities=(m1.name, m2.name))
                 for m1, m2 in itertools.combinations(self._available_modalities, 2)
             ]
 
@@ -280,7 +291,7 @@ class ContrastivePretraining(L.LightningModule):
                 )
 
             self.auxiliary_tasks[task_name] = task_spec.task(
-                self.encoders[Modalities.get_modality(task_spec.modality)]
+                self.encoders[Modalities.get_modality(task_spec.modality).name]
             )
 
         if loss is None and (compute_validation_loss or compute_test_loss):
@@ -304,14 +315,12 @@ class ContrastivePretraining(L.LightningModule):
                     )
         self.evaluation_tasks = evaluation_tasks
 
-    def encode(
-        self, inputs: Dict[Union[str, Modality], Any], modality: Modality
-    ) -> torch.Tensor:
+    def encode(self, inputs: Dict[str, Any], modality: Modality) -> torch.Tensor:
         """Encode the input values for the given modality.
 
         Parameters
         ----------
-        inputs : Dict[Union[str, Modality], Any]
+        inputs : Dict[str, Any]
             Input values.
         modality : Modality
             The modality to encode.
@@ -321,24 +330,22 @@ class ContrastivePretraining(L.LightningModule):
         torch.Tensor
             The encoded values for the specified modality.
         """
-        output = self.encoders[modality](inputs)[0]
+        output = self.encoders[modality.name](inputs)[0]
 
-        if self.heads and modality in self.heads:
-            output = self.heads[modality](output)
+        if self.heads and modality.name in self.heads:
+            output = self.heads[modality.name](output)
 
-        if self.postprocessors and modality in self.postprocessors:
-            output = self.postprocessors[modality](output)
+        if self.postprocessors and modality.name in self.postprocessors:
+            output = self.postprocessors[modality.name](output)
 
         return output
 
-    def forward(
-        self, inputs: Dict[Union[str, Modality], Any]
-    ) -> Dict[str, torch.Tensor]:
+    def forward(self, inputs: Dict[str, Any]) -> Dict[str, torch.Tensor]:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[Union[str, Modality], Any]
+        inputs : Dict[str, Any]
             The input tensors to encode.
 
         Returns
@@ -360,10 +367,7 @@ class ContrastivePretraining(L.LightningModule):
         return outputs
 
     def _compute_loss(
-        self,
-        batch: Dict[Union[str, Modality], Any],
-        batch_idx: int,
-        outputs: Dict[str, torch.Tensor],
+        self, batch: Dict[str, Any], batch_idx: int, outputs: Dict[str, torch.Tensor]
     ) -> Optional[torch.Tensor]:
         if self.loss_fn is None:
             return None
@@ -374,8 +378,8 @@ class ContrastivePretraining(L.LightningModule):
             modality_b = Modalities.get_modality(loss_pair.modalities[1])
 
             indices_a, indices_b = find_matching_indices(
-                batch["example_ids"][modality_a],
-                batch["example_ids"][modality_b],
+                batch["example_ids"][modality_a.name],
+                batch["example_ids"][modality_b.name],
             )
             if indices_a.numel() == 0 or indices_b.numel() == 0:
                 continue
@@ -406,26 +410,16 @@ class ContrastivePretraining(L.LightningModule):
 
                 auxiliary_losses.append(task_spec.loss_weight * auxiliary_task_loss)
                 if self.log_auxiliary_tasks_loss:
-                    self.log(
-                        f"train/{task_name}_loss",
-                        auxiliary_task_loss
-                        if not self.fabric
-                        else self.all_gather(
-                            auxiliary_task_loss.clone().detach()
-                        ).mean(),
-                        sync_dist=True,
-                    )
+                    self.log(f"train/{task_name}_loss", auxiliary_task_loss)
 
         return torch.stack(contrastive_losses + auxiliary_losses).sum()
 
-    def training_step(
-        self, batch: Dict[Union[str, Modality], Any], batch_idx: int
-    ) -> torch.Tensor:
+    def training_step(self, batch: Dict[str, Any], batch_idx: int) -> torch.Tensor:
         """Compute the loss for the batch.
 
         Parameters
         ----------
-        batch : Dict[Union[str, Modality], Any]
+        batch : Dict[str, Any]
             The batch of data to process.
         batch_idx : int
             The index of the batch.
@@ -437,15 +431,11 @@ class ContrastivePretraining(L.LightningModule):
         """
         outputs = self(batch)
         loss = self._compute_loss(batch, batch_idx, outputs)
+
         if loss is None:
             raise ValueError("The loss function must be provided for training.")
 
-        self.log(
-            "train/loss",
-            loss if not self.fabric else self.all_gather(loss.clone().detach()).mean(),
-            prog_bar=True,
-            sync_dist=True,
-        )
+        self.log("train/loss", loss, prog_bar=True)
 
         return loss
 
@@ -617,39 +607,22 @@ class ContrastivePretraining(L.LightningModule):
         torch.Tensor or None
             The loss for the batch or None if the loss function is not provided.
         """
-        outputs = self(batch)
         loss: Optional[torch.Tensor] = None
         if (eval_type == "val" and self.compute_validation_loss) or (
             eval_type == "test" and self.compute_test_loss
         ):
+            outputs = self(batch)
             loss = self._compute_loss(batch, batch_idx, outputs)
-            if loss is not None:
-                self.log(
-                    f"{eval_type}/loss",
-                    loss
-                    if not self.fabric
-                    else self.all_gather(loss.clone().detach()).mean(),
-                    prog_bar=True,
-                    sync_dist=True,
-                )
+            if loss is not None and not self.trainer.sanity_checking:
+                self.log(f"{eval_type}/loss", loss, prog_bar=True)
 
         if self.evaluation_tasks:
             for task_spec in self.evaluation_tasks.values():
                 if (eval_type == "val" and task_spec.run_on_validation) or (
                     eval_type == "test" and task_spec.run_on_test
                 ):
-                    batch_result = task_spec.task.evaluation_step(
-                        self.trainer, self, batch, batch_idx
-                    )
-                    if batch_result:
-                        for key, value in batch_result.items():
-                            self.log(
-                                f"{eval_type}/{key}_step",
-                                value,
-                                on_step=True,
-                                on_epoch=False,
-                                sync_dist=True,
-                            )
+                    task_spec.task.evaluation_step(self, batch, batch_idx)
+
         return loss
 
     def _on_eval_epoch_end(self, eval_type: Literal["val", "test"]) -> None:
@@ -659,7 +632,4 @@ class ContrastivePretraining(L.LightningModule):
                 if (eval_type == "val" and task_spec.run_on_validation) or (
                     eval_type == "test" and task_spec.run_on_test
                 ):
-                    results = task_spec.task.on_evaluation_epoch_end(self)
-                    if results:
-                        for key, value in results.items():
-                            self.log(f"{eval_type}/{key}", value)
+                    task_spec.task.on_evaluation_epoch_end(self)

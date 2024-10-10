@@ -59,7 +59,7 @@ environment, remove the `hydra.launcher.*` arguments.
 ### Evaluation
 To run taxonomic classification evaluation task on the BIOSCAN-1M dataset, use the following command:
 ```bash
-mmlearn_run 'hydra.searchpath=[pkg://projects.bioscan_clip.configs]' +experiment=bioscan_1m experiment_name=bioscan1m_eval job_type=eval resume_from_checkpoint=<path_to_checkpoint> strict_loading=false trainer.devices=1
+mmlearn_run 'hydra.searchpath=[pkg://projects.bioscan_clip.configs]' +experiment=bioscan_1m experiment_name=bioscan1m_eval job_type=eval resume_from_checkpoint=<path_to_checkpoint> trainer.devices=1
 ```
 
 <details>

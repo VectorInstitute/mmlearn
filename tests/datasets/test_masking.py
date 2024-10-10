@@ -23,7 +23,7 @@ def test_random_masking() -> None:
     )
 
     torch.testing.assert_close(
-        tokenizer_output[Modalities.TEXT][:4], torch.tensor([0, 250, 1345, 9])
+        tokenizer_output[Modalities.TEXT.name][:4], torch.tensor([0, 250, 1345, 9])
     )
 
     _, _, mask = mask_generator(

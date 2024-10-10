@@ -1,7 +1,7 @@
 """Zero-shot cross-modal retrieval evaluation task."""
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import lightning.pytorch as pl
 import torch
@@ -11,7 +11,6 @@ from hydra_zen import store
 from torchmetrics import MetricCollection
 
 from mmlearn.datasets.core import Modalities
-from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.metrics import RetrievalRecallAtK
 from mmlearn.tasks.hooks import EvaluationHooks
 
@@ -48,14 +47,13 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
         super().__init__()
 
         self.task_specs = task_specs
-        self.metrics: Dict[Tuple[Modality, Modality], MetricCollection] = {}
+        self.metrics: Dict[Tuple[str, str], MetricCollection] = {}
 
         for spec in self.task_specs:
-            assert Modalities.has_modality(spec.query_modality)
-            assert Modalities.has_modality(spec.target_modality)
-
-            query_modality = Modalities.get_modality(spec.query_modality)
-            target_modality = Modalities.get_modality(spec.target_modality)
+            query_modality = spec.query_modality
+            target_modality = spec.target_modality
+            assert Modalities.has_modality(query_modality)
+            assert Modalities.has_modality(target_modality)
 
             self.metrics[(query_modality, target_modality)] = MetricCollection(
                 {
@@ -73,7 +71,6 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
     def evaluation_step(
         self,
-        trainer: pl.Trainer,
         pl_module: pl.LightningModule,
         batch: Dict[str, torch.Tensor],
         batch_idx: int,
@@ -82,8 +79,6 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
         Parameters
         ----------
-        trainer : pl.Trainer
-            A reference to the Lightning Trainer.
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
         batch : Dict[str, torch.Tensor]
@@ -92,28 +87,47 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
             The index of the batch.
 
         """
-        if trainer.sanity_checking:
+        if pl_module.trainer.sanity_checking:
             return
 
-        outputs: Dict[Union[str, Modality], Any] = pl_module(batch)
+        outputs: Dict[str, Any] = pl_module(batch)
         for (query_modality, target_modality), metric in self.metrics.items():
-            query_embeddings: torch.Tensor = outputs[query_modality.embedding]
-            target_embeddings: torch.Tensor = outputs[target_modality.embedding]
+            query_embeddings: torch.Tensor = outputs[
+                Modalities.get_modality(query_modality).embedding
+            ]
+            target_embeddings: torch.Tensor = outputs[
+                Modalities.get_modality(target_modality).embedding
+            ]
             indexes = torch.arange(query_embeddings.size(0), device=pl_module.device)
 
             metric.update(query_embeddings, target_embeddings, indexes)
 
-    def on_evaluation_epoch_end(self, pl_module: pl.LightningModule) -> Dict[str, Any]:
+    def on_evaluation_epoch_end(
+        self, pl_module: pl.LightningModule
+    ) -> Optional[Dict[str, Any]]:
         """Compute the retrieval recall metrics.
 
         Parameters
         ----------
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
+
+        Returns
+        -------
+        Optional[Dict[str, Any]]
+            A dictionary of evaluation results or `None` if no results are available.
         """
+        if pl_module.trainer.sanity_checking:
+            return None
+
         results = {}
         for metric in self.metrics.values():
             results.update(metric.compute())
             metric.reset()
+
+        eval_type = "val" if pl_module.trainer.validating else "test"
+
+        for key, value in results.items():
+            pl_module.log(f"{eval_type}/{key}", value)
 
         return results

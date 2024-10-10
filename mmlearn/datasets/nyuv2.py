@@ -201,8 +201,8 @@ class NYUv2Dataset(Dataset[Example]):
 
         return Example(
             {
-                Modalities.RGB: rgb_image,
-                Modalities.DEPTH: depth_image,
+                Modalities.RGB.name: rgb_image,
+                Modalities.DEPTH.name: depth_image,
                 EXAMPLE_INDEX_KEY: idx,
                 Modalities.DEPTH.target: self.samples[idx][2],
             }

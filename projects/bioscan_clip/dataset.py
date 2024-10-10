@@ -159,9 +159,9 @@ class BIOSCANInsectDataset(Dataset[Example]):
         return Example(
             {
                 EXAMPLE_INDEX_KEY: idx,
-                Modalities.RGB: image,
-                Modalities.DNA: dna_seq,
-                Modalities.TEXT: language_input_ids,
+                Modalities.RGB.name: image,
+                Modalities.DNA.name: dna_seq,
+                Modalities.TEXT.name: language_input_ids,
                 "language_token_type_ids": language_token_type_ids,
                 Modalities.TEXT.attention_mask: language_attention_mask,
                 "labels": self.labels[idx],
