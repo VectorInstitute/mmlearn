@@ -26,12 +26,19 @@ class TestZeroShotClassification(unittest.TestCase):
         def encode_side_effect(batch, modality):
             if modality == Modalities.TEXT:
                 # return batch["input_ids"]
-                return torch.tensor([[1, 0, 1],
+                return torch.tensor(
+                    # [[0.7870, 0.7693, 0.8265],
+                    # [0.0201, 0.8326, 0.1889],
+                    # [0.1156, 0.5263, 0.3515],
+                    # [0.0933, 0.6259, 0.4130],
+                    # [0.2087, 0.2893, 0.3422]]
+                    [[1, 0, 1],
                     [0, 0, 1],
                     [1, 1, 1],
                     [0, 1, 0],
                     [1, 1, 1],
-                    [0, 0, 0],], dtype=torch.float)
+                    [0, 0, 0]],
+                    dtype=torch.float)
             else:
                 return torch.tensor([
                     # [12, 43, 234],
