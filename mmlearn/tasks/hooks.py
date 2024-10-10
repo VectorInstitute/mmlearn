@@ -19,11 +19,7 @@ class EvaluationHooks:
         """
 
     def evaluation_step(
-        self,
-        trainer: pl.Trainer,
-        pl_module: pl.LightningModule,
-        batch: Any,
-        batch_idx: int,
+        self, pl_module: pl.LightningModule, batch: Any, batch_idx: int
     ) -> Optional[Mapping[str, Any]]:
         """Run a single evaluation step.
 

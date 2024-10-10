@@ -1,3 +1,5 @@
+datasets~=3.0.1
+openpyxl~=3.1.5
 timm~=1.0.7
 torchvision~=0.19.0
 wandb~=0.18.0

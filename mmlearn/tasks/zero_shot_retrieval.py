@@ -73,7 +73,6 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
     def evaluation_step(
         self,
-        trainer: pl.Trainer,
         pl_module: pl.LightningModule,
         batch: Dict[str, torch.Tensor],
         batch_idx: int,
@@ -82,8 +81,6 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
         Parameters
         ----------
-        trainer : pl.Trainer
-            A reference to the Lightning Trainer.
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
         batch : Dict[str, torch.Tensor]
@@ -92,7 +89,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
             The index of the batch.
 
         """
-        if trainer.sanity_checking:
+        if pl_module.trainer.sanity_checking:
             return
 
         outputs: Dict[Union[str, Modality], Any] = pl_module(batch)

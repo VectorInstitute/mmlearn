@@ -302,6 +302,7 @@ class ContrastivePretraining(L.LightningModule):
                         f"Expected {eval_task_spec.task} to be an instance of `EvaluationHooks` "
                         f"but got {type(eval_task_spec.task)}."
                     )
+
         self.evaluation_tasks = evaluation_tasks
 
     def encode(
@@ -617,11 +618,11 @@ class ContrastivePretraining(L.LightningModule):
         torch.Tensor or None
             The loss for the batch or None if the loss function is not provided.
         """
-        outputs = self(batch)
         loss: Optional[torch.Tensor] = None
         if (eval_type == "val" and self.compute_validation_loss) or (
             eval_type == "test" and self.compute_test_loss
         ):
+            outputs = self(batch)
             loss = self._compute_loss(batch, batch_idx, outputs)
             if loss is not None:
                 self.log(
@@ -639,7 +640,7 @@ class ContrastivePretraining(L.LightningModule):
                     eval_type == "test" and task_spec.run_on_test
                 ):
                     batch_result = task_spec.task.evaluation_step(
-                        self.trainer, self, batch, batch_idx
+                        self, batch, batch_idx
                     )
                     if batch_result:
                         for key, value in batch_result.items():
