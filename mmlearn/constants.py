@@ -12,12 +12,6 @@ data = {
         "mammogram showing {c}",
         "presence of {c} on mammogram",
     ],
-    "HAM10000": [
-        "a histopathology slide showing {c}",
-        "histopathology image of {c}",
-        "pathology tissue showing {c}",
-        "presence of {c} tissue on image",
-    ],
     "PadUfes20": [
         "a histopathology slide showing {c}",
         "histopathology image of {c}",

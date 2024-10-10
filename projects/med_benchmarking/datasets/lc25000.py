@@ -14,7 +14,7 @@ from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
 
 
-@external_store(group="datasets", root_dir=os.getenv("LC25000_LUNG_ROOT_DIR", MISSING))
+@external_store(group="datasets", root_dir=os.getenv("LC25000_COLON_ROOT_DIR", MISSING))
 class LC25000(Dataset[Example]):
     """LC25000 dataset for zero-shot classification.
 
@@ -32,7 +32,7 @@ class LC25000(Dataset[Example]):
         self,
         root_dir: str,
         split: str = "test",
-        organ: Literal["lung", "colon"] = "lung",
+        organ: Literal["lung", "colon"] = "colon",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
     ) -> None:
         """Initialize the LC25000 dataset."""
