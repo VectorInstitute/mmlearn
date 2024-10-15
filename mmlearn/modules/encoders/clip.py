@@ -9,6 +9,7 @@ from hydra_zen import store
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
 from transformers.modeling_outputs import BaseModelOutput
+from transformers.models.clip.configuration_clip import CLIPTextConfig, CLIPVisionConfig
 
 from mmlearn import hf_utils
 from mmlearn.datasets.core import Modalities
@@ -299,11 +300,13 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
         self.use_all_token_embeddings = use_all_token_embeddings
+
         model = hf_utils.load_huggingface_model(
             transformers.CLIPTextModelWithProjection,
-            model_name_or_path=model_name_or_path,
+            model_name_or_path,
             load_pretrained_weights=pretrained,
             model_config_kwargs=model_config_kwargs,
+            config_type=CLIPTextConfig,
         )
 
         model = _freeze_text_model(model, freeze_layers, freeze_layer_norm)
@@ -416,11 +419,13 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
         self.use_all_token_embeddings = use_all_token_embeddings
+
         model = hf_utils.load_huggingface_model(
             transformers.CLIPVisionModelWithProjection,
-            model_name_or_path=model_name_or_path,
+            model_name_or_path,
             load_pretrained_weights=pretrained,
             model_config_kwargs=model_config_kwargs,
+            config_type=CLIPVisionConfig,
         )
 
         model = _freeze_vision_model(model, freeze_layers, freeze_layer_norm)
