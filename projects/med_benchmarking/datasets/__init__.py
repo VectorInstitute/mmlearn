@@ -72,17 +72,27 @@ def med_clip_vision_transform(
     transforms.Compose
         Composed transforms for training CLIP with medical images.
     """
+    if job_type == "train":
+        return transforms.Compose(
+            [
+                ResizeKeepRatio(512, interpolation="bicubic"),
+                transforms.RandomCrop(image_crop_size),
+                transforms.RGB(),
+                transforms.ToImage(),
+                transforms.ToDtype(torch.float32, scale=True),
+                transforms.Normalize(
+                    mean=[0.48145466, 0.4578275, 0.40821073],
+                    std=[0.26862954, 0.26130258, 0.27577711],
+                ),
+            ]
+        )
     return transforms.Compose(
         [
-            ResizeKeepRatio(
-                512 if job_type == "train" else image_crop_size, interpolation="bicubic"
-            ),
-            transforms.RandomCrop(image_crop_size)
-            if job_type == "train"
-            else transforms.CenterCrop(image_crop_size),
+            ResizeKeepRatio(image_crop_size, interpolation="bicubic"),
+            transforms.CenterCrop(image_crop_size),
             transforms.RGB(),
             transforms.ToImage(),
-            transforms.ToDtype(torch.float32),
+            transforms.ToDtype(torch.float32, scale=True),
             transforms.Normalize(
                 mean=[0.48145466, 0.4578275, 0.40821073],
                 std=[0.26862954, 0.26130258, 0.27577711],
