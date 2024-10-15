@@ -1,10 +1,10 @@
 import os
 from typing import Callable, Dict, Optional
 
+import pandas as pd
 import torch
 from omegaconf import MISSING
 from PIL import Image
-import pandas as pd
 from torch.utils.data import Dataset
 from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
@@ -35,17 +35,21 @@ class HAM10000(Dataset[Example]):
         self.root_dir = root_dir
         self.metadata = pd.read_csv(os.path.join(root_dir, "HAM10000_metadata.csv"))
 
-        self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()]) if transform is None else transform
+        self.transform = (
+            Compose([Resize(224), CenterCrop(224), ToTensor()])
+            if transform is None
+            else transform
+        )
 
     @property
     def zero_shot_prompt_templates(self) -> list[str]:
         """Return the zero-shot prompt templates."""
         return [
-        "a histopathology slide showing {}",
-        "histopathology image of {}",
-        "pathology tissue showing {}",
-        "presence of {} tissue on image",
-    ]
+            "a histopathology slide showing {}",
+            "histopathology image of {}",
+            "pathology tissue showing {}",
+            "presence of {} tissue on image",
+        ]
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
@@ -54,11 +58,13 @@ class HAM10000(Dataset[Example]):
     def __getitem__(self, idx: int) -> Example:
         """Return the idx'th data sample as an Example instance."""
         entry = self.metadata.iloc[idx]
-        image_path = os.path.join(self.root_dir, "skin_cancer", f"{entry['image_id']}.jpg")
+        image_path = os.path.join(
+            self.root_dir, "skin_cancer", f"{entry['image_id']}.jpg"
+        )
 
         with Image.open(image_path) as img:
             image = img.convert("RGB")
-        
+
         if self.transform is not None:
             image = self.transform(image)
 
@@ -66,7 +72,7 @@ class HAM10000(Dataset[Example]):
 
         return Example(
             {
-                Modalities.RGB: image,
+                Modalities.RGB.name: image,
                 Modalities.RGB.target: label_index,
                 EXAMPLE_INDEX_KEY: idx,
             }

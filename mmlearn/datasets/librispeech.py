@@ -108,8 +108,8 @@ class LibriSpeech(Dataset[Example]):
 
         return Example(
             {
-                Modalities.AUDIO: waveform,
-                Modalities.TEXT: transcript,
+                Modalities.AUDIO.name: waveform,
+                Modalities.TEXT.name: transcript,
                 EXAMPLE_INDEX_KEY: idx,
             },
         )

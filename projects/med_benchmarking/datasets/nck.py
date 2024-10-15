@@ -1,30 +1,31 @@
 """NCK CRC Dataset."""
 
 import os
+import random
+from typing import Callable, Dict, Optional, Union
+
 import torch
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor
-from typing import Callable, Optional, Union, Dict
-import random
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
-from omegaconf import MISSING
+from datasets import load_dataset, load_from_disk
 from mmlearn.conf import external_store
-from mmlearn.datasets.core.example import Example
-from mmlearn.datasets.core import Modalities
 from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
-from datasets import load_from_disk, load_dataset
+from mmlearn.datasets.core import Modalities
+from mmlearn.datasets.core.example import Example
 
 
 @external_store(group="datasets", root_dir=os.getenv("NCK_CRC_ROOT_DIR", MISSING))
-class NCK_CRC(Dataset[Example]):
+class NckCrc(Dataset[Example]):
     """NCK CRC dataset for colorectal cancer classification.
-    
+
     Parameters
     ----------
     root_dir : str
         Path to the dataset directory or cache directory.
-    split : str
+    split : str, default='train'
         Dataset split, one of 'train', 'train_nonorm', or 'validation'.
     transform : Optional[Callable], default=None
         Transform applied to images.
@@ -35,7 +36,7 @@ class NCK_CRC(Dataset[Example]):
     def __init__(
         self,
         root_dir: str,
-        split: str = "validation",
+        split: str = "train",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         tokenizer: Optional[
             Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
@@ -45,8 +46,12 @@ class NCK_CRC(Dataset[Example]):
         ] = None,
     ) -> None:
         """Initialize the NCK CRC dataset."""
-        assert split in ("train", "train_nonorm", "validation"), f"Invalid split: {split}"
-        
+        assert split in (
+            "train",
+            "train_nonorm",
+            "validation",
+        ), f"Invalid split: {split}"
+
         # Class mapping for labels
         self.class_mapping = {
             "ADI": 0,
@@ -71,7 +76,9 @@ class NCK_CRC(Dataset[Example]):
                 cache_dir=os.path.join(root_dir, "scratch/"),
                 split=split,
             )
-            dataset = dataset.filter(lambda row: row["label"] != "BACK")  # Exclude "BACK" label
+            dataset = dataset.filter(
+                lambda row: row["label"] != "BACK"
+            )  # Exclude "BACK" label
             dataset.save_to_disk(cache_path)
 
         self.data = dataset
@@ -92,7 +99,9 @@ class NCK_CRC(Dataset[Example]):
         image = entry["image"]
         label = self.class_mapping[entry["label"]]
         label_description = self.get_label_mapping()[label]
-        description = random.choice(TEMPLATES[self.__class__.__name__])(label_description)
+        description = random.choice(TEMPLATES[self.__class__.__name__])(
+            label_description
+        )
         tokens = self.tokenizer(description) if self.tokenizer is not None else None
 
         if self.transform is not None:
@@ -103,8 +112,8 @@ class NCK_CRC(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: label_description,
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: label_description,
                 Modalities.RGB.target: label,
                 EXAMPLE_INDEX_KEY: idx,
             }
@@ -112,10 +121,12 @@ class NCK_CRC(Dataset[Example]):
 
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
-                assert Modalities.TEXT in tokens, f"Missing key `{Modalities.TEXT}` in tokens."
+                assert (
+                    Modalities.TEXT.name in tokens
+                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         return example
 

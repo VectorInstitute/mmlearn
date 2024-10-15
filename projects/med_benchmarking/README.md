@@ -34,5 +34,5 @@ mmlearn_run --multirun hydra.launcher.mem_gb=32 hydra.launcher.qos=your_qos hydr
 
 To run zero-shot retrieval evaluation on a pretrained model locally (on the ROCO dataset, as an example), use the following command:
 ```bash
-mmlearn_run 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=baseline experiment_name=test_eval job_type=eval datasets@datasets.test=ROCO datasets.test.split=test +datasets/tokenizers@dataloader.test.collate_fn.batch_processors.text=HFCLIPTokenizer +datasets/transforms@datasets.test.transform=med_clip_vision_transform datasets.test.transform.job_type=eval dataloader.test.batch_size=32 dataloader.test.num_workers=4 strict_loading=False resume_from_checkpoint=/path/to/checkpoint
+mmlearn_run 'hydra.searchpath=[pkg://projects.med_benchmarking.configs]' +experiment=baseline job_type=eval +datasets@datasets.test=ROCO datasets.test.split=test +datasets/tokenizers@dataloader.test.collate_fn.batch_processors.text=HFCLIPTokenizer +datasets/transforms@datasets.test.transform=med_clip_vision_transform datasets.test.transform.job_type=eval dataloader.test.batch_size=32 dataloader.test.num_workers=2 resume_from_checkpoint=/path/to/your/checkpoint experiment_name=test
 ```

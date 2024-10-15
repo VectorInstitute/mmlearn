@@ -59,7 +59,7 @@ environment, remove the `hydra.launcher.*` arguments.
 ### Evaluation
 To run taxonomic classification evaluation task on the BIOSCAN-1M dataset, use the following command:
 ```bash
-mmlearn_run 'hydra.searchpath=[pkg://projects.bioscan_clip.configs]' +experiment=bioscan_1m experiment_name=bioscan1m_eval job_type=eval resume_from_checkpoint=<path_to_checkpoint> strict_loading=false trainer.devices=1
+mmlearn_run 'hydra.searchpath=[pkg://projects.bioscan_clip.configs]' +experiment=bioscan_1m experiment_name=bioscan1m_eval job_type=eval resume_from_checkpoint=<path_to_checkpoint> trainer.devices=1
 ```
 
 <details>
@@ -80,6 +80,6 @@ results we obtained from our experiments.
 
 There are 3 values for each metric in the table. The first value is the original result from the paper. The second value is the
 average result we obtained from running the experiment with LoRA applied only to the query and value embeddings. The third value is
-the average result we obtained from running the experiment with LoRA applied to both the query, key and value embeddings.
+the average result we obtained from running the experiment with LoRA applied to all three  query, key, and value matrices.
 
 </details>

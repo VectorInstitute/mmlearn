@@ -118,8 +118,8 @@ class PadUfes20(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: label,
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: label,
                 Modalities.RGB.target: int(entry["label"]),
                 EXAMPLE_INDEX_KEY: idx,
             }
@@ -128,11 +128,11 @@ class PadUfes20(Dataset[Example]):
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
                 assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
+                    Modalities.TEXT.name in tokens
+                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         return example
 

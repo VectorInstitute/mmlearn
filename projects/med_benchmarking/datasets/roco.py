@@ -92,8 +92,8 @@ class ROCO(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: caption,
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: caption,
                 EXAMPLE_INDEX_KEY: idx,
             }
         )
@@ -101,11 +101,11 @@ class ROCO(Dataset[Example]):
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
                 assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
+                    Modalities.TEXT.name in tokens
+                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         return example
 

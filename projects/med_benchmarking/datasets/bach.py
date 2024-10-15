@@ -1,25 +1,26 @@
 """BACH Dataset."""
 
 import os
+import random
+from typing import Callable, Dict, Optional, Union
+
 import torch
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor
-from typing import Callable, Optional, Union, Dict
-import random
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
-from omegaconf import MISSING
-from mmlearn.conf import external_store
-from mmlearn.datasets.core.example import Example
-from mmlearn.datasets.core import Modalities
-from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
 from datasets import load_dataset
+from mmlearn.conf import external_store
+from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.datasets.core import Modalities
+from mmlearn.datasets.core.example import Example
 
 
 @external_store(group="datasets", root_dir=os.getenv("BACH_ROOT_DIR", MISSING))
 class BACH(Dataset[Example]):
     """BACH dataset for breast cancer classification.
-    
+
     Parameters
     ----------
     root_dir : str
@@ -52,7 +53,9 @@ class BACH(Dataset[Example]):
             cache_dir=os.path.join(root_dir, "scratch/"),
             split="train",
         )
-        data_dict = dataset.train_test_split(test_size=0.25, train_size=0.75, shuffle=True, seed=0)
+        data_dict = dataset.train_test_split(
+            test_size=0.25, train_size=0.75, shuffle=True, seed=0
+        )
         self.data = data_dict[split]
 
         if processor is None and transform is None:
@@ -75,7 +78,9 @@ class BACH(Dataset[Example]):
         image = entry["image"]
         label = int(entry["label"])
         label_description = self.get_label_mapping()[label]
-        description = random.choice(TEMPLATES[self.__class__.__name__])(label_description)
+        description = random.choice(TEMPLATES[self.__class__.__name__])(
+            label_description
+        )
         tokens = self.tokenizer(description) if self.tokenizer is not None else None
 
         if self.transform is not None:
@@ -86,8 +91,8 @@ class BACH(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: label_description,
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: label_description,
                 Modalities.RGB.target: int(entry["label"]),
                 EXAMPLE_INDEX_KEY: idx,
             }
@@ -96,11 +101,11 @@ class BACH(Dataset[Example]):
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
                 assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
+                    Modalities.TEXT.name in tokens
+                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         return example
 

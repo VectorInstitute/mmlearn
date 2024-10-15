@@ -176,8 +176,8 @@ class MedVQA(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.TEXT: question,
-                Modalities.RGB: image_data,
+                Modalities.TEXT.name: question,
+                Modalities.RGB.name: image_data,
                 EXAMPLE_INDEX_KEY: index,
                 "qid": entry["qid"],
                 "answer_type": entry["answer_type"],

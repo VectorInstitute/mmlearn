@@ -1,21 +1,22 @@
-import sys
 import logging
+import sys
 from typing import Any, Dict, Optional, Union
 
 import faiss
 import lightning.pytorch as pl
-from lightning.pytorch.utilities import move_data_to_device
 import numpy as np
+import torch
+import torch.distributed as dist
+from lightning.pytorch.utilities import move_data_to_device
 from rich.console import Console
 from rich.table import Table
 from sklearn.preprocessing import normalize
-import torch
-import torch.distributed as dist
 
 from mmlearn.conf import external_store
-from mmlearn.datasets.core.modalities import Modality, Modalities
 from mmlearn.datasets.core import find_matching_indices
+from mmlearn.datasets.core.modalities import Modalities, Modality
 from mmlearn.tasks.hooks import EvaluationHooks
+
 
 logger = logging.getLogger(__name__)
 
@@ -45,31 +46,27 @@ class TaxonomicClassification(EvaluationHooks):
 
     def on_evaluation_epoch_start(self, pl_module: pl.LightningModule) -> None:
         # initialize the dictionary to store the embeddings and labels
-        self.embedding_store: Dict[str, Dict[Union[str, Modality], Any]] = {}
+        self._embedding_store: Dict[str, Dict[str, Any]] = {}
 
     def evaluation_step(  # noqa: PLR0912
-        self,
-        trainer: pl.Trainer,
-        pl_module: pl.LightningModule,
-        batch: Dict[Union[Modality, str], Any],
-        batch_idx: int,
+        self, pl_module: pl.LightningModule, batch: Dict[str, Any], batch_idx: int
     ) -> None:
-        if trainer.sanity_checking:
+        if pl_module.trainer.sanity_checking:
             return
 
         assert (
-            Modalities.RGB in batch
-            and Modalities.DNA in batch
-            and Modalities.TEXT in batch
-        ), "The batch must contain the RGB, DNA and TEXT modalities"
+            Modalities.RGB.name in batch
+            and Modalities.DNA.name in batch
+            and Modalities.TEXT.name in batch
+        ), "The batch must contain the RGB, DNA and text modalities"
 
-        outputs: Dict[Union[str, Modality], Any] = pl_module(batch)
+        outputs: Dict[str, Any] = pl_module(batch)
 
         splits_batch = batch["split"]
         labels_batch = batch["labels"]
         process_ids_batch = batch["process_id"]
 
-        if trainer._accelerator_connector.is_distributed:
+        if pl_module.trainer._accelerator_connector.is_distributed:
             batch = pl_module.all_gather(batch)
             for key in batch:
                 if isinstance(batch[key], torch.Tensor):
@@ -99,19 +96,19 @@ class TaxonomicClassification(EvaluationHooks):
         outputs = move_data_to_device(outputs, "cpu")
 
         _, rgb_indices = find_matching_indices(
-            batch["example_ids"]["split"], batch["example_ids"][Modalities.RGB]
+            batch["example_ids"]["split"], batch["example_ids"][Modalities.RGB.name]
         )
         _, dna_indices = find_matching_indices(
-            batch["example_ids"]["split"], batch["example_ids"][Modalities.DNA]
+            batch["example_ids"]["split"], batch["example_ids"][Modalities.DNA.name]
         )
         _, text_indices = find_matching_indices(
-            batch["example_ids"]["split"], batch["example_ids"][Modalities.TEXT]
+            batch["example_ids"]["split"], batch["example_ids"][Modalities.TEXT.name]
         )
 
         splits = set(splits_batch)
         for split in splits:
-            if split not in self.embedding_store:
-                self.embedding_store[split] = {}
+            if split not in self._embedding_store:
+                self._embedding_store[split] = {}
 
             # get the indices of the examples in the current split
             split_indices = torch.asarray(
@@ -142,51 +139,51 @@ class TaxonomicClassification(EvaluationHooks):
             )
 
             # store the embeddings
-            self.embedding_store[split].setdefault(Modalities.RGB.embedding, []).append(
-                rgb_embeddings
-            )
-            self.embedding_store[split].setdefault(Modalities.DNA.embedding, []).append(
-                dna_embeddings
-            )
-            self.embedding_store[split].setdefault(
+            self._embedding_store[split].setdefault(
+                Modalities.RGB.embedding, []
+            ).append(rgb_embeddings)
+            self._embedding_store[split].setdefault(
+                Modalities.DNA.embedding, []
+            ).append(dna_embeddings)
+            self._embedding_store[split].setdefault(
                 Modalities.TEXT.embedding, []
             ).append(text_embeddings)
-            self.embedding_store[split].setdefault("concatenated_embedding", []).append(
-                concatenated_embeddings
-            )
-            self.embedding_store[split].setdefault("averaged_embedding", []).append(
+            self._embedding_store[split].setdefault(
+                "concatenated_embedding", []
+            ).append(concatenated_embeddings)
+            self._embedding_store[split].setdefault("averaged_embedding", []).append(
                 averaged_embeddings
             )
-            self.embedding_store[split].setdefault("process_ids", []).extend(
+            self._embedding_store[split].setdefault("process_ids", []).extend(
                 process_ids
             )
-            self.embedding_store[split].setdefault("labels", []).extend(labels)
+            self._embedding_store[split].setdefault("labels", []).extend(labels)
 
             if split == "all_keys":
-                self.embedding_store[split].setdefault("all_key_embedding", []).append(
+                self._embedding_store[split].setdefault("all_key_embedding", []).append(
                     torch.cat([rgb_embeddings, dna_embeddings, text_embeddings], dim=0)
                 )
-                self.embedding_store[split].setdefault("all_key_labels", []).extend(
+                self._embedding_store[split].setdefault("all_key_labels", []).extend(
                     labels + labels + labels
                 )
 
     def on_evaluation_epoch_end(self, pl_module: pl.LightningModule) -> Dict[str, Any]:
         # concatenate the embeddings for the entire dataset
-        if not self.embedding_store:
+        if not self._embedding_store:
             return {}
 
-        for split in self.embedding_store:
-            self.embedding_store[split] = {
+        for split in self._embedding_store:
+            self._embedding_store[split] = {
                 key: torch.cat(value, dim=0)
                 if isinstance(value[0], torch.Tensor)
                 else value
-                for key, value in self.embedding_store[split].items()
+                for key, value in self._embedding_store[split].items()
             }
 
         acc_dict, _, _ = _inference_and_print_result(
-            self.embedding_store["all_keys"],
-            self.embedding_store["val_seen"],
-            self.embedding_store["val_unseen"],
+            self._embedding_store["all_keys"],
+            self._embedding_store["val_seen"],
+            self._embedding_store["val_unseen"],
             k_list=self.top_k,
         )
         _print_micro_and_macro_acc(acc_dict, self.top_k)
@@ -202,7 +199,7 @@ class TaxonomicClassification(EvaluationHooks):
         }
 
         # clear the embeddings store
-        self.embedding_store.clear()
+        self._embedding_store.clear()
 
         return results
 
@@ -408,9 +405,9 @@ def _print_micro_and_macro_acc(
 
 
 def _inference_and_print_result(
-    keys_dict: Dict[Union[str, Modality], Any],
-    seen_dict: Dict[Union[str, Modality], Any],
-    unseen_dict: Dict[Union[str, Modality], Any],
+    keys_dict: Dict[str, Any],
+    seen_dict: Dict[str, Any],
+    unseen_dict: Dict[str, Any],
     k_list: Optional[list[int]] = None,
 ) -> tuple[
     dict[str, dict[str, dict[str, dict[str, dict[int, dict[str, float]]]]]],

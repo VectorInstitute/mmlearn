@@ -113,12 +113,12 @@ class TimmViT(nn.Module):
                             (not freeze_layer_norm) if "norm" in name else False
                         )
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
+    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str | Modality, Any]
+        inputs : Dict[str, Any]
             The input data. The `image` will be expected under the `Modalities.RGB` key.
 
         Returns
@@ -126,7 +126,7 @@ class TimmViT(nn.Module):
         BaseModelOutput
             The output of the model.
         """
-        x = inputs[Modalities.RGB]
+        x = inputs[Modalities.RGB.name]
         last_hidden_state, hidden_states = self.model.forward_intermediates(
             x, output_fmt="NLC"
         )

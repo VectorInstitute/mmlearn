@@ -3,17 +3,20 @@
 import os
 import pickle
 import random
-from typing import Callable, Optional, Union, Dict
+from typing import Callable, Dict, Optional, Union
+
 import torch
-from datasets import load_dataset
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor
-from omegaconf import MISSING
-from mmlearn.datasets.core.example import Example
-from mmlearn.datasets.core import Modalities
-from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
+
+from datasets import load_dataset
 from mmlearn.conf import external_store
+from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.datasets.core import Modalities
+from mmlearn.datasets.core.example import Example
+
 
 @external_store(group="datasets", root_dir=os.getenv("PCAM_ROOT_DIR", MISSING))
 class PCAM(Dataset[Example]):
@@ -36,7 +39,7 @@ class PCAM(Dataset[Example]):
     def __init__(
         self,
         root_dir: str,
-        split: str = "test",
+        split: str = "train",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         tokenizer: Optional[
             Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
@@ -50,18 +53,21 @@ class PCAM(Dataset[Example]):
 
         if os.path.exists(cache_path):
             print("!!!Using cached dataset")
-            self.data = pickle.load(open(cache_path, "rb"))
+            with open(cache_path, "rb") as f:
+                self.data = pickle.load(f)
         else:
             os.makedirs(os.path.join(root_dir, "cache/"), exist_ok=True)
             dataset = load_dataset(
-                "1aurent/PatchCamelyon",
-                cache_dir=os.path.join(root_dir, "scratch/")
+                "1aurent/PatchCamelyon", cache_dir=os.path.join(root_dir, "scratch/")
             )[split]
 
             self.data = dataset
-            pickle.dump(self.data, open(cache_path, "wb"))
+            with open(cache_path, "wb") as f:
+                pickle.dump(self.data, f)
 
-        self.transform = transform or Compose([Resize(224), CenterCrop(224), ToTensor()])
+        self.transform = transform or Compose(
+            [Resize(224), CenterCrop(224), ToTensor()]
+        )
         self.tokenizer = tokenizer
         self.processor = processor
 
@@ -77,7 +83,7 @@ class PCAM(Dataset[Example]):
 
         if self.transform is not None:
             image = self.transform(image)
-        
+
         if self.tokenizer is not None:
             tokens = self.tokenizer(str(label))
             description = random.choice(TEMPLATES[self.__class__.__name__])(label)
@@ -88,8 +94,8 @@ class PCAM(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: str(label),
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: str(label),
                 Modalities.RGB.target: label,
                 EXAMPLE_INDEX_KEY: idx,
             }
@@ -98,17 +104,14 @@ class PCAM(Dataset[Example]):
         if isinstance(tokens, dict):
             example.update(tokens)
         else:
-            example[Modalities.TEXT] = tokens
+            example[Modalities.TEXT.name] = tokens
 
         return example
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
         return len(self.data)
-    
+
     def get_label_mapping(self) -> str:
         """Return the mapping of labels for the PCAM dataset."""
-        return {
-            0: "lymph node",
-            1: "lymph node containing metastatic tumor tissue"
-        }
+        return {0: "lymph node", 1: "lymph node containing metastatic tumor tissue"}

@@ -58,7 +58,7 @@ class ImageNet(ImageFolder):
         image, target = super().__getitem__(index)
         example = Example(
             {
-                Modalities.RGB: image,
+                Modalities.RGB.name: image,
                 Modalities.RGB.target: target,
                 EXAMPLE_INDEX_KEY: index,
             }

@@ -42,12 +42,16 @@ class ZeroShotClassification(EvaluationHooks):
     ----------
     task_specs : List[ClassificationTaskSpec]
         A list of classification task specifications.
-    """
+    tokenizer : Callable[[Union[str, list[str]]], Union[torch.Tensor, Dict[str, torch.Tensor]]]
+        A function to tokenize text inputs.
+    """  # noqa: W505
 
     def __init__(
         self,
         task_specs: List[ClassificationTaskSpec],
-        tokenizer: Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]],
+        tokenizer: Callable[
+            [Union[str, list[str]]], Union[torch.Tensor, Dict[str, torch.Tensor]]
+        ],
     ):
         super().__init__()
         self.tokenizer = tokenizer
@@ -55,7 +59,7 @@ class ZeroShotClassification(EvaluationHooks):
         for spec in self.task_specs:
             assert Modalities.has_modality(spec.query_modality)
 
-        self.metrics: Dict[tuple[Modality, int], MetricCollection] = {}
+        self.metrics: Dict[tuple[str, int], MetricCollection] = {}
         self._embeddings_store: Dict[int, torch.Tensor] = {}
 
     def on_evaluation_epoch_start(self, pl_module: LightningModule) -> None:
@@ -101,7 +105,7 @@ class ZeroShotClassification(EvaluationHooks):
                 }
 
                 for spec in self.task_specs:
-                    query_modality = Modalities.get_modality(spec.query_modality)
+                    query_modality = Modalities.get_modality(spec.query_modality).name
                     self.metrics[(query_modality, dataset_index)] = (
                         self._create_metrics(
                             num_classes,
@@ -173,12 +177,16 @@ class ZeroShotClassification(EvaluationHooks):
                 continue
 
             class_embeddings = self._embeddings_store[dataset_index]
-            query_embeddings: torch.Tensor = pl_module.encode(batch, query_modality)
+            query_embeddings: torch.Tensor = pl_module.encode(
+                batch, Modalities.get_modality(query_modality)
+            )
             query_embeddings /= query_embeddings.norm(p=2, dim=-1, keepdim=True)
             query_embeddings = query_embeddings[matching_indices]
 
             logits = 100.0 * _safe_matmul(query_embeddings, class_embeddings)
-            targets = batch[query_modality.target][matching_indices]
+            targets = batch[Modalities.get_modality(query_modality).target][
+                matching_indices
+            ]
 
             metric_collection.update(logits, targets)
 
@@ -196,6 +204,11 @@ class ZeroShotClassification(EvaluationHooks):
             metric_collection.reset()
 
         self._embeddings_store.clear()
+
+        eval_type = "val" if pl_module.trainer.validating else "test"
+        for key, value in results.items():
+            pl_module.log(f"{eval_type}/{key}", value)
+
         return results
 
     @staticmethod

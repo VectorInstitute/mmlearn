@@ -1,15 +1,13 @@
 import os
 from typing import Callable, Dict, Optional, Union
+
 import numpy as np
-
 import torch
-
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
+from torchvision.transforms import Compose, Resize, ToTensor
 
-from datasets import load_from_disk
 from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
@@ -73,7 +71,6 @@ class MedMNISTPlus(Dataset[Example]):
 
         self.processor = processor
 
-    
     @property
     def zero_shot_prompt_templates(self) -> list[str]:
         """Return the zero-shot prompt templates."""
@@ -99,13 +96,12 @@ class MedMNISTPlus(Dataset[Example]):
         label_index = int(entry["label"])
         return Example(
             {
-                Modalities.RGB: image,
+                Modalities.RGB.name: image,
                 Modalities.RGB.target: label_index,
                 EXAMPLE_INDEX_KEY: idx,
             }
         )
-        
-        
+
     @property
     def label_mapping(self) -> Dict[int, str]:
         """Return the label mapping based on the dataset name."""
@@ -146,7 +142,7 @@ class MedMNISTPlus(Dataset[Example]):
                 5: "melanocytic nevi",
                 6: "vascular lesions",
             },
-            "octmnist" : {
+            "octmnist": {
                 0: "choroidal neovascularization",
                 1: "diabetic macular edema",
                 2: "drusen",
@@ -156,18 +152,18 @@ class MedMNISTPlus(Dataset[Example]):
                 0: "normal",
                 1: "pneumonia",
             },
-            "retinamnist" : {
+            "retinamnist": {
                 0: "no apparent retinopathy",
                 1: "mild NPDR, non-proliferative diabetic retinopathy",
                 2: "moderate NPDR, non-proliferative diabetic retinopathy",
                 3: "severe NPDR, non-proliferative diabetic retinopathy",
                 4: "PDR, proliferative diabetic retinopathy",
             },
-            "breastmnist" : {
+            "breastmnist": {
                 0: "malignant",
                 1: "normal, benign",
             },
-            "bloodmnist" : {
+            "bloodmnist": {
                 0: "basophil",
                 1: "eosinophil",
                 2: "erythroblast",
@@ -177,7 +173,7 @@ class MedMNISTPlus(Dataset[Example]):
                 6: "neutrophil",
                 7: "platelet",
             },
-            "tissuemnist" : {
+            "tissuemnist": {
                 0: "Collecting Duct, Connecting Tubule",
                 1: "Distal Convoluted Tubule",
                 2: "Glomerular endothelial cells",
@@ -187,7 +183,7 @@ class MedMNISTPlus(Dataset[Example]):
                 6: "Proximal Tubule Segments",
                 7: "Thick Ascending Limb",
             },
-            "organsmnist" : {
+            "organsmnist": {
                 0: "bladder",
                 1: "femur-left",
                 2: "femur-right",
@@ -200,7 +196,7 @@ class MedMNISTPlus(Dataset[Example]):
                 9: "pancreas",
                 10: "spleen",
             },
-            "organcmnist" : {
+            "organcmnist": {
                 0: "bladder",
                 1: "femur-left",
                 2: "femur-right",
@@ -213,7 +209,7 @@ class MedMNISTPlus(Dataset[Example]):
                 9: "pancreas",
                 10: "spleen",
             },
-            "organamnist" : {
+            "organamnist": {
                 0: "bladder",
                 1: "femur-left",
                 2: "femur-right",
@@ -228,4 +224,3 @@ class MedMNISTPlus(Dataset[Example]):
             },
         }
         return label_mappings.get(self.name, {})
-

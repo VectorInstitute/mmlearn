@@ -95,7 +95,7 @@ class LC25000(Dataset[Example]):
 
         return Example(
             {
-                Modalities.RGB: image,
+                Modalities.RGB.name: image,
                 Modalities.RGB.target: int(entry["label"]),
                 EXAMPLE_INDEX_KEY: idx,
             }
