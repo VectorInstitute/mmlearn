@@ -57,7 +57,7 @@ class NckCrc(Dataset[Example]):
             "ADI": 0,
             "DEB": 1,
             "LYM": 2,
-            "MUC": 3,
+            "MUC": 3,  # noqa: F821
             "MUS": 4,
             "NORM": 5,
             "STR": 6,
