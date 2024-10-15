@@ -1,7 +1,7 @@
 """ImageNet dataset."""
 
 import os
-from typing import Any, Callable, Literal, Optional, Callable, Dict, Literal, Optional
+from typing import Any, Callable, Dict, Literal, Optional
 
 from hydra_zen import MISSING, store
 from torchvision.datasets.folder import ImageFolder
@@ -36,7 +36,38 @@ class ImageNet(ImageFolder):
     mask_generator : Optional[Callable[..., Any]], optional, default=None
         Generator for the mask.
     """
-    
+
+    def __init__(
+        self,
+        root_dir: str,
+        split: Literal["train", "val"] = "train",
+        transform: Optional[Callable[..., Any]] = None,
+        target_transform: Optional[Callable[..., Any]] = None,
+        mask_generator: Optional[Callable[..., Any]] = None,
+    ) -> None:
+        """Initialize the dataset."""
+        split = "train" if split == "train" else "val"
+        root_dir = os.path.join(root_dir, split)
+        super().__init__(
+            root=root_dir, transform=transform, target_transform=target_transform
+        )
+        self.mask_generator = mask_generator
+
+    def __getitem__(self, index: int) -> Example:
+        """Get an example at the given index."""
+        image, target = super().__getitem__(index)
+        example = Example(
+            {
+                Modalities.RGB: image,
+                Modalities.RGB.target: target,
+                EXAMPLE_INDEX_KEY: index,
+            }
+        )
+        mask = self.mask_generator() if self.mask_generator else None
+        if mask is not None:  # error will be raised during collation if `None`
+            example[Modalities.RGB.mask] = mask
+        return example
+
     @property
     def zero_shot_prompt_templates(self) -> list[str]:
         """Return the zero-shot prompt templates."""
@@ -120,13 +151,12 @@ class ImageNet(ImageFolder):
             "itap of my {}.",
             "a photo of a cool {}.",
             "a photo of a small {}.",
-            "a tattoo of the {}."
+            "a tattoo of the {}.",
         ]
-        
+
     @property
     def label_mapping(self) -> Dict[int, str]:
         """Return the label mapping."""
-        
         return {
             0: "tench",
             1: "goldfish",
@@ -1129,34 +1159,3 @@ class ImageNet(ImageFolder):
             998: "corn cob",
             999: "toilet paper",
         }
-
-    def __init__(
-        self,
-        root_dir: str,
-        split: Literal["train", "val"] = "val",
-        transform: Optional[Callable[..., Any]] = None,
-        target_transform: Optional[Callable[..., Any]] = None,
-        mask_generator: Optional[Callable[..., Any]] = None,
-    ) -> None:
-        """Initialize the dataset."""
-        split = "train" if split == "train" else "val"
-        root_dir = os.path.join(root_dir, split)
-        super().__init__(
-            root=root_dir, transform=transform, target_transform=target_transform
-        )
-        self.mask_generator = mask_generator
-
-    def __getitem__(self, index: int) -> Example:
-        """Get an example at the given index."""
-        image, target = super().__getitem__(index)
-        example = Example(
-            {
-                Modalities.RGB: image,
-                Modalities.RGB.target: target,
-                EXAMPLE_INDEX_KEY: index,
-            }
-        )
-        mask = self.mask_generator() if self.mask_generator else None
-        if mask is not None:  # error will be raised during collation if `None`
-            example[Modalities.RGB.mask] = mask
-        return example
