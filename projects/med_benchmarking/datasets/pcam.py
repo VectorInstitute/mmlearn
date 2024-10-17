@@ -73,7 +73,6 @@ class PCAM(Dataset[Example]):
 
     def __getitem__(self, idx: int) -> Example:
         """Return the idx'th data sample as an Example instance."""
-        print()
         entry = self.data[idx]
         image = entry["image"].convert("RGB")
         label_idx = int(entry["label"])
