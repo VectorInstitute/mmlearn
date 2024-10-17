@@ -1,18 +1,17 @@
 import os
 
-from omegaconf import MISSING
-from hydra_zen import builds
-from peft import LoraConfig
 import torch
+from hydra_zen import builds
+from omegaconf import MISSING
+from peft import LoraConfig
 
 from mmlearn.conf import external_store
 from mmlearn.modules.encoders.text import HFTextEncoder
 from mmlearn.modules.encoders.vision import TimmViT
-
-from projects.bioscan_clip.encoders import BarcodeBERT
 from projects.bioscan_clip.dataset import BIOSCANInsectDataset
-from projects.bioscan_clip.eval_task import TaxonomicClassification
 from projects.bioscan_clip.dna_tokenizer import DNAProcessor
+from projects.bioscan_clip.encoders import BarcodeBERT
+from projects.bioscan_clip.eval_task import TaxonomicClassification
 
 
 # configurations for encoders

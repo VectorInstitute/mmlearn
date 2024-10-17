@@ -313,6 +313,7 @@ class ContrastivePretraining(L.LightningModule):
                         f"Expected {eval_task_spec.task} to be an instance of `EvaluationHooks` "
                         f"but got {type(eval_task_spec.task)}."
                     )
+
         self.evaluation_tasks = evaluation_tasks
 
     def encode(self, inputs: Dict[str, Any], modality: Modality) -> torch.Tensor:

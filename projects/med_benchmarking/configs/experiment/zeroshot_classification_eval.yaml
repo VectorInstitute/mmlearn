@@ -1,0 +1,171 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.test.bach: BACH
+  - /datasets/transforms@datasets.test.bach.transform: med_clip_vision_transform
+  - /datasets@datasets.test.ham10k: HAM10000
+  - /datasets/transforms@datasets.test.ham10k.transform: med_clip_vision_transform
+  - /datasets@datasets.test.lc25k_lung: LC25000
+  - /datasets/transforms@datasets.test.lc25k_lung.transform: med_clip_vision_transform
+  - /datasets@datasets.test.lc25k_colon: LC25000
+  - /datasets/transforms@datasets.test.lc25k_colon.transform: med_clip_vision_transform
+  - /datasets@datasets.test.nck_crc: NckCrc
+  - /datasets/transforms@datasets.test.nck_crc.transform: med_clip_vision_transform
+  - /datasets@datasets.test.pad_ufes_20: PadUfes20
+  - /datasets/transforms@datasets.test.pad_ufes_20.transform: med_clip_vision_transform
+  - /datasets@datasets.test.pcam: PCAM
+  - /datasets/transforms@datasets.test.pcam.transform: med_clip_vision_transform
+  - /datasets@datasets.test.sicap: SICAP
+  - /datasets/transforms@datasets.test.sicap.transform: med_clip_vision_transform
+  - /datasets@datasets.test.pathmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.pathmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.dermamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.dermamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.octmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.octmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.pneumoniamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.pneumoniamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.retinamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.retinamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.breastmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.breastmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.bloodmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.bloodmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.tissuemnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.tissuemnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.organamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.organamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.organcmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.organcmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.test.organsmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.test.organsmnist.transform: med_clip_vision_transform
+  - /datasets/tokenizers@dataloader.test.collate_fn.batch_processors.text: HFCLIPTokenizer
+  - /modules/encoders@task.encoders.text: HFCLIPTextEncoderWithProjection
+  - /modules/encoders@task.encoders.rgb: HFCLIPVisionEncoderWithProjection
+  - /eval_task@task.evaluation_tasks.classification.task: ZeroShotClassification
+  - /datasets/tokenizers@task.evaluation_tasks.classification.task.tokenizer: HFCLIPTokenizer
+  - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - override /task: ContrastivePretraining
+  - _self_
+
+seed: 0
+job_type: eval
+
+datasets:
+  test:
+    ham10k:
+      transform:
+        job_type: eval
+    pcam:
+      transform:
+        job_type: eval
+    bach:
+      split: test
+      transform:
+        job_type: eval
+    lc25k_lung:
+      split: test
+      transform:
+        job_type: eval
+    lc25k_colon:
+      root_dir: ${oc.env:LC25000_COLON_ROOT_DIR}
+      split: test
+      organ: colon
+      transform:
+        job_type: eval
+    pathmnist:
+      split: test
+      name: pathmnist
+      transform:
+        job_type: eval
+    dermamnist:
+      split: test
+      name: dermamnist
+      transform:
+        job_type: eval
+    octmnist:
+      split: test
+      name: octmnist
+      transform:
+        job_type: eval
+    pneumoniamnist:
+      split: test
+      name: pneumoniamnist
+      transform:
+        job_type: eval
+    retinamnist:
+      split: test
+      name: retinamnist
+      transform:
+        job_type: eval
+    breastmnist:
+      split: test
+      name: breastmnist
+      transform:
+        job_type: eval
+    bloodmnist:
+      split: test
+      name: bloodmnist
+      transform:
+        job_type: eval
+    tissuemnist:
+      split: test
+      name: tissuemnist
+      transform:
+        job_type: eval
+    organamnist:
+      split: test
+      name: organamnist
+      transform:
+        job_type: eval
+    organcmnist:
+      split: test
+      name: organcmnist
+      transform:
+        job_type: eval
+    organsmnist:
+      split: test
+      name: organsmnist
+      transform:
+        job_type: eval
+    nck_crc:
+      split: validation
+      transform:
+        job_type: eval
+    pad_ufes_20:
+      split: test
+      transform:
+        job_type: eval
+    sicap:
+      split: test
+      transform:
+        job_type: eval
+
+dataloader:
+  test:
+    batch_size: 64
+    num_workers: 4
+
+task:
+  evaluation_tasks:
+    classification:
+      task:
+        task_specs:
+          - top_k: [1]
+            query_modality: rgb
+      run_on_validation: false
+      run_on_test: true
+  compute_validation_loss: False
+  compute_test_loss: False
+
+trainer:
+  precision: 16-mixed
+  deterministic: False
+  benchmark: True
+  sync_batchnorm: False # set to True if using DDP with batchnorm
+  log_every_n_steps: 100
+
+tags:
+  - ${experiment_name}
+  - zeroshot
+  - classification

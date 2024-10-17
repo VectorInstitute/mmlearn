@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 
 from lightning_utilities.core.imports import RequirementCache
 from torch import nn
+from transformers import PretrainedConfig
 from transformers.models.auto.auto_factory import AutoConfig, _BaseAutoModelClass
 
 
@@ -23,6 +24,7 @@ def load_huggingface_model(
     load_pretrained_weights: bool = True,
     get_model_attr: Optional[str] = None,
     model_config_kwargs: Optional[Dict[str, Any]] = None,
+    config_type: Optional[Type[PretrainedConfig]] = None,
 ) -> nn.Module:
     """Load a model from the HuggingFace `transformers` library.
 
@@ -40,12 +42,14 @@ def load_huggingface_model(
         If not None, the attribute of the model to return. For example, if the model
         is an `AutoModel` and `get_model_attr='encoder'`, the encoder part of the
         model will be returned. If None, the full model will be returned.
-    **model_config_kwargs : Dict[str, Any]
+    model_config_kwargs : Dict[str, Any]
         Additional keyword arguments to pass to the model configuration.
         The values in kwargs of any keys which are configuration attributes will
         be used to override the loaded values. Behavior concerning key/value pairs
         whose keys are *not* configuration attributes is controlled by the
         `return_unused_kwargs` keyword parameter.
+    config_type : Type[PretrainedConfig], optional, default=None
+        The class of the configuration to use. If None, `AutoConfig` will be used.
 
     Returns
     -------
@@ -56,12 +60,14 @@ def load_huggingface_model(
     if load_pretrained_weights:
         model = model_type.from_pretrained(model_name_or_path, **model_config_kwargs)
     else:
-        config, kwargs = AutoConfig.from_pretrained(
+        if config_type is None:
+            config_type = AutoConfig
+        config, kwargs = config_type.from_pretrained(
             pretrained_model_name_or_path=model_name_or_path,
             return_unused_kwargs=True,
             **model_config_kwargs,
         )
-        model = model_type.from_config(config, **kwargs)
+        model = model_type._from_config(config, **kwargs)
 
     if get_model_attr is not None and hasattr(model, get_model_attr):
         model = getattr(model, get_model_attr)
