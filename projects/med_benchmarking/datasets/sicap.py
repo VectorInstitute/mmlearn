@@ -1,7 +1,7 @@
 """Sicap Dataset."""
 
 import os
-from typing import Callable, Dict, Literal, Optional, Union
+from typing import Callable, Dict, Literal, Optional
 
 import pandas as pd
 import torch
@@ -24,6 +24,8 @@ class SICAP(Dataset[Example]):
     ----------
     root_dir : str
         Path to the dataset directory containing images and metadata CSV.
+    split : {'train', 'test'}
+        Dataset split, must be one of ["train", "test"].
     transform : Optional[Callable], default=None
         Transform applied to images.
     tokenizer : Optional[Callable], default=None
@@ -33,17 +35,12 @@ class SICAP(Dataset[Example]):
     def __init__(
         self,
         root_dir: str,
+        split: Literal["train", "test"],
         image_dir: str = "images",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
-        ] = None,
-        processor: Optional[
-            Callable[[torch.Tensor, str], tuple[torch.Tensor, str]]
-        ] = None,
-        split: Literal["train", "test"] = "test",
     ) -> None:
         """Initialize the dataset."""
+        assert split in ["train", "test"], f"split {split} is not supported in dataset."
         image_dir = os.path.join(root_dir, image_dir)
 
         if split == "train":
@@ -77,17 +74,15 @@ class SICAP(Dataset[Example]):
             if transform is not None
             else Compose([Resize(224), CenterCrop(224), ToTensor()])
         )
-        self.tokenizer = tokenizer
-        self.processor = processor
 
     @property
-    def label_mapping(self) -> Dict[str, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the label mapping."""
         return {
-            "NC": "benign glands",
-            "G3": "atrophic dense glands",
-            "G4": "cribriform ill-formed fused papillary patterns",
-            "G5": "isolated nest cells without lumen roseting patterns",
+            0: "benign glands",
+            1: "atrophic dense glands",
+            2: "cribriform ill-formed fused papillary patterns",
+            3: "isolated nest cells without lumen roseting patterns",
         }
 
     @property

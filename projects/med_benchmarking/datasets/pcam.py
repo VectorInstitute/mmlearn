@@ -2,8 +2,7 @@
 
 import os
 import pickle
-import random
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, Optional
 
 import torch
 from omegaconf import MISSING
@@ -27,13 +26,9 @@ class PCAM(Dataset[Example]):
     root_dir : str
         Path to the dataset directory or cache directory.
     split : str
-        Dataset split (e.g., 'train', 'test', 'validation').
+        Dataset split.
     transform : Optional[Callable], default=None
         Transform applied to images.
-    tokenizer : Optional[Callable], default=None
-        Function to generate textual embeddings.
-    processor : Optional[Callable], default=None
-        Function to process image and token pairs.
     """
 
     def __init__(
@@ -41,12 +36,6 @@ class PCAM(Dataset[Example]):
         root_dir: str,
         split: str = "test",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
-        ] = None,
-        processor: Optional[
-            Callable[[torch.Tensor, str], tuple[torch.Tensor, str]]
-        ] = None,
     ) -> None:
         """Initialize the PCAM dataset."""
         cache_path = os.path.join(root_dir, f"cache/pcam_{split}.pkl")
@@ -65,11 +54,11 @@ class PCAM(Dataset[Example]):
             with open(cache_path, "wb") as f:
                 pickle.dump(self.data, f)
 
-        self.transform = transform or Compose(
-            [Resize(224), CenterCrop(224), ToTensor()]
+        self.transform = (
+            Compose([Resize(224), CenterCrop(224), ToTensor()])
+            if transform is None
+            else transform
         )
-        self.tokenizer = tokenizer
-        self.processor = processor
 
     def __getitem__(self, idx: int) -> Example:
         """Return the idx'th data sample as an Example instance."""
@@ -93,7 +82,7 @@ class PCAM(Dataset[Example]):
         return len(self.data)
 
     @property
-    def label_mapping(self) -> Dict[str, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the mapping of labels for the PCAM dataset."""
         return {0: "lymph node", 1: "lymph node containing metastatic tumor tissue"}
 

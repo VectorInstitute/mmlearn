@@ -9,20 +9,19 @@ from timm.data.transforms import ResizeKeepRatio
 
 from mmlearn.conf import external_store
 
+from .bach import BACH
 from .ham10000 import HAM10000
 from .lc25000 import LC25000
 from .med_mnist_plus import MedMNISTPlus
 from .medvqa import MedVQA, MedVQAProcessor
 from .mimiciv_cxr import MIMICIVCXR
+from .nck import NckCrc
+from .pad_ufes_20 import PadUfes20
+from .pcam import PCAM
 from .pmcoa import PMCOA
 from .quilt import Quilt
 from .roco import ROCO
 from .sicap import SICAP
-from .vindr_mammo import VinDrMammo
-from .pad_ufes_20 import PadUfes20
-from .pcam import PCAM
-from .nck import NckCrc
-from .bach import BACH
 
 
 _MedVQAConf = builds(
@@ -116,7 +115,6 @@ __all__ = [
     "Quilt",
     "ROCO",
     "SICAP",
-    "VinDrMammo",
     "PadUfes20",
     "PCAM",
     "NckCrc",

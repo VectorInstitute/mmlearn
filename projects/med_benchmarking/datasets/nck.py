@@ -1,8 +1,7 @@
 """NCK CRC Dataset."""
 
 import os
-import random
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, Literal, Optional
 
 import torch
 from omegaconf import MISSING
@@ -12,9 +11,9 @@ from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
 from datasets import load_dataset, load_from_disk
 from mmlearn.conf import external_store
+from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
-from mmlearn.constants import EXAMPLE_INDEX_KEY
 
 
 @external_store(group="datasets", root_dir=os.getenv("NCK_CRC_ROOT_DIR", MISSING))
@@ -29,21 +28,13 @@ class NckCrc(Dataset[Example]):
         Dataset split, one of 'train', 'train_nonorm', or 'validation'.
     transform : Optional[Callable], default=None
         Transform applied to images.
-    tokenizer : Optional[Callable], default=None
-        Function to generate textual embeddings.
     """
 
     def __init__(
         self,
         root_dir: str,
-        split: str = "validation",
+        split: Literal["train", "train_nonorm", "validation"],
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
-        ] = None,
-        processor: Optional[
-            Callable[[torch.Tensor, str], tuple[torch.Tensor, str]]
-        ] = None,
     ) -> None:
         """Initialize the NCK CRC dataset."""
         assert split in (
@@ -83,15 +74,11 @@ class NckCrc(Dataset[Example]):
 
         self.data = dataset
 
-        if processor is None and transform is None:
-            self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
-        elif processor is None:
-            self.transform = transform
-        else:
-            self.transform = None
-
-        self.tokenizer = tokenizer
-        self.processor = processor
+        self.transform = (
+            Compose([Resize(224), CenterCrop(224), ToTensor()])
+            if transform is None
+            else transform
+        )
 
     def __getitem__(self, idx: int) -> Example:
         """Return the idx'th data sample as an Example instance."""
@@ -115,7 +102,7 @@ class NckCrc(Dataset[Example]):
         return len(self.data)
 
     @property
-    def label_mapping(self) -> Dict[str, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the label mapping for the NCK CRC dataset."""
         return {
             0: "adipose",

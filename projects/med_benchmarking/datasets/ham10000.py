@@ -34,6 +34,7 @@ class HAM10000(Dataset[Example]):
         """Initialize the HAM10000 dataset."""
         self.root_dir = root_dir
         self.metadata = pd.read_csv(os.path.join(root_dir, "HAM10000_metadata.csv"))
+        self.classes = ["nv", "mel", "bkl", "bcc", "akiec", "vasc", "df"]
 
         self.transform = (
             Compose([Resize(224), CenterCrop(224), ToTensor()])
@@ -68,7 +69,7 @@ class HAM10000(Dataset[Example]):
         if self.transform is not None:
             image = self.transform(image)
 
-        label_index = list(self.label_mapping.keys()).index(entry["dx"])
+        label_index = self.classes.index(entry["dx"])
 
         return Example(
             {
@@ -79,14 +80,14 @@ class HAM10000(Dataset[Example]):
         )
 
     @property
-    def label_mapping(self) -> Dict[str, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the label mapping."""
         return {
-            "nv": "Melanocytic Nevi",
-            "mel": "Melanoma",
-            "bkl": "Benign Keratosis-like Lesions",
-            "bcc": "Basal Cell Carcinoma",
-            "akiec": "Actinic Keratoses and Intraepithelial Carcinoma",
-            "vasc": "Vascular Lesions",
-            "df": "Dermatofibroma",
+            0: "Melanocytic Nevi",
+            1: "Melanoma",
+            2: "Benign Keratosis-like Lesions",
+            3: "Basal Cell Carcinoma",
+            4: "Actinic Keratoses and Intraepithelial Carcinoma",
+            5: "Vascular Lesions",
+            6: "Dermatofibroma",
         }

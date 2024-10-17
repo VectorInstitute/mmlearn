@@ -95,7 +95,7 @@ store(
     name="HFCLIPTokenizer",
     group="datasets/tokenizers",
     model_name_or_path="openai/clip-vit-base-patch16",
-    padding=True,
+    padding="max_length",
     truncation=True,
 )
 

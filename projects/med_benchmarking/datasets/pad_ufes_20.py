@@ -2,8 +2,7 @@
 
 import os
 import pickle
-import random
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, Literal, Optional
 
 import pandas as pd
 import torch
@@ -12,10 +11,10 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
+from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
-from mmlearn.conf import external_store
 
 
 @external_store(group="datasets", root_dir=os.getenv("PADUFES_ROOT_DIR", MISSING))
@@ -26,36 +25,23 @@ class PadUfes20(Dataset[Example]):
     ----------
     root_dir : str
         Path to the dataset directory containing images and metadata CSV.
-    split : str
+    split : {'train', 'test'}
         Dataset split, must be one of ["train", "test"].
     transform : Optional[Callable], default=None
         Transform applied to images.
-    tokenizer : Optional[Callable], default=None
-        Function to generate textual embeddings.
-    processor : Optional[Callable], default=None
-        Optional processor for post-processing.
     """
 
     def __init__(
         self,
         root_dir: str,
-        split: str = "test",
+        split: Literal["train", "test"],
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
-        ] = None,
-        processor: Optional[
-            Callable[[torch.Tensor, str], tuple[torch.Tensor, str]]
-        ] = None,
     ) -> None:
         """Initialize the dataset."""
         assert split in ["train", "test"], f"split {split} is not supported in dataset."
 
         self.root_dir = root_dir
         self.split = split
-        self.transform = transform
-        self.tokenizer = tokenizer
-        self.processor = processor
 
         # Load cached data if available
         cache_path = f"cache/PadUfes20_{split}.pkl"
@@ -69,17 +55,11 @@ class PadUfes20(Dataset[Example]):
             with open(cache_path, "wb") as f:
                 pickle.dump(self.metadata.to_dict("records"), f)
 
-        if processor is None and transform is None:
-            self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
-        elif processor is None:
-            self.transform = transform
-        else:
-            self.transform = None
-
-        if processor is None:
-            self.tokenizer = tokenizer
-        else:
-            self.tokenizer = None
+        self.transform = (
+            Compose([Resize(224), CenterCrop(224), ToTensor()])
+            if transform is None
+            else transform
+        )
 
     def _load_and_process_metadata(self) -> pd.DataFrame:
         """Load and process metadata from CSV."""
@@ -126,15 +106,15 @@ class PadUfes20(Dataset[Example]):
         return len(self.metadata)
 
     @property
-    def label_mapping(self) -> Dict[str, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the label mapping for the PadUfes20 dataset."""
         return {
-            "BCC": "Basal Cell Carcinoma",
-            "MEL": "Melanoma",
-            "SCC": "Squamous Cell Carcinoma",
-            "ACK": "Actinic Keratosis",
-            "NEV": "Nevus",
-            "SEK": "Seborrheic Keratosis",
+            0: "Basal Cell Carcinoma",
+            1: "Melanoma",
+            2: "Squamous Cell Carcinoma",
+            3: "Actinic Keratosis",
+            4: "Nevus",
+            5: "Seborrheic Keratosis",
         }
 
     @property

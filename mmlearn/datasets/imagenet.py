@@ -155,7 +155,7 @@ class ImageNet(ImageFolder):
         ]
 
     @property
-    def label_mapping(self) -> Dict[int, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the label mapping."""
         return {
             0: "tench",

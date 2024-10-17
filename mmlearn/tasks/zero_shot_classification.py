@@ -19,7 +19,6 @@ from torchmetrics.utilities.compute import _safe_matmul
 from tqdm.auto import tqdm
 
 from mmlearn.datasets.core import CombinedDataset, Modalities
-from mmlearn.datasets.core.modalities import Modality
 from mmlearn.tasks.hooks import EvaluationHooks
 
 
@@ -33,8 +32,7 @@ class ClassificationTaskSpec:
 
 @store(group="eval_task", provider="mmlearn")
 class ZeroShotClassification(EvaluationHooks):
-    """
-    Zero-shot classification evaluation task.
+    """Zero-shot classification evaluation task.
 
     This task evaluates the zero-shot classification performance.
 
@@ -52,7 +50,7 @@ class ZeroShotClassification(EvaluationHooks):
         tokenizer: Callable[
             [Union[str, list[str]]], Union[torch.Tensor, Dict[str, torch.Tensor]]
         ],
-    ):
+    ) -> None:
         super().__init__()
         self.tokenizer = tokenizer
         self.task_specs = task_specs
@@ -63,7 +61,13 @@ class ZeroShotClassification(EvaluationHooks):
         self._embeddings_store: Dict[int, torch.Tensor] = {}
 
     def on_evaluation_epoch_start(self, pl_module: LightningModule) -> None:
-        """Set up the evaluation task."""
+        """Set up the evaluation task.
+
+        Parameters
+        ----------
+        pl_module : pl.LightningModule
+            A reference to the Lightning module being evaluated.
+        """
         if pl_module.trainer.validating:
             eval_dataset: CombinedDataset = pl_module.trainer.val_dataloaders.dataset
         elif pl_module.trainer.testing:
@@ -78,11 +82,13 @@ class ZeroShotClassification(EvaluationHooks):
         # create metrics for each dataset/query_modality combination
         if not self.metrics:
             for dataset_index, dataset in enumerate(eval_dataset.datasets):
+                dataset_name = getattr(dataset, "name", dataset.__class__.__name__)
                 try:
-                    label_mapping = dataset.label_mapping
+                    id2label: dict[int, str] = dataset.id2label
                 except AttributeError:
                     raise ValueError(
-                        "Dataset must have a `label_mapping` attribute to perform zero-shot classification."
+                        f"Dataset '{dataset_name}' must have a `id2label` attribute "
+                        "to perform zero-shot classification."
                     ) from None
 
                 try:
@@ -94,12 +100,11 @@ class ZeroShotClassification(EvaluationHooks):
                         "Dataset must have a `zero_shot_prompt_templates` attribute to perform zero-shot classification."
                     ) from None
 
-                num_classes = len(label_mapping)
-                dataset_name = getattr(dataset, "name", dataset.__class__.__name__)
+                num_classes = len(id2label)
 
                 self.all_dataset_info[dataset_index] = {
                     "name": dataset_name,
-                    "label_mapping": label_mapping,
+                    "id2label": id2label,
                     "prompt_templates": zero_shot_prompt_templates,
                     "num_classes": num_classes,
                 }
@@ -119,9 +124,9 @@ class ZeroShotClassification(EvaluationHooks):
             metric.to(pl_module.device)
 
         for dataset_index, dataset_info in self.all_dataset_info.items():
-            label_mapping = dataset_info["label_mapping"]
+            id2label = dataset_info["id2label"]
             prompt_templates: list[str] = dataset_info["prompt_templates"]
-            labels = list(label_mapping.values())
+            labels = list(id2label.values())
 
             with torch.no_grad():
                 chunk_size = 10
@@ -161,12 +166,19 @@ class ZeroShotClassification(EvaluationHooks):
             self._embeddings_store[dataset_index] = class_embeddings
 
     def evaluation_step(
-        self,
-        pl_module: LightningModule,
-        batch: Dict[Union[str, Modality], torch.Tensor],
-        batch_idx: int,
+        self, pl_module: LightningModule, batch: Dict[str, torch.Tensor], batch_idx: int
     ) -> None:
-        """Update metrics."""
+        """Compute logits and update metrics.
+
+        Parameters
+        ----------
+        pl_module : pl.LightningModule
+            A reference to the Lightning module being evaluated.
+        batch : Dict[str, torch.Tensor]
+            A batch of data.
+        batch_idx : int
+            The index of the batch.
+        """
         if pl_module.trainer.sanity_checking:
             return
 
@@ -197,6 +209,11 @@ class ZeroShotClassification(EvaluationHooks):
         ----------
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
+
+        Returns
+        -------
+        Dict[str, Any]
+            The computed metrics.
         """
         results = {}
         for metric_collection in self.metrics.values():
@@ -215,6 +232,7 @@ class ZeroShotClassification(EvaluationHooks):
     def _create_metrics(
         num_classes: int, top_k: List[int], prefix: str, postfix: str
     ) -> MetricCollection:
+        """Create a collection of classification metrics."""
         return MetricCollection(
             {
                 "precision": Precision(
@@ -239,5 +257,5 @@ class ZeroShotClassification(EvaluationHooks):
             },
             prefix=prefix,
             postfix=postfix,
-            compute_groups=False,
+            compute_groups=True,
         )

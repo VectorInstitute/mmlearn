@@ -1,8 +1,7 @@
 """BACH Dataset."""
 
 import os
-import random
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, Literal, Optional
 
 import torch
 from omegaconf import MISSING
@@ -29,21 +28,13 @@ class BACH(Dataset[Example]):
         Dataset split, one of 'train' or 'test'.
     transform : Optional[Callable], default=None
         Transform applied to images.
-    tokenizer : Optional[Callable], default=None
-        Function to generate textual embeddings.
     """
 
     def __init__(
         self,
         root_dir: str,
-        split: str = "test",
+        split: Literal["train", "test"],
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
-        ] = None,
-        processor: Optional[
-            Callable[[torch.Tensor, str], tuple[torch.Tensor, str]]
-        ] = None,
     ) -> None:
         """Initialize the BACH dataset."""
         os.makedirs(os.path.join(root_dir, "cache/"), exist_ok=True)
@@ -58,25 +49,16 @@ class BACH(Dataset[Example]):
         )
         self.data = data_dict[split]
 
-        if processor is None and transform is None:
-            self.transform = Compose([Resize(224), CenterCrop(224), ToTensor()])
-        elif processor is None:
-            self.transform = transform
-        else:
-            self.transform = None
-
-        if processor is None:
-            self.tokenizer = tokenizer
-        else:
-            self.tokenizer = None
-
-        self.processor = processor
+        self.transform = (
+            Compose([Resize(224), CenterCrop(224), ToTensor()])
+            if transform is None
+            else transform
+        )
 
     def __getitem__(self, idx: int) -> Example:
         """Return the idx'th data sample as an Example instance."""
         entry = self.data[idx]
         image = entry["image"]
-        label = int(entry["label"])
 
         if self.transform is not None:
             image = self.transform(image)
@@ -94,7 +76,7 @@ class BACH(Dataset[Example]):
         return len(self.data)
 
     @property
-    def label_mapping(self) -> Dict[str, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the label mapping for the BACH dataset."""
         return {
             0: "breast non-malignant benign tissue",

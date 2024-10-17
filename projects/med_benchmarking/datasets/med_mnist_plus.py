@@ -1,12 +1,12 @@
 import os
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, Literal, Optional
 
 import numpy as np
 import torch
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Resize, ToTensor
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
 from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
@@ -22,7 +22,9 @@ class MedMNISTPlus(Dataset[Example]):
     ----------
     root_dir : str
         Path to the dataset directory containing images and metadata.
-    name : str
+    split : {'train', 'val', 'test'}
+        Dataset split.
+    name : str, default='organamnist'
         Specific name of the MedMNIST dataset variant.
     transform : Optional[Callable], default=None
         Transform applied to images.
@@ -31,15 +33,9 @@ class MedMNISTPlus(Dataset[Example]):
     def __init__(
         self,
         root_dir: str,
+        split: Literal["train", "val", "test"],
         name: str = "organamnist",
-        split: str = "test",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
-        tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
-        ] = None,
-        processor: Optional[
-            Callable[[torch.Tensor, str], tuple[torch.Tensor, str]]
-        ] = None,
     ) -> None:
         """Initialize the dataset."""
         assert split in [
@@ -49,27 +45,20 @@ class MedMNISTPlus(Dataset[Example]):
         ], f"split {split} is not supported in dataset {name}."
         if name is None:
             raise ValueError("Variable name must be given to dataset")
-        self.dataset_name = name
+
+        self.name = name
         file_name = name + "_224.npz"
+
         # Load the dataset
         data = np.load(os.path.join(root_dir, file_name), mmap_mode="r")
         self.images = data[f"{split}_images"]
         self.labels = data[f"{split}_labels"]
 
-        # Set transform, tokenizer, and processor
-        if processor is None and transform is None:
-            self.transform = Compose([Resize(224), ToTensor()])
-        elif processor is None:
-            self.transform = transform
-        else:
-            self.transform = None
-
-        if processor is None:
-            self.tokenizer = tokenizer
-        else:
-            self.tokenizer = None
-
-        self.processor = processor
+        self.transform = (
+            Compose([Resize(224), CenterCrop(224), ToTensor()])
+            if transform is None
+            else transform
+        )
 
     @property
     def zero_shot_prompt_templates(self) -> list[str]:
@@ -89,9 +78,9 @@ class MedMNISTPlus(Dataset[Example]):
         """Return the idx'th data sample as an Example instance."""
         image = self.images[idx].astype(np.uint8)
         image = self.transform(Image.fromarray(image).convert("RGB"))
+
         label = self.labels[idx].astype(int)
-        if len(label) == 1:
-            label = int(label[0])
+        label = label.tolist() if len(label) > 1 else label.item()
 
         if self.transform is not None:
             image = self.transform(image)
@@ -105,9 +94,8 @@ class MedMNISTPlus(Dataset[Example]):
         )
 
     @property
-    def label_mapping(self) -> Dict[int, str]:
+    def id2label(self) -> Dict[int, str]:  # noqa: PLR0911
         """Return the label mapping based on the dataset name."""
-        """
         if self.name == "pathmnist":
             return {
                 0: "adipose",
@@ -120,7 +108,7 @@ class MedMNISTPlus(Dataset[Example]):
                 7: "cancer-associated stroma",
                 8: "colorectal adenocarcinoma epithelium",
             }
-        elif self.name == "chestmnist":
+        if self.name == "chestmnist":
             return {
                 0: "atelectasis",
                 1: "cardiomegaly",
@@ -137,7 +125,7 @@ class MedMNISTPlus(Dataset[Example]):
                 12: "pleural",
                 13: "hernia",
             }
-        elif self.name == "dermamnist":
+        if self.name == "dermamnist":
             return {
                 0: "actinic keratoses and intraepithelial carcinoma",
                 1: "basal cell carcinoma",
@@ -147,19 +135,19 @@ class MedMNISTPlus(Dataset[Example]):
                 5: "melanocytic nevi",
                 6: "vascular lesions",
             }
-        elif self.name == "octmnist":
+        if self.name == "octmnist":
             return {
                 0: "choroidal neovascularization",
                 1: "diabetic macular edema",
                 2: "drusen",
                 3: "normal",
             }
-        elif self.name == "pneumoniamnist":
+        if self.name == "pneumoniamnist":
             return {
                 0: "normal",
                 1: "pneumonia",
             }
-        elif self.name == "retinamnist":
+        if self.name == "retinamnist":
             return {
                 0: "no apparent retinopathy",
                 1: "mild NPDR, non-proliferative diabetic retinopathy",
@@ -167,24 +155,24 @@ class MedMNISTPlus(Dataset[Example]):
                 3: "severe NPDR, non-proliferative diabetic retinopathy",
                 4: "PDR, proliferative diabetic retinopathy",
             }
-        elif self.name == "breastmnist":
+        if self.name == "breastmnist":
             return {
                 0: "malignant",
                 1: "normal, benign",
             }
-        elif self.name == "bloodmnist":
+        if self.name == "bloodmnist":
             return {
                 0: "basophil",
                 1: "eosinophil",
                 2: "erythroblast",
-                3: "immature granulocytes (myelocytes, metamyelocytes, " \
-                    "and promyelocytes)",
+                3: "immature granulocytes (myelocytes, metamyelocytes, "
+                "and promyelocytes)",
                 4: "lymphocyte",
                 5: "monocyte",
                 6: "neutrophil",
                 7: "platelet",
             }
-        elif self.name == "tissuemnist":
+        if self.name == "tissuemnist":
             return {
                 0: "Collecting Duct, Connecting Tubule",
                 1: "Distal Convoluted Tubule",
@@ -195,22 +183,8 @@ class MedMNISTPlus(Dataset[Example]):
                 6: "Proximal Tubule Segments",
                 7: "Thick Ascending Limb",
             }
-        elif self.name == "organsmnist":
-            return {
-                0: "bladder",
-                1: "femur-left",
-                2: "femur-right",
-                3: "heart",
-                4: "kidney-left",
-                5: "kidney-right",
-                6: "liver",
-                7: "lung-left",
-                8: "lung-right",
-                9: "pancreas",
-                10: "spleen",
-            }
-        """
-        return {
+
+        return {  # organamnist, organsmnist, organcmnist
             0: "bladder",
             1: "femur-left",
             2: "femur-right",

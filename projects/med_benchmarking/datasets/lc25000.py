@@ -31,7 +31,7 @@ class LC25000(Dataset[Example]):
     def __init__(
         self,
         root_dir: str,
-        split: str = "test",
+        split: Literal["train", "test"],
         organ: Literal["lung", "colon"] = "lung",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
     ) -> None:
@@ -60,7 +60,7 @@ class LC25000(Dataset[Example]):
         return "LC25000_colon"
 
     @property
-    def label_mapping(self) -> Dict[int, str]:
+    def id2label(self) -> Dict[int, str]:
         """Return the label mapping."""
         if self.organ == "lung":
             return {
