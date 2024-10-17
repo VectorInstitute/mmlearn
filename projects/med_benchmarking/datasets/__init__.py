@@ -19,6 +19,10 @@ from .quilt import Quilt
 from .roco import ROCO
 from .sicap import SICAP
 from .vindr_mammo import VinDrMammo
+from .pad_ufes_20 import PadUfes20
+from .pcam import PCAM
+from .nck import NckCrc
+from .bach import BACH
 
 
 _MedVQAConf = builds(
@@ -113,5 +117,9 @@ __all__ = [
     "ROCO",
     "SICAP",
     "VinDrMammo",
+    "PadUfes20",
+    "PCAM",
+    "NckCrc",
+    "BACH",
     "med_clip_vision_transform",
 ]

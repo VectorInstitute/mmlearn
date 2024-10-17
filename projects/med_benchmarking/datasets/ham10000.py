@@ -82,11 +82,11 @@ class HAM10000(Dataset[Example]):
     def label_mapping(self) -> Dict[str, str]:
         """Return the label mapping."""
         return {
-            "nv": "melanocytic nevus",
-            "mel": "melanoma",
-            "bkl": "benign keratosis",
-            "bcc": "basal cell carcinoma",
-            "akiec": "actinic keratosis",
-            "vasc": "vascular lesion",
-            "df": "dermatofibroma",
+            "nv": "Melanocytic Nevi",
+            "mel": "Melanoma",
+            "bkl": "Benign Keratosis-like Lesions",
+            "bcc": "Basal Cell Carcinoma",
+            "akiec": "Actinic Keratoses and Intraepithelial Carcinoma",
+            "vasc": "Vascular Lesions",
+            "df": "Dermatofibroma",
         }

@@ -14,7 +14,7 @@ from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
 
 
-@external_store(group="datasets", root_dir=os.getenv("LC25000_COLON_ROOT_DIR", MISSING))
+@external_store(group="datasets", root_dir=os.getenv("LC25000_LUNG_ROOT_DIR", MISSING))
 class LC25000(Dataset[Example]):
     """LC25000 dataset for zero-shot classification.
 
@@ -32,7 +32,7 @@ class LC25000(Dataset[Example]):
         self,
         root_dir: str,
         split: str = "test",
-        organ: Literal["lung", "colon"] = "colon",
+        organ: Literal["lung", "colon"] = "lung",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
     ) -> None:
         """Initialize the LC25000 dataset."""
@@ -64,12 +64,12 @@ class LC25000(Dataset[Example]):
         """Return the label mapping."""
         if self.organ == "lung":
             return {
-                0: "lung adenocarcinoma",
-                1: "lung squamous cell carcinoma",
-                2: "lung benign tissue",
+                0: "benign lung",
+                1: "lung adenocarcinoma",
+                2: "lung squamous cell carcinoma",
             }
 
-        return {0: "colon adenocarcinoma", 1: "colon benign tissue"}
+        return {0: "benign colonic tissue", 1: "colon adenocarcinoma"}
 
     @property
     def zero_shot_prompt_templates(self) -> list[str]:

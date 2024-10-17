@@ -12,7 +12,7 @@ from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
 from datasets import load_dataset
 from mmlearn.conf import external_store
-from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
 
@@ -77,43 +77,24 @@ class BACH(Dataset[Example]):
         entry = self.data[idx]
         image = entry["image"]
         label = int(entry["label"])
-        label_description = self.get_label_mapping()[label]
-        description = random.choice(TEMPLATES[self.__class__.__name__])(
-            label_description
-        )
-        tokens = self.tokenizer(description) if self.tokenizer is not None else None
 
         if self.transform is not None:
             image = self.transform(image)
 
-        if self.processor is not None:
-            image, tokens = self.processor(image, label)
-
-        example = Example(
+        return Example(
             {
                 Modalities.RGB.name: image,
-                Modalities.TEXT.name: label_description,
                 Modalities.RGB.target: int(entry["label"]),
                 EXAMPLE_INDEX_KEY: idx,
             }
         )
 
-        if tokens is not None:
-            if isinstance(tokens, dict):  # output of HFTokenizer
-                assert (
-                    Modalities.TEXT.name in tokens
-                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
-                example.update(tokens)
-            else:
-                example[Modalities.TEXT.name] = tokens
-
-        return example
-
     def __len__(self) -> int:
         """Return the length of the dataset."""
         return len(self.data)
 
-    def get_label_mapping(self):
+    @property
+    def label_mapping(self) -> Dict[str, str]:
         """Return the label mapping for the BACH dataset."""
         return {
             0: "breast non-malignant benign tissue",
@@ -122,6 +103,12 @@ class BACH(Dataset[Example]):
             3: "breast normal breast tissue",
         }
 
-    def name(self) -> str:
-        """Return the name of the dataset."""
-        return "BACH"
+    @property
+    def zero_shot_prompt_templates(self) -> list[str]:
+        """Return the zero-shot prompt templates."""
+        return [
+            "a histopathology slide showing {}",
+            "histopathology image of {}",
+            "pathology tissue showing {}",
+            "presence of {} tissue on image",
+        ]

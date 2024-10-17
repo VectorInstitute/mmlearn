@@ -7,15 +7,18 @@ from typing import Callable, Dict, Optional, Union
 
 import pandas as pd
 import torch
+from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
-from mmlearn.constants import EXAMPLE_INDEX_KEY, TEMPLATES
+from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
+from mmlearn.conf import external_store
 
 
+@external_store(group="datasets", root_dir=os.getenv("PADUFES_ROOT_DIR", MISSING))
 class PadUfes20(Dataset[Example]):
     """PadUfes20 dataset for classification tasks.
 
@@ -36,7 +39,7 @@ class PadUfes20(Dataset[Example]):
     def __init__(
         self,
         root_dir: str,
-        split: str,
+        split: str = "test",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         tokenizer: Optional[
             Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
@@ -101,11 +104,8 @@ class PadUfes20(Dataset[Example]):
 
     def __getitem__(self, idx: int) -> Example:
         """Return the idx'th data sample as an Example instance."""
-        entry = self.metadata.iloc[idx]
+        entry = self.metadata[idx]
         image_path = entry["path"]
-        label = entry["label"]
-        description = random.choice(TEMPLATES[self.__class__.__name__])(label)
-        tokens = self.tokenizer(description) if self.tokenizer is not None else None
 
         with Image.open(image_path) as img:
             image = img.convert("RGB")
@@ -113,34 +113,20 @@ class PadUfes20(Dataset[Example]):
         if self.transform is not None:
             image = self.transform(image)
 
-        if self.processor is not None:
-            image, tokens = self.processor(image, label)
-
-        example = Example(
+        return Example(
             {
                 Modalities.RGB.name: image,
-                Modalities.TEXT.name: label,
                 Modalities.RGB.target: int(entry["label"]),
                 EXAMPLE_INDEX_KEY: idx,
             }
         )
 
-        if tokens is not None:
-            if isinstance(tokens, dict):  # output of HFTokenizer
-                assert (
-                    Modalities.TEXT.name in tokens
-                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
-                example.update(tokens)
-            else:
-                example[Modalities.TEXT.name] = tokens
-
-        return example
-
     def __len__(self) -> int:
         """Return the length of the dataset."""
         return len(self.metadata)
 
-    def get_label_mapping() -> Dict[str, str]:
+    @property
+    def label_mapping(self) -> Dict[str, str]:
         """Return the label mapping for the PadUfes20 dataset."""
         return {
             "BCC": "Basal Cell Carcinoma",
@@ -150,3 +136,13 @@ class PadUfes20(Dataset[Example]):
             "NEV": "Nevus",
             "SEK": "Seborrheic Keratosis",
         }
+
+    @property
+    def zero_shot_prompt_templates(self) -> list[Callable[[str], str]]:
+        """Return the zero-shot prompt templates."""
+        return [
+            "a histopathology slide showing {}.",
+            "histopathology image of {}.",
+            "pathology tissue showing {}.",
+            "presence of {} tissue on image.",
+        ]
