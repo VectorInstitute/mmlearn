@@ -310,6 +310,41 @@ class VisionTransformer(nn.Module):
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
+    def load_checkpoint(
+        self,
+        device: str,
+        checkpoint_path: str,
+        encoder: nn.Module,
+        predictor: nn.Module,
+        target_encoder: nn.Module,
+    ) -> Tuple[nn.Module, nn.Module, nn.Module]:
+        """Load a pre-trained model from a checkpoint."""
+        try:
+            checkpoint = torch.load(checkpoint_path, map_location=torch.device(device))
+            epoch = checkpoint["epoch"]
+
+            # loading encoder
+            pretrained_dict = checkpoint["encoder"]
+            msg = encoder.load_state_dict(pretrained_dict)
+            print(f"loaded pretrained encoder from epoch {epoch} with msg: {msg}")
+
+            # loading predictor
+            pretrained_dict = checkpoint["predictor"]
+            msg = predictor.load_state_dict(pretrained_dict)
+            print(f"loaded pretrained encoder from epoch {epoch} with msg: {msg}")
+
+            # loading target_encoder
+            if target_encoder is not None:
+                print(list(checkpoint.keys()))
+                pretrained_dict = checkpoint["target_encoder"]
+                msg = target_encoder.load_state_dict(pretrained_dict)
+                print(f"loaded pretrained encoder from epoch {epoch} with msg: {msg}")
+
+        except Exception as e:
+            print(f"Encountered exception when loading checkpoint {e}")
+
+        return encoder, predictor, target_encoder
+
     def forward(
         self,
         x: torch.Tensor,
