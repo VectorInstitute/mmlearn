@@ -49,10 +49,12 @@ optional = true
 wandb = "^0.18.3"
 ipykernel = "^6.29.5"
 ipython = "8.28.0"
+ipywidgets = "^8.1.5"
 h5py = "^3.12.1"
 scikit-learn = "^1.5.2"
 faiss-gpu = "^1.7.2"
 pip = "^24.2"
+datasets = "^3.0.1"
 
 [tool.poetry.group.test]
 optional = true
@@ -157,6 +159,9 @@ markers = [
 
 [tool.poetry.scripts]
 mmlearn_run = 'mmlearn.cli.run:main'
+
+[tool.typos.default.extend-words]
+MUC = "MUC"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

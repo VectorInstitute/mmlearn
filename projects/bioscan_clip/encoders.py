@@ -8,7 +8,7 @@ from transformers import BertConfig, BertForMaskedLM
 from transformers.modeling_outputs import BaseModelOutput
 
 from mmlearn import hf_utils
-from mmlearn.datasets.core.modalities import Modalities, Modality
+from mmlearn.datasets.core.modalities import Modalities
 
 
 class BarcodeBERT(nn.Module):

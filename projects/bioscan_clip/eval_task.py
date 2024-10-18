@@ -14,7 +14,7 @@ from sklearn.preprocessing import normalize
 
 from mmlearn.conf import external_store
 from mmlearn.datasets.core import find_matching_indices
-from mmlearn.datasets.core.modalities import Modalities, Modality
+from mmlearn.datasets.core.modalities import Modalities
 from mmlearn.tasks.hooks import EvaluationHooks
 
 
