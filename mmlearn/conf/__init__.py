@@ -1,6 +1,7 @@
 """Hydra/Hydra-zen-based configurations."""
 
 import functools
+import os
 import warnings
 from dataclasses import dataclass, field
 from enum import Enum
@@ -29,7 +30,7 @@ from mmlearn.datasets.core.data_collator import DefaultDataCollator
 
 def _get_default_ckpt_dir() -> Any:
     """Get the default checkpoint directory."""
-    return SI("/checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID}")
+    return SI("${hydra:runtime.output_dir}/checkpoints")
 
 
 _DataLoaderConf = builds(
@@ -150,27 +151,29 @@ class MMLearnConf:
         },
         metadata={"help": "Configuration for torch.jit.compile."},
     )
-    hydra: HydraConf = HydraConf(
-        searchpath=["pkg://mmlearn/conf"],
-        run=RunDir(
-            dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}")
-        ),
-        sweep=SweepDir(
-            dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}"),
-            subdir=SI("${hydra.job.num}_${hydra.job.id}"),
-        ),
-        help=HelpConf(
-            app_name="mmlearn",
-            header="mmlearn: A modular framework for research on multimodal representation learning.",
-        ),
-        job=JobConf(
-            name=II("experiment_name"),
-            env_set={
-                "NCCL_IB_DISABLE": "1",  # disable InfiniBand (the Vector cluster does not have it)
-                "TORCH_NCCL_ASYNC_ERROR_HANDLING": "3",
-                "HYDRA_FULL_ERROR": "1",
-            },
-        ),
+    hydra: HydraConf = field(
+        default_factory=lambda: HydraConf(
+            searchpath=["pkg://mmlearn.conf"],
+            run=RunDir(
+                dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}")
+            ),
+            sweep=SweepDir(
+                dir=SI("./outputs/${experiment_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}"),
+                subdir=SI("${hydra.job.num}_${hydra.job.id}"),
+            ),
+            help=HelpConf(
+                app_name="mmlearn",
+                header="mmlearn: A modular framework for research on multimodal representation learning.",
+            ),
+            job=JobConf(
+                name=II("experiment_name"),
+                env_set={
+                    "NCCL_IB_DISABLE": "1",
+                    "TORCH_NCCL_ASYNC_ERROR_HANDLING": "3",
+                    "HYDRA_FULL_ERROR": "1",
+                },
+            ),
+        )
     )
 
 

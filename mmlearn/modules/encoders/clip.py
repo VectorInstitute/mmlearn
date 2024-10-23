@@ -9,10 +9,10 @@ from hydra_zen import store
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
 from transformers.modeling_outputs import BaseModelOutput
+from transformers.models.clip.configuration_clip import CLIPTextConfig, CLIPVisionConfig
 
 from mmlearn import hf_utils
 from mmlearn.datasets.core import Modalities
-from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.layers import PatchDropout
 
 
@@ -87,12 +87,12 @@ class HFCLIPTextEncoder(nn.Module):
         self.model = model
         self.pooling_layer = pooling_layer
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
+    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str | Modality, Any]
+        inputs : Dict[str, Any]
             The input data. The `input_ids` will be expected under the `Modalities.TEXT`
             key.
 
@@ -103,7 +103,7 @@ class HFCLIPTextEncoder(nn.Module):
             and the attention weights, if `output_attentions` is set to `True`.
         """
         outputs = self.model(
-            input_ids=inputs[Modalities.TEXT],
+            input_ids=inputs[Modalities.TEXT.name],
             attention_mask=inputs.get("attention_mask")
             or inputs.get(Modalities.TEXT.attention_mask),
             position_ids=inputs.get("position_ids"),
@@ -203,12 +203,12 @@ class HFCLIPVisionEncoder(nn.Module):
                 bias=patch_dropout_bias,
             )
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
+    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str | Modality, Any]
+        inputs : Dict[str, Any]
             The input data. The image tensor will be expected under the `Modalities.RGB`
             key.
 
@@ -220,7 +220,7 @@ class HFCLIPVisionEncoder(nn.Module):
 
         """
         # FIXME: handle other vision modalities
-        pixel_values = inputs[Modalities.RGB]
+        pixel_values = inputs[Modalities.RGB.name]
         hidden_states = self.model.embeddings(pixel_values)
         if self.patch_dropout is not None:
             hidden_states = self.patch_dropout(hidden_states)
@@ -299,11 +299,13 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
         self.use_all_token_embeddings = use_all_token_embeddings
+
         model = hf_utils.load_huggingface_model(
             transformers.CLIPTextModelWithProjection,
-            model_name_or_path=model_name_or_path,
+            model_name_or_path,
             load_pretrained_weights=pretrained,
             model_config_kwargs=model_config_kwargs,
+            config_type=CLIPTextConfig,
         )
 
         model = _freeze_text_model(model, freeze_layers, freeze_layer_norm)
@@ -312,12 +314,12 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
 
         self.model = model
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> Tuple[torch.Tensor]:
+    def forward(self, inputs: Dict[str, Any]) -> Tuple[torch.Tensor]:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str | Modality, Any]
+        inputs : Dict[str, Any]
             The input data. The `input_ids` will be expected under the `Modalities.TEXT`
             key.
 
@@ -326,7 +328,7 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
         Tuple[torch.Tensor]
             The text embeddings. Will be a tuple with a single element.
         """
-        input_ids = inputs[Modalities.TEXT]
+        input_ids = inputs[Modalities.TEXT.name]
         attention_mask: Optional[torch.Tensor] = inputs.get(
             "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
         )
@@ -416,11 +418,13 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
         self.use_all_token_embeddings = use_all_token_embeddings
+
         model = hf_utils.load_huggingface_model(
             transformers.CLIPVisionModelWithProjection,
-            model_name_or_path=model_name_or_path,
+            model_name_or_path,
             load_pretrained_weights=pretrained,
             model_config_kwargs=model_config_kwargs,
+            config_type=CLIPVisionConfig,
         )
 
         model = _freeze_vision_model(model, freeze_layers, freeze_layer_norm)
@@ -436,7 +440,7 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
                 bias=patch_dropout_bias,
             )
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> Tuple[torch.Tensor]:
+    def forward(self, inputs: Dict[str, Any]) -> Tuple[torch.Tensor]:
         """Run the forward pass.
 
         Parameters
@@ -450,7 +454,7 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
         Tuple[torch.Tensor]
             The image embeddings. Will be a tuple with a single element.
         """
-        pixel_values = inputs[Modalities.RGB]
+        pixel_values = inputs[Modalities.RGB.name]
         hidden_states = self.model.vision_model.embeddings(pixel_values)
         if self.patch_dropout is not None:
             hidden_states = self.patch_dropout(hidden_states)
@@ -551,12 +555,12 @@ class PubMedBERTForCLIPTextEncoding(nn.Module):
         self.model = model
         self.pooling_layer = pooling_layer
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
+    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str | Modality, Any]
+        inputs : Dict[str, Any]
             The input data. The `input_ids` will be expected under the `Modalities.TEXT`
             key.
 
@@ -567,7 +571,7 @@ class PubMedBERTForCLIPTextEncoding(nn.Module):
             and the attention weights, if `output_attentions` is set to `True`.
         """
         output = self.model(
-            input_ids=inputs[Modalities.TEXT],
+            input_ids=inputs[Modalities.TEXT.name],
             attention_mask=inputs.get(
                 "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
             ),

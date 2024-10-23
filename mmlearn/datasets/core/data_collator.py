@@ -2,12 +2,12 @@
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional
 
 from torch.utils.data import default_collate
 
 from mmlearn.datasets.core.example import Example
-from mmlearn.datasets.core.modalities import Modalities, Modality
+from mmlearn.datasets.core.modalities import Modalities
 
 
 @dataclass
@@ -43,9 +43,9 @@ class DefaultDataCollator:
 
         if self.batch_processors is not None:
             for key, processor in self.batch_processors.items():
-                batch_key: Union[str, Modality] = key
+                batch_key: str = key
                 if Modalities.has_modality(key):
-                    batch_key = Modalities.get_modality(key)
+                    batch_key = Modalities.get_modality(key).name
 
                 if batch_key in batch:
                     batch_processed = processor(batch[batch_key])

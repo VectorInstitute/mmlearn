@@ -9,7 +9,7 @@ experimentation and research for new techniques.
 ## Quick Start
 ### Installation
 #### Prerequisites
-The library requires Python 3.9 or later. We recommend using a virtual environment to manage dependencies. You can create
+The library requires Python 3.10 or later. We recommend using a virtual environment to manage dependencies. You can create
 a virtual environment using the following command:
 ```bash
 python3 -m venv /path/to/new/virtual/environment

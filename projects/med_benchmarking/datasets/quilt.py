@@ -96,7 +96,7 @@ class Quilt(Dataset[Example]):
             self.data_df.apply(
                 lambda row: row["split"] == split and row["subset"] in subset, axis=1
             )
-        ]
+        ].reset_index(drop=True)
 
         # the 'pathology' column is a list of strings
         self.data_df["pathology"] = self.data_df["pathology"].apply(_safe_eval)
@@ -146,8 +146,8 @@ class Quilt(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: caption,
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: caption,
                 EXAMPLE_INDEX_KEY: idx,
                 "qid": self.data_df.index[idx],
                 "magnification": self.data_df.loc[idx, "magnification"],
@@ -159,11 +159,11 @@ class Quilt(Dataset[Example]):
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
                 assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
+                    Modalities.TEXT.name in tokens
+                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         return example
 

@@ -86,7 +86,7 @@ class HFTokenizer:
                     batch_encoding[key] = torch.squeeze(value, 0)
 
         # use 'Modalities.TEXT' key for input_ids for consistency
-        batch_encoding[Modalities.TEXT] = batch_encoding["input_ids"]
+        batch_encoding[Modalities.TEXT.name] = batch_encoding["input_ids"]
         return dict(batch_encoding)
 
 
@@ -95,7 +95,6 @@ store(
     name="HFCLIPTokenizer",
     group="datasets/tokenizers",
     model_name_or_path="openai/clip-vit-base-patch16",
-    max_length=77,
     padding="max_length",
     truncation=True,
 )

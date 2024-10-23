@@ -3,14 +3,14 @@
 import os
 from typing import Any, Callable, Dict, Literal, Optional, Tuple, Union
 
+import pyarrow as pa
+import pyarrow.json as pj
 import torch
 from omegaconf import MISSING
 from PIL import Image
+from pyarrow import csv
 from torch.utils.data import Dataset
 from torchvision import transforms
-import pyarrow.json as pj
-from pyarrow import csv
-import pyarrow as pa
 
 from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
@@ -114,8 +114,8 @@ class PMCOA(Dataset[Example]):
         caption = self.captions[idx].as_py()
         example = Example(
             {
-                Modalities.RGB: images,
-                Modalities.TEXT: caption,
+                Modalities.RGB.name: images,
+                Modalities.TEXT.name: caption,
                 EXAMPLE_INDEX_KEY: idx,
             }
         )
@@ -124,11 +124,11 @@ class PMCOA(Dataset[Example]):
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
                 assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
+                    Modalities.TEXT.name in tokens
+                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         if self.mask_generator is not None and self.tokenizer is not None:
             _, masked_labels, masked_text = self.mask_generator(
