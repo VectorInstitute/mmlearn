@@ -233,21 +233,22 @@ class ZeroShotClassification(EvaluationHooks):
         num_classes: int, top_k: List[int], prefix: str, postfix: str
     ) -> MetricCollection:
         """Create a collection of classification metrics."""
+        task_type = "binary" if num_classes == 2 else "multiclass"
         return MetricCollection(
             {
                 "precision": Precision(
-                    task="multiclass", num_classes=num_classes, average="macro"
+                    task=task_type, num_classes=num_classes, average="macro"
                 ),
                 "recall": Recall(
-                    task="multiclass", num_classes=num_classes, average="macro"
+                    task=task_type, num_classes=num_classes, average="macro"
                 ),
                 "f1_score_macro": F1Score(
-                    task="multiclass", num_classes=num_classes, average="macro"
+                    task=task_type, num_classes=num_classes, average="macro"
                 ),
-                "aucroc": AUROC(task="multiclass", num_classes=num_classes),
+                "aucroc": AUROC(task=task_type, num_classes=num_classes),
                 **{
                     f"top{k}_accuracy": Accuracy(
-                        task="multiclass",
+                        task=task_type,
                         num_classes=num_classes,
                         top_k=k,
                         average="micro",

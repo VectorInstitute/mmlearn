@@ -156,6 +156,17 @@ Evaluates the quality of the learned representations in retrieving the <i>k</i> 
 using recall@k metric. This is applicable to any number of pairs of modalities at once, depending on memory constraints.
 </td>
 </tr>
+<tr>
+<td>
+
+Zero-shot Classification
+</td>
+<td>
+Evaluates the ability of a pre-trained encoder-based multimodal model to predict classes that were not explicitly seen
+during training. The new classes are given as text prompts, and the query modality can be any of the supported modalities.
+Binary and multi-class classification tasks are supported.
+</td>
+</tr>
 </table>
 
 ## Components
