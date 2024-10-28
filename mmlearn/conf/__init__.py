@@ -168,7 +168,6 @@ class MMLearnConf:
             job=JobConf(
                 name=II("experiment_name"),
                 env_set={
-                    "NCCL_IB_DISABLE": "1",
                     "TORCH_NCCL_ASYNC_ERROR_HANDLING": "3",
                     "HYDRA_FULL_ERROR": "1",
                 },
