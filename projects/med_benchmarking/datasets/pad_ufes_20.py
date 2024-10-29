@@ -6,15 +6,14 @@ from typing import Callable, Dict, Literal, Optional
 
 import pandas as pd
 import torch
-from omegaconf import MISSING
-from PIL import Image
-from torch.utils.data import Dataset
-from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
-
 from mmlearn.conf import external_store
 from mmlearn.constants import EXAMPLE_INDEX_KEY
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.example import Example
+from omegaconf import MISSING
+from PIL import Image
+from torch.utils.data import Dataset
+from torchvision.transforms import CenterCrop, Compose, Resize, ToTensor
 
 
 @external_store(group="datasets", root_dir=os.getenv("PADUFES_ROOT_DIR", MISSING))
@@ -69,7 +68,9 @@ class PadUfes20(Dataset[Example]):
         df["path"] = df["img_id"].apply(
             lambda imgid: os.path.join(self.root_dir, "Dataset", imgid)
         )
-        df.drop(columns=["img_id", "diagnostic"], inplace=True)
+        df.drop(columns=["img_id", "diagnostic"], inplace=True).reset_index(
+            drop=True, inplace=True
+        )
 
         # Split into train and test
         dataset = {}

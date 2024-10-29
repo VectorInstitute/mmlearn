@@ -195,7 +195,13 @@ class ZeroShotClassification(EvaluationHooks):
             query_embeddings /= query_embeddings.norm(p=2, dim=-1, keepdim=True)
             query_embeddings = query_embeddings[matching_indices]
 
-            logits = 100.0 * _safe_matmul(query_embeddings, class_embeddings)
+            if self.all_dataset_info[dataset_index]["num_classes"] == 2:
+                softmax_output = _safe_matmul(
+                    query_embeddings, class_embeddings
+                ).softmax(dim=-1)
+                logits = softmax_output[:, 1] - softmax_output[:, 0]
+            else:
+                logits = 100.0 * _safe_matmul(query_embeddings, class_embeddings)
             targets = batch[Modalities.get_modality(query_modality).target][
                 matching_indices
             ]
@@ -233,27 +239,36 @@ class ZeroShotClassification(EvaluationHooks):
         num_classes: int, top_k: List[int], prefix: str, postfix: str
     ) -> MetricCollection:
         """Create a collection of classification metrics."""
+        task_type = "binary" if num_classes == 2 else "multiclass"
+        acc_metrics = (
+            {
+                f"top{k}_accuracy": Accuracy(
+                    task=task_type, num_classes=num_classes, top_k=k, average="micro"
+                )
+                for k in top_k
+            }
+            if num_classes > 2
+            else {"accuracy": Accuracy(task=task_type, num_classes=num_classes)}
+        )
         return MetricCollection(
             {
                 "precision": Precision(
-                    task="multiclass", num_classes=num_classes, average="macro"
+                    task=task_type,
+                    num_classes=num_classes,
+                    average="macro" if num_classes > 2 else "micro",
                 ),
                 "recall": Recall(
-                    task="multiclass", num_classes=num_classes, average="macro"
+                    task=task_type,
+                    num_classes=num_classes,
+                    average="macro" if num_classes > 2 else "micro",
                 ),
                 "f1_score_macro": F1Score(
-                    task="multiclass", num_classes=num_classes, average="macro"
+                    task=task_type,
+                    num_classes=num_classes,
+                    average="macro" if num_classes > 2 else "micro",
                 ),
-                "aucroc": AUROC(task="multiclass", num_classes=num_classes),
-                **{
-                    f"top{k}_accuracy": Accuracy(
-                        task="multiclass",
-                        num_classes=num_classes,
-                        top_k=k,
-                        average="micro",
-                    )
-                    for k in top_k
-                },
+                "aucroc": AUROC(task=task_type, num_classes=num_classes),
+                **acc_metrics,
             },
             prefix=prefix,
             postfix=postfix,
