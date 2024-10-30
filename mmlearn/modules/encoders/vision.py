@@ -561,6 +561,10 @@ class VisionTransformerPredictor(nn.Module):
         return self.predictor_proj(x)
 
 
+@store(
+    group="modules/encoders",
+    provider="mmlearn",
+)
 def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
     """
     Create a VisionTransformerPredictor model.
@@ -575,6 +579,10 @@ def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
     )
 
 
+@store(
+    group="modules/encoders",
+    provider="mmlearn",
+)
 def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with tiny configuration.

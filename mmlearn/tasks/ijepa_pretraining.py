@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, Optional
 import lightning as L  # noqa: N812
 import torch
 import torch.nn.functional as F  # noqa: N812
+from hydra_zen import store
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from lightning_utilities.core.rank_zero import rank_zero_warn
 
@@ -15,6 +16,7 @@ from mmlearn.modules.ema import ExponentialMovingAverage
 from mmlearn.modules.encoders.vision import VisionTransformer
 
 
+@store(group="task", provider="mmlearn")
 class IJEPA(L.LightningModule):
     """Pretraining module for IJEPA.
 
