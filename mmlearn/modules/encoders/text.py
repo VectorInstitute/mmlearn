@@ -3,11 +3,11 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa: N812
 from hydra_zen import store
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
-from transformers import AutoModel, AutoModelForTextEncoding
+from transformers import AutoModel, AutoModelForTextEncoding, PreTrainedModel
 from transformers.modeling_outputs import BaseModelOutput
 
 from mmlearn import hf_utils
@@ -18,173 +18,74 @@ if TYPE_CHECKING:
     from peft import PeftConfig
 
 
-@store(group="modules/encoders", provider="mmlearn", hydra_convert="object")
-class HFTextEncoder(nn.Module):
-    """Wrapper around huggingface models in the `AutoModelForTextEncoding` class.
+def freeze_model_layers(
+    model: PreTrainedModel,
+    freeze_layers: Union[int, float, List[int], bool],
+    freeze_layer_norm: bool = True,
+) -> None:
+    """Freeze model layers based on configuration.
 
     Parameters
     ----------
-    model_name_or_path : str
-        The huggingface model name or a local path from which to load the model.
-    pretrained : bool, default=True
-        Whether to load the pretrained weights or not.
-    pooling_layer : nn.Module, optional, default=None
-        Pooling layer to apply to the last hidden state of the model.
-    freeze_layers : int | float | List[int] | bool, default=False
-        Whether to freeze layers of the model and which layers to freeze. If `True`,
-        all model layers are frozen. If it is an integer, the first `N` layers of
-        the model are frozen. If it is a float, the first `N` percent of the layers
-        are frozen. If it is a list of integers, the layers at the indices in the
-        list are frozen.
-    freeze_layer_norm : bool, default=True
-        Whether to freeze the layer normalization layers of the model.
-    peft_config : PeftConfig, optional, default=None
-        The configuration from the `peft` library to use to wrap the model
-        for parameter-efficient finetuning.
-    model_config_kwargs : Dict[str, Any], optional, default=None
-        Additional keyword arguments to pass to the model configuration.
-
-    Warns
-    -----
-    UserWarning
-        If both `peft_config` and `freeze_layers` are set. The `peft_config` will
-        override the `freeze_layers` setting.
-
-
+    model : PreTrainedModel
+        The model whose layers to freeze.
+    freeze_layers : Union[int, float, List[int], bool]
+        Specification of which layers to freeze.
+    freeze_layer_norm : bool
+        Whether to freeze layer normalization layers.
     """
-
-    def __init__(  # noqa: PLR0912
-        self,
-        model_name_or_path: str,
-        pretrained: bool = True,
-        pooling_layer: Optional[nn.Module] = None,
-        freeze_layers: Union[int, float, List[int], bool] = False,
-        freeze_layer_norm: bool = True,
-        peft_config: Optional["PeftConfig"] = None,
-        model_config_kwargs: Optional[Dict[str, Any]] = None,
-    ):
-        """Initialize the model."""
-        super().__init__()
-        if model_config_kwargs is None:
-            model_config_kwargs = {}
-        model_config_kwargs["output_hidden_states"] = True
-        model_config_kwargs["add_pooling_layer"] = False
-        model = hf_utils.load_huggingface_model(
-            AutoModelForTextEncoding,
-            model_name_or_path,
-            load_pretrained_weights=pretrained,
-            model_config_kwargs=model_config_kwargs,
-        )
-        if hasattr(model.config, "is_decoder") and model.config.is_decoder:
-            raise ValueError("Model is a decoder. Only encoder models are supported.")
-
-        if not pretrained and freeze_layers:
-            rank_zero_warn(
-                "Freezing layers when loading a model with random weights may lead to "
-                "unexpected behavior. Consider setting `freeze_layers=False` if "
-                "`pretrained=False`.",
+    if isinstance(freeze_layers, bool) and freeze_layers:
+        for name, param in model.named_parameters():
+            param.requires_grad = (
+                (not freeze_layer_norm) if "LayerNorm" in name else False
             )
+        return
 
-        if isinstance(freeze_layers, bool) and freeze_layers:
-            for name, param in model.named_parameters():
-                param.requires_grad = (
-                    (not freeze_layer_norm) if "LayerNorm" in name else False
-                )
-
-        if isinstance(
-            freeze_layers, (float, int, list)
-        ) and model.config.model_type in ["flaubert", "xlm"]:
-            # flaubert and xlm models have a different architecture that does not
-            # support freezing individual layers in the same way as other models
-            raise ValueError(
-                f"Freezing individual layers is not supported for {model.config.model_type} "
-                "models. Please use `freeze_layers=False` or `freeze_layers=True`."
-            )
-
-        # get list of layers
-        embeddings = model.embeddings
-        encoder = getattr(model, "encoder", None) or getattr(
-            model, "transformer", model
+    if isinstance(freeze_layers, (float, int, list)) and model.config.model_type in [
+        "flaubert",
+        "xlm",
+    ]:
+        raise ValueError(
+            f"Freezing individual layers is not supported for {model.config.model_type} "
+            "models. Please use `freeze_layers=False` or `freeze_layers=True`."
         )
-        encoder_layers = (
-            getattr(encoder, "layer", None)
-            or getattr(encoder, "layers", None)
-            or getattr(encoder, "block", None)
-        )
-        if encoder_layers is None and hasattr(encoder, "albert_layer_groups"):
-            encoder_layers = [
-                layer
-                for group in encoder.albert_layer_groups
-                for layer in group.albert_layers
-            ]
-        modules = [embeddings]
-        if encoder_layers is not None and isinstance(encoder_layers, list):
-            modules.extend(encoder_layers)
 
-        if isinstance(freeze_layers, float):
-            freeze_layers = int(freeze_layers * len(modules))
-        if isinstance(freeze_layers, int):
-            freeze_layers = list(range(freeze_layers))
+    # Get list of layers
+    embeddings = model.embeddings
+    encoder = getattr(model, "encoder", None) or getattr(model, "transformer", model)
+    encoder_layers = (
+        getattr(encoder, "layer", None)
+        or getattr(encoder, "layers", None)
+        or getattr(encoder, "block", None)
+    )
 
-        if isinstance(freeze_layers, list):
-            for idx, module in enumerate(modules):
-                if idx in freeze_layers:
-                    for name, param in module.named_parameters():
-                        param.requires_grad = (
-                            (not freeze_layer_norm) if "LayerNorm" in name else False
-                        )
+    if encoder_layers is None and hasattr(encoder, "albert_layer_groups"):
+        encoder_layers = [
+            layer
+            for group in encoder.albert_layer_groups
+            for layer in group.albert_layers
+        ]
 
-        if peft_config is not None:
-            model = hf_utils._wrap_peft_model(model, peft_config)
+    modules = [embeddings]
+    if encoder_layers is not None and isinstance(encoder_layers, list):
+        modules.extend(encoder_layers)
 
-        self.model = model
-        self.pooling_layer = pooling_layer
+    if isinstance(freeze_layers, float):
+        freeze_layers = int(freeze_layers * len(modules))
+    if isinstance(freeze_layers, int):
+        freeze_layers = list(range(freeze_layers))
 
-    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
-        """Run the forward pass.
-
-        Parameters
-        ----------
-        inputs : Dict[str, Any]
-            The input data. The `input_ids` will be expected under the `Modalities.TEXT`
-            key.
-
-        Returns
-        -------
-        BaseModelOutput
-            The output of the model, including the last hidden state, all hidden states,
-            and the attention weights, if `output_attentions` is set to `True`.
-        """
-        outputs = self.model(
-            input_ids=inputs[Modalities.TEXT.name],
-            attention_mask=inputs.get(
-                "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
-            ),
-            position_ids=inputs.get("position_ids"),
-            output_attentions=inputs.get("output_attentions"),
-            return_dict=True,
-        )
-        last_hidden_state = outputs.hidden_states[-1]  # NOTE: no layer norm applied
-        if self.pooling_layer:
-            last_hidden_state = self.pooling_layer(last_hidden_state)
-
-        return BaseModelOutput(
-            last_hidden_state=last_hidden_state,
-            hidden_states=outputs.hidden_states,
-            attentions=outputs.attentions,
-        )
+    if isinstance(freeze_layers, list):
+        for idx, module in enumerate(modules):
+            if idx in freeze_layers:
+                for name, param in module.named_parameters():
+                    param.requires_grad = (
+                        (not freeze_layer_norm) if "LayerNorm" in name else False
+                    )
 
 
 class RegressionHead(nn.Module):
-    """Regression head for Data2Vec text encoder.
-
-    Parameters
-    ----------
-    embed_dim : int
-        Input embedding dimension.
-    num_layers : int
-        Number of layers in the regression head.
-    """
+    """Regression head for Data2Vec text encoder."""
 
     def __init__(self, embed_dim: int, num_layers: int = 1) -> None:
         """Initialize the regression head."""
@@ -204,42 +105,101 @@ class RegressionHead(nn.Module):
         self.layers = nn.Sequential(*layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Run the forward pass through the regression head.
+        """Run the forward pass.
 
         Parameters
         ----------
         x : torch.Tensor
-            The input tensor.
+            Input tensor.
 
         Returns
         -------
         torch.Tensor
-            The output tensor.
+            Output tensor.
         """
         return self.layers(x)
 
 
-@store(group="modules/encoders", provider="mmlearn", hydra_convert="object")
-class Data2VecTextEncoder(nn.Module):
-    """Text encoder for Data2Vec implementation.
+class TextEncoderBase(nn.Module):
+    """Base class for text encoders."""
 
-    Parameters
-    ----------
-    model_name_or_path : str
-        The huggingface model name or path.
-    head_layers : int
-        Number of layers in regression head.
-    pretrained : bool
-        Whether to use pretrained weights.
-    freeze_layers : Union[int, float, List[int], bool]
-        Which layers to freeze.
-    freeze_layer_norm : bool
-        Whether to freeze layer norm parameters.
-    peft_config : Optional[PeftConfig]
-        PEFT configuration for efficient fine-tuning.
-    model_kwargs : Optional[Dict[str, Any]]
-        Additional model configuration arguments.
-    """
+    def _get_attention_mask(self, inputs: Dict[str, Any]) -> Optional[torch.Tensor]:
+        """Get attention mask from inputs."""
+        return inputs.get(
+            "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
+        )
+
+
+@store(group="modules/encoders", provider="mmlearn", hydra_convert="object")
+class HFTextEncoder(TextEncoderBase):
+    """Wrapper around huggingface models in the `AutoModelForTextEncoding` class."""
+
+    def __init__(
+        self,
+        model_name_or_path: str,
+        pretrained: bool = True,
+        pooling_layer: Optional[nn.Module] = None,
+        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layer_norm: bool = True,
+        peft_config: Optional["PeftConfig"] = None,
+        model_config_kwargs: Optional[Dict[str, Any]] = None,
+    ):
+        """Initialize the model."""
+        super().__init__()
+        if model_config_kwargs is None:
+            model_config_kwargs = {}
+        model_config_kwargs["output_hidden_states"] = True
+        model_config_kwargs["add_pooling_layer"] = False
+
+        model = hf_utils.load_huggingface_model(
+            AutoModelForTextEncoding,
+            model_name_or_path,
+            load_pretrained_weights=pretrained,
+            model_config_kwargs=model_config_kwargs,
+        )
+
+        if hasattr(model.config, "is_decoder") and model.config.is_decoder:
+            raise ValueError("Model is a decoder. Only encoder models are supported.")
+
+        if not pretrained and freeze_layers:
+            rank_zero_warn(
+                "Freezing layers when loading a model with random weights may lead to "
+                "unexpected behavior. Consider setting `freeze_layers=False` if "
+                "`pretrained=False`."
+            )
+
+        freeze_model_layers(model, freeze_layers, freeze_layer_norm)
+
+        if peft_config is not None:
+            model = hf_utils._wrap_peft_model(model, peft_config)
+
+        self.model = model
+        self.pooling_layer = pooling_layer
+
+    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
+        """Run the forward pass."""
+        outputs = self.model(
+            input_ids=inputs[Modalities.TEXT.name],
+            attention_mask=self._get_attention_mask(inputs),
+            position_ids=inputs.get("position_ids"),
+            output_attentions=inputs.get("output_attentions"),
+            return_dict=True,
+        )
+
+        last_hidden_state = outputs.hidden_states[-1]
+        if self.pooling_layer:
+            last_hidden_state = self.pooling_layer(last_hidden_state)
+
+        return BaseModelOutput(
+            last_hidden_state=last_hidden_state,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+        )
+
+
+@store(group="modules/encoders", provider="mmlearn", hydra_convert="object")
+class Data2VecTextEncoder(TextEncoderBase):
+    """Text encoder for Data2Vec implementation."""
 
     def __init__(
         self,
@@ -251,6 +211,7 @@ class Data2VecTextEncoder(nn.Module):
         peft_config: Optional["PeftConfig"] = None,
         model_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
+        """Initialize the encoder."""
         super().__init__()
 
         if model_kwargs is None:
@@ -267,12 +228,7 @@ class Data2VecTextEncoder(nn.Module):
             )
         )
 
-        # Handle layer freezing
-        if isinstance(freeze_layers, bool) and freeze_layers:
-            for name, param in self.model.named_parameters():
-                param.requires_grad = (
-                    (not freeze_layer_norm) if "LayerNorm" in name else False
-                )
+        freeze_model_layers(self.model, freeze_layers, freeze_layer_norm)
 
         # Build regression head
         self.regression_head = RegressionHead(
@@ -287,25 +243,10 @@ class Data2VecTextEncoder(nn.Module):
         inputs: Dict[str, Any],
         output_hidden_states: bool = False,
     ) -> BaseModelOutput:
-        """Forward pass through the encoder.
-
-        Parameters
-        ----------
-        inputs : Dict[str, Any]
-            Input dictionary containing text inputs under Modalities.TEXT key.
-        output_hidden_states : bool
-            Whether to return all hidden states.
-
-        Returns
-        -------
-        BaseModelOutput
-            Model outputs including hidden states if requested.
-        """
+        """Forward pass through the encoder."""
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT.name],
-            attention_mask=inputs.get(
-                "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
-            ),
+            attention_mask=self._get_attention_mask(inputs),
             output_hidden_states=True,
             return_dict=True,
         )
@@ -328,31 +269,10 @@ class Data2VecTextEncoder(nn.Module):
         instance_norm: bool = False,
         batch_norm: bool = False,
     ) -> List[torch.Tensor]:
-        """Get intermediate hidden states with optional normalization.
-
-        Parameters
-        ----------
-        inputs : Dict[str, Any]
-            Input dictionary with text inputs.
-        normalize : bool
-            Whether to apply any normalization.
-        layer_norm : bool
-            Whether to apply layer normalization.
-        instance_norm : bool
-            Whether to apply instance normalization.
-        batch_norm : bool
-            Whether to apply batch normalization.
-
-        Returns
-        -------
-        List[torch.Tensor]
-            List of hidden states from intermediate layers.
-        """
+        """Get intermediate hidden states with optional normalization."""
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT.name],
-            attention_mask=inputs.get(
-                "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
-            ),
+            attention_mask=self._get_attention_mask(inputs),
             output_hidden_states=True,
             return_dict=True,
         )
