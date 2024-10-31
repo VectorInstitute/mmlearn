@@ -3,18 +3,21 @@
 import inspect
 from dataclasses import dataclass
 from functools import partial
-from typing import Any, Dict, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import lightning as L  # noqa: N812
 import torch
+import torch.nn.functional as F
 from hydra_zen import store
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
-from transformers.modeling_outputs import BaseModelOutput
 
 from mmlearn.datasets.core.modalities import Modalities, Modality
-from mmlearn.datasets.processors.masking import apply_masks
+from mmlearn.datasets.processors.masking import (
+    BlockwiseImagePatchMaskGenerator,
+    apply_masks,
+)
 from mmlearn.modules.ema import ExponentialMovingAverage
 from mmlearn.modules.losses.data2vec import Data2VecLoss
 
@@ -30,39 +33,7 @@ class EvaluationSpec:
 
 @store(group="task", provider="mmlearn")
 class Data2VecTask(L.LightningModule):
-    """Data2Vec task.
-
-    This class implements the Data2Vec self-supervised learning approach for a single
-    modality. It can be used as an auxiliary task in multi-modal learning setups.
-
-    Parameters
-    ----------
-    encoder : nn.Module
-        The encoder for the modality.
-    optimizer : partial[torch.optim.Optimizer], optional
-        The optimizer to use for training.
-    lr_scheduler : Union[
-        Dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]],
-        partial[torch.optim.lr_scheduler.LRScheduler]
-    ], optional
-        The learning rate scheduler to use for training.
-    loss : Data2VecLoss, optional
-        The loss function to use.
-    ema_decay : float
-        The initial decay value for EMA.
-    ema_end_decay : float
-        The final decay value for EMA.
-    ema_anneal_end_step : int
-        The number of steps to anneal the decay from `ema_decay` to `ema_end_decay`.
-    mask_generator : Any
-        The mask generator to use for creating masked inputs.
-    compute_validation_loss : bool
-        Whether to compute the validation loss.
-    compute_test_loss : bool
-        Whether to compute the test loss.
-    evaluation_tasks : Dict[str, EvaluationSpec], optional
-        Evaluation tasks to run during validation and testing.
-    """
+    """Data2Vec task implementation."""
 
     def __init__(
         self,
@@ -78,10 +49,16 @@ class Data2VecTask(L.LightningModule):
         ema_decay: float = 0.999,
         ema_end_decay: float = 0.9999,
         ema_anneal_end_step: int = 300000,
-        mask_generator: Any = None,
+        mask_generator: Optional[BlockwiseImagePatchMaskGenerator] = None,
         compute_validation_loss: bool = True,
         compute_test_loss: bool = True,
         evaluation_tasks: Optional[Dict[str, EvaluationSpec]] = None,
+        average_top_k_layers: int = 6,
+        target_instance_norm: bool = False,
+        target_batch_norm: bool = False,
+        target_layer_norm_last: bool = False,
+        post_target_instance_norm: bool = False,
+        post_target_layer_norm: bool = False,
     ) -> None:
         super().__init__()
 
@@ -102,20 +79,68 @@ class Data2VecTask(L.LightningModule):
         self.compute_test_loss = compute_test_loss
         self.evaluation_tasks = evaluation_tasks
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
-        """Run the forward pass.
+        # Data2Vec specific parameters
+        self.average_top_k_layers = average_top_k_layers
+        self.target_instance_norm = target_instance_norm
+        self.target_batch_norm = target_batch_norm
+        self.target_layer_norm_last = target_layer_norm_last
+        self.post_target_instance_norm = post_target_instance_norm
+        self.post_target_layer_norm = post_target_layer_norm
+
+    def _get_teacher_targets(self, hidden_states: List[torch.Tensor]) -> torch.Tensor:
+        """Get teacher targets by averaging top k layers with normalization.
 
         Parameters
         ----------
-        inputs : Dict[Union[str, Modality], Any]
-            The input tensors to encode.
+        hidden_states : List[torch.Tensor]
+            The hidden states to average.
 
         Returns
         -------
-        BaseModelOutput
-            The output of the encoder.
+        torch.Tensor
+            The averaged hidden states.
         """
-        return self.encoder(inputs)
+        top_k_hidden_states = hidden_states[-self.average_top_k_layers :]
+
+        if self.target_instance_norm or self.target_batch_norm:
+            top_k_hidden_states = [
+                val.permute(0, 2, 1) for val in top_k_hidden_states
+            ]  # btc => bct
+
+        if self.target_batch_norm:
+            top_k_hidden_states = [
+                F.batch_norm(
+                    val.float(), running_mean=None, running_var=None, training=True
+                )
+                for val in top_k_hidden_states
+            ]
+
+        if self.target_instance_norm:
+            top_k_hidden_states = [
+                F.instance_norm(val.float()) for val in top_k_hidden_states
+            ]
+
+        if self.target_instance_norm or self.target_batch_norm:
+            top_k_hidden_states = [
+                val.permute(0, 2, 1) for val in top_k_hidden_states
+            ]  # bct => btc
+
+        if self.target_layer_norm_last:
+            top_k_hidden_states = [
+                F.layer_norm(val.float(), val.shape[-1:]) for val in top_k_hidden_states
+            ]
+
+        targets = sum(top_k_hidden_states) / len(top_k_hidden_states)
+
+        if self.post_target_instance_norm:
+            targets = targets.permute(0, 2, 1)
+            targets = F.instance_norm(targets.float())
+            targets = targets.permute(0, 2, 1)
+
+        if self.post_target_layer_norm:
+            targets = F.layer_norm(targets.float(), targets.shape[-1:])
+
+        return targets
 
     def _compute_loss(self, batch: Dict[Union[str, Modality], Any]) -> torch.Tensor:
         """Compute the loss for the batch.
@@ -139,23 +164,21 @@ class Data2VecTask(L.LightningModule):
             for k, v in batch.items()
         }
 
-        # Get student output
+        # Get student output with masked input
         student_output = self(masked_input)
-        student_hidden_states = student_output.hidden_states
+        student_hidden = student_output.last_hidden_state
 
-        # Get teacher output (without gradients)
+        # Get teacher output with original input
         with torch.no_grad():
-            teacher_output = self.ema.model(batch)
-            teacher_hidden_states = teacher_output.hidden_states
+            teacher_output = self.ema.model(batch, output_hidden_states=True)
+            teacher_targets = self._get_teacher_targets(teacher_output.hidden_states)
 
-        # Compute loss
-        loss = 0
-        for student_layer, teacher_layer in zip(
-            student_hidden_states, teacher_hidden_states
-        ):
-            loss += self.loss_fn(student_layer, teacher_layer)
+        # Get masked indices
+        if isinstance(mask, torch.Tensor):
+            mask = mask.bool()
 
-        return loss / len(student_hidden_states)
+        # Compute loss only on masked positions
+        return self.loss_fn(student_hidden[mask], teacher_targets[mask])
 
     def training_step(
         self, batch: Dict[Union[str, Modality], Any], batch_idx: int
