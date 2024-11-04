@@ -497,7 +497,7 @@ class ContrastivePretraining(L.LightningModule):
 
         Parameters
         ----------
-        batch : Dict[Union[str, Modality], Any]
+        batch : Dict[str, torch.Tensor]
             The batch of data to process.
         batch_idx : int
             The index of the batch.
@@ -524,7 +524,7 @@ class ContrastivePretraining(L.LightningModule):
 
         Parameters
         ----------
-        batch : Dict[Union[str, Modality], Any]
+        batch : Dict[str, torch.Tensor]
             The batch of data to process.
         batch_idx : int
             The index of the batch.
@@ -644,7 +644,7 @@ class ContrastivePretraining(L.LightningModule):
 
         Parameters
         ----------
-        batch : Dict[Union[str, Modality], Any]
+        batch : Dict[str, torch.Tensor]
             The batch of data to process.
         batch_idx : int
             The index of the batch.
