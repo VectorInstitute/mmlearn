@@ -13,7 +13,7 @@ from torch import nn
 from transformers.modeling_outputs import BaseModelOutput
 
 from mmlearn import hf_utils
-from mmlearn.datasets.core.modalities import Modalities, Modality
+from mmlearn.datasets.core.modalities import Modalities
 from mmlearn.datasets.processors.masking import apply_masks
 from mmlearn.datasets.processors.transforms import (
     repeat_interleave_batch,
@@ -137,13 +137,13 @@ class TimmViT(nn.Module):
         )
 
     def get_intermediate_layers(
-        self, inputs: Dict[Union[str, Modality], Any], n: int = 1
+        self, inputs: Dict[str, Any], n: int = 1
     ) -> List[torch.Tensor]:
         """Get the output of the intermediate layers.
 
         Parameters
         ----------
-        inputs : Dict[Union[str, Modality], Any]
+        inputs : Dict[str, Any]
             The input data. The `image` will be expected under the `Modalities.RGB` key.
         n : int, default=1
             The number of intermediate layers to return.
