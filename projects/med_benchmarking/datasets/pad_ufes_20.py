@@ -43,13 +43,13 @@ class PadUfes20(Dataset[Example]):
         self.split = split
 
         # Load cached data if available
-        cache_path = f"cache/PadUfes20_{split}.pkl"
+        cache_path = f".cache/PadUfes20_{split}.pkl"
         if os.path.exists(cache_path):
             print(f"!!! Using cached dataset for {split}")
             with open(cache_path, "rb") as f:
                 self.metadata = pickle.load(f)
         else:
-            os.makedirs("cache/", exist_ok=True)
+            os.makedirs(".cache/", exist_ok=True)
             self.metadata = self._load_and_process_metadata()
             with open(cache_path, "wb") as f:
                 pickle.dump(self.metadata.to_dict("records"), f)
@@ -68,14 +68,13 @@ class PadUfes20(Dataset[Example]):
         df["path"] = df["img_id"].apply(
             lambda imgid: os.path.join(self.root_dir, "Dataset", imgid)
         )
-        df.drop(columns=["img_id", "diagnostic"], inplace=True).reset_index(
-            drop=True, inplace=True
-        )
+        df.drop(columns=["img_id", "diagnostic"], inplace=True)
+        df.reset_index(drop=True, inplace=True)
 
         # Split into train and test
         dataset = {}
-        dataset["test"] = df.sample(frac=0.2)
-        dataset["train"] = df.drop(dataset["test"].index)
+        dataset["test"] = df.sample(frac=0.2, ignore_index=True)
+        dataset["train"] = df.drop(dataset["test"].index).reset_index(drop=True)
         return dataset[self.split]
 
     def _build_label(self, str_label: str) -> int:

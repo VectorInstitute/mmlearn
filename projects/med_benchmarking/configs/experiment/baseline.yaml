@@ -15,8 +15,6 @@ defaults:
   - /datasets/tokenizers@dataloader.val.collate_fn.batch_processors.text: HFCLIPTokenizer
   - /modules/encoders@task.encoders.text: HFCLIPTextEncoderWithProjection
   - /modules/encoders@task.encoders.rgb: HFCLIPVisionEncoderWithProjection
-  - /modules/layers@task.postprocessors.norm_and_logit_scale.norm: L2Norm
-  - /modules/layers@task.postprocessors.norm_and_logit_scale.logit_scale: LearnableLogitScaling
   - /modules/losses@task.loss: CLIPLoss
   - /modules/optimizers@task.optimizer: AdamW
   - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
@@ -47,17 +45,6 @@ dataloader:
     num_workers: 4
 
 task:
-  postprocessors:
-    norm_and_logit_scale:
-      norm:
-        dim: -1
-      logit_scale:
-        learnable: True
-  modality_module_mapping:
-    text:
-      postprocessor_key: norm_and_logit_scale
-    rgb:
-      postprocessor_key: norm_and_logit_scale
   optimizer:
     betas:
     - 0.9
