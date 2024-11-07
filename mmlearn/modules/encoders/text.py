@@ -244,13 +244,12 @@ class Data2VecTextEncoder(TextEncoderBase):
         model_kwargs["output_hidden_states"] = True
         model_kwargs["add_pooling_layer"] = False
 
-        # Load base model
-        self.model = (
-            AutoModel.from_pretrained(model_name_or_path, **model_kwargs)
-            if pretrained
-            else AutoModel.from_config(
-                AutoModel.config_class.from_pretrained(model_name_or_path)
-            )
+        # Load base model using the utility function
+        self.model = hf_utils.load_huggingface_model(
+            AutoModel,
+            model_name_or_path,
+            load_pretrained_weights=pretrained,
+            model_config_kwargs=model_kwargs,
         )
 
         freeze_model_layers(self.model, freeze_layers, freeze_layer_norm)
