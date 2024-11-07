@@ -12,8 +12,6 @@ defaults:
   - /modules/encoders@task.encoders.rgb: timm-vit-lora
   - /modules/encoders@task.encoders.dna: barcode-bert-lora
   - /modules/layers@task.heads.text: MLP # the other modalities have projection heads in their encoders
-  - /modules/layers@task.postprocessors.norm_and_logit_scale.norm: L2Norm
-  - /modules/layers@task.postprocessors.norm_and_logit_scale.logit_scale: LearnableLogitScaling
   - /modules/losses@task.loss: CLIPLoss
   - /modules/optimizers@task.optimizer: AdamW
   - /modules/lr_schedulers@task.lr_scheduler.scheduler: OneCycleLR
@@ -67,19 +65,6 @@ task:
     text:
       in_dim: 512
       out_dim: ${task.encoders.rgb.projection_dim}
-  postprocessors:
-    norm_and_logit_scale:
-      norm:
-        dim: -1
-      logit_scale:
-        learnable: True
-  modality_module_mapping:
-    text:
-      postprocessor_key: norm_and_logit_scale
-    rgb:
-      postprocessor_key: norm_and_logit_scale
-    dna:
-      postprocessor_key: norm_and_logit_scale
   optimizer:
     lr: 1.0e-3
     eps: 1.0e-6
