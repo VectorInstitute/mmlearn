@@ -177,7 +177,20 @@ class HFTextEncoder(TextEncoderBase):
         self.pooling_layer = pooling_layer
 
     def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
-        """Run the forward pass."""
+        """Run the forward pass.
+
+        Parameters
+        ----------
+        inputs : Dict[str, Any]
+            The input data. The `input_ids` will be expected under the `Modalities.TEXT`
+            key.
+
+        Returns
+        -------
+        BaseModelOutput
+            The output of the model, including the last hidden state, all hidden states,
+            and the attention weights, if `output_attentions` is set to `True`.
+        """
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT.name],
             attention_mask=self._get_attention_mask(inputs),
