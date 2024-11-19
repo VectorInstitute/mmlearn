@@ -19,6 +19,7 @@ from mmlearn.datasets.processors.masking import (
     apply_masks,
 )
 from mmlearn.modules.ema import ExponentialMovingAverage
+from mmlearn.modules.layers.mlp import MLP
 from mmlearn.modules.losses.data2vec import Data2VecLoss
 
 
@@ -32,37 +33,48 @@ class EvaluationSpec:
 
 
 class RegressionHead(nn.Module):
-    """Regression head for Data2Vec."""
+    """Regression head for Data2Vec text encoder."""
 
     def __init__(self, embed_dim: int, num_layers: int = 1) -> None:
-        """Initialize the regression head."""
+        """Initialize the regression head.
+
+        Parameters
+        ----------
+        embed_dim : int
+            Dimension of the input embeddings
+        num_layers : int, optional
+            Number of layers in the regression head, by default 1
+        """
         super().__init__()
         if num_layers < 1:
             raise ValueError("num_layers must be >= 1")
 
-        layers = []
-        curr_dim = embed_dim
+        if num_layers == 1:
+            hidden_dims = []
+        else:
+            hidden_dims = [embed_dim * 2] + [embed_dim * 2] * (num_layers - 2)
 
-        for i in range(num_layers - 1):
-            next_dim = embed_dim * 2 if i == 0 else curr_dim
-            layers.extend([nn.Linear(curr_dim, next_dim), nn.GELU()])
-            curr_dim = next_dim
-
-        layers.append(nn.Linear(curr_dim, embed_dim))
-        self.layers = nn.Sequential(*layers)
+        self.layers = MLP(
+            in_dim=embed_dim,
+            out_dim=embed_dim,
+            hidden_dims=hidden_dims,
+            activation_layer=nn.GELU,
+            norm_layer=None,
+            dropout=0.0,
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass.
+        """Run the forward pass.
 
         Parameters
         ----------
         x : torch.Tensor
-            The input tensor.
+            Input tensor.
 
         Returns
         -------
         torch.Tensor
-            The output tensor.
+            Output tensor.
         """
         return self.layers(x)
 
