@@ -237,31 +237,35 @@ def apply_masks(
     Parameters
     ----------
     x : torch.Tensor
-        Input tensor of shape (B, N, D), where B is the batch size, N is the number
-        of patches, and D is the feature dimension.
+        Input tensor of shape (B, N, D).
     masks : Union[torch.Tensor, List[torch.Tensor]]
-        A list of tensors containing the indices of patches to keep for each sample.
-        Each mask tensor has shape (B, N), where B is the batch size and N is the number
-        of patches.
+        A list of mask tensors of shape (N,), (1, N), or (B, N).
 
     Returns
     -------
     torch.Tensor
         The masked tensor where only the patches indicated by the masks are kept.
-        The output tensor has shape (B', N', D), where B' is the new batch size
-        (which may be different due to concatenation) and N' is the
-        reduced number of patches.
-
-    Notes
-    -----
-    - The masks should indicate which patches to keep (1 for keep, 0 for discard).
-    - The function uses `torch.gather` to select the patches specified by the masks.
+        The output tensor has shape (B * num_masks, N', D), where N' is the number of patches kept.
     """
     all_x = []
+    batch_size = x.size(0)
     for m in masks:
-        # Expand the mask to match the feature dimension and gather the relevant patches
-        mask_keep = m.unsqueeze(-1).repeat(1, 1, x.size(-1))
-        all_x.append(torch.gather(x, dim=1, index=mask_keep))
+        m = m.to(x.device)
+
+        # Ensure mask is at least 2D
+        if m.dim() == 1:
+            m = m.unsqueeze(0)  # Shape: (1, N)
+
+        # Expand mask to match the batch size if needed
+        if m.size(0) == 1 and batch_size > 1:
+            m = m.expand(batch_size, -1)  # Shape: (B, N)
+
+        # Expand mask to match x's dimensions
+        m_expanded = m.unsqueeze(-1).expand(-1, -1, x.size(-1)).bool()  # Shape: (B, N, D)
+
+        # Use boolean indexing
+        selected_patches = x[m_expanded].view(batch_size, -1, x.size(-1))
+        all_x.append(selected_patches)
 
     # Concatenate along the batch dimension
     return torch.cat(all_x, dim=0)
@@ -271,8 +275,7 @@ def apply_masks(
 class IJEPAMaskGenerator:
     """Generates encoder and predictor masks for preprocessing.
 
-    This class generates masks dynamically for individual examples and can be passed to
-    a data loader as a preprocessing step.
+    This class generates masks dynamically for batches of examples.
 
     Parameters
     ----------
@@ -353,8 +356,14 @@ class IJEPAMaskGenerator:
 
     def __call__(
         self,
+        batch_size: int = 1,
     ) -> Dict[str, Any]:
-        """Generate encoder and predictor masks for a single example.
+        """Generate encoder and predictor masks for a batch of examples.
+
+        Parameters
+        ----------
+        batch_size : int, default=1
+            The batch size for which to generate masks.
 
         Returns
         -------
@@ -378,14 +387,18 @@ class IJEPAMaskGenerator:
         masks_pred, masks_enc = [], []
         for _ in range(self.npred):
             mask_p, _ = self._sample_block_mask(p_size)
+            # Expand mask to match batch size
+            mask_p = mask_p.unsqueeze(0).expand(batch_size, -1)
             masks_pred.append(mask_p)
 
         # Generate encoder masks
         for _ in range(self.nenc):
             mask_e, _ = self._sample_block_mask(e_size)
+            # Expand mask to match batch size
+            mask_e = mask_e.unsqueeze(0).expand(batch_size, -1)
             masks_enc.append(mask_e)
 
         return {
-            "encoder_masks": torch.stack(masks_enc),
-            "predictor_masks": torch.stack(masks_pred),
+            "encoder_masks": masks_enc,  # List of tensors of shape (batch_size, N)
+            "predictor_masks": masks_pred,  # List of tensors of shape (batch_size, N)
         }
