@@ -1,13 +1,13 @@
 """Exponential Moving Average (EMA) module."""
 
 import copy
-from typing import Any, List, Optional, Set, Union
+from typing import List, Optional, Set, Union
 
 import torch
 from lightning.fabric.utilities import rank_zero_warn
 
 
-class ExponentialMovingAverage:
+class ExponentialMovingAverage(torch.nn.Module):
     """Exponential Moving Average (EMA) for the input 'model'.
 
     At each step the parameter of the EMA model is updates as the weighted average
@@ -39,6 +39,7 @@ class ExponentialMovingAverage:
         device_id: Optional[Union[int, torch.device]] = None,
         skip_keys: Optional[Union[List[str], Set[str]]] = None,
     ):
+        super().__init__()
         self.model = self.deepcopy_model(model)
         self.model.requires_grad_(False)
 
@@ -129,9 +130,9 @@ class ExponentialMovingAverage:
         model.load_state_dict(d, strict=False)
         return model
 
-    def state_dict(self) -> dict[str, Any]:
-        """Return the state dict of the model."""
-        return self.model.state_dict()  # type: ignore[no-any-return]
+    # def state_dict(self) -> dict[str, Any]:
+    #     """Return the state dict of the model."""
+    #     return self.model.state_dict()  # type: ignore[no-any-return]
 
     @staticmethod
     def get_annealed_rate(
