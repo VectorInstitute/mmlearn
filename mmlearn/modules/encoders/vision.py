@@ -460,7 +460,9 @@ class VisionTransformerPredictor(nn.Module):
             torch.zeros(1, self.num_patches, predictor_embed_dim), requires_grad=False
         )
         predictor_pos_embed = get_2d_sincos_pos_embed(
-            self.predictor_pos_embed.shape[-1], int(self.num_patches**0.5), cls_token=False
+            self.predictor_pos_embed.shape[-1],
+            int(self.num_patches**0.5),
+            cls_token=False,
         )
         self.predictor_pos_embed.data.copy_(
             torch.from_numpy(predictor_pos_embed).float().unsqueeze(0)
@@ -607,6 +609,7 @@ def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         **kwargs,
     )
 
+
 @store(
     group="modules/encoders",
     provider="mmlearn",
@@ -630,6 +633,7 @@ def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
         **kwargs,
     )
+
 
 @store(
     group="modules/encoders",
@@ -655,6 +659,7 @@ def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         **kwargs,
     )
 
+
 @store(
     group="modules/encoders",
     provider="mmlearn",
@@ -679,6 +684,7 @@ def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         **kwargs,
     )
 
+
 @store(
     group="modules/encoders",
     provider="mmlearn",
@@ -702,6 +708,7 @@ def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
         **kwargs,
     )
+
 
 @store(
     group="modules/encoders",
