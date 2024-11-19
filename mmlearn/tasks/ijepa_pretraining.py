@@ -5,11 +5,10 @@ from typing import Any, Callable, Dict, Optional
 import lightning as L  # noqa: N812
 import torch
 import torch.nn.functional as F  # noqa: N812
+from hydra.utils import instantiate  # Import instantiate
 from hydra_zen import store
-from lightning.pytorch.utilities.types import OptimizerLRScheduler
-from lightning_utilities.core.rank_zero import rank_zero_warn
 
-from mmlearn.datasets.core.modalities import Modalities
+from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.processors.masking import IJEPAMaskGenerator, apply_masks
 from mmlearn.datasets.processors.transforms import repeat_interleave_batch
 from mmlearn.modules.ema import ExponentialMovingAverage
@@ -30,10 +29,10 @@ class IJEPA(L.LightningModule):
         Vision transformer encoder.
     predictor : VisionTransformer
         Vision transformer predictor.
-    optimizer : Optional[torch.optim.Optimizer], optional
-        Optimizer, by default None.
-    lr_scheduler : Optional[Any], optional
-        Learning rate scheduler, by default None.
+    optimizer_cfg : Optional[Dict[str, Any]], optional
+        Optimizer configuration dictionary, by default None.
+    lr_scheduler_cfg : Optional[Dict[str, Any]], optional
+        Learning rate scheduler configuration dictionary, by default None.
     ema_decay : float, optional
         Initial momentum for EMA of target encoder, by default 0.996.
     ema_decay_end : float, optional
@@ -46,17 +45,14 @@ class IJEPA(L.LightningModule):
         Whether to compute validation loss, by default True.
     compute_test_loss : bool, optional
         Whether to compute test loss, by default True.
-    checkpoint_path : str, optional
-        Path to a pre-trained model checkpoint, by default
-
     """
 
     def __init__(
         self,
         encoder: VisionTransformer,
         predictor: VisionTransformer,
-        optimizer: Optional[torch.optim.Optimizer] = None,
-        lr_scheduler: Optional[Any] = None,
+        optimizer_cfg: Optional[Dict[str, Any]] = None,
+        lr_scheduler_cfg: Optional[Dict[str, Any]] = None,
         ema_decay: float = 0.996,
         ema_decay_end: float = 1.0,
         ema_anneal_end_step: int = 1000,
@@ -68,8 +64,8 @@ class IJEPA(L.LightningModule):
 
         self.mask_generator = IJEPAMaskGenerator()
 
-        self.optimizer_config = optimizer
-        self.lr_scheduler_config = lr_scheduler
+        self.optimizer_cfg = optimizer_cfg  # Store optimizer config
+        self.lr_scheduler_cfg = lr_scheduler_cfg  # Store lr_scheduler config
         self.loss_fn = loss_fn if loss_fn is not None else F.smooth_l1_loss
 
         self.compute_validation_loss = compute_validation_loss
@@ -80,6 +76,10 @@ class IJEPA(L.LightningModule):
 
         self.encoder = encoder
         self.predictor = predictor
+
+        self.predictor.num_patches = encoder.patch_embed.num_patches
+        self.predictor.embed_dim = encoder.embed_dim
+        self.predictor.num_heads = encoder.num_heads
 
         self.ema = ExponentialMovingAverage(
             encoder,
@@ -111,18 +111,20 @@ class IJEPA(L.LightningModule):
         batch_idx: int,
         step_type: str,
     ) -> Optional[torch.Tensor]:
-        images = batch[Modalities.RGB.name]
+        images = batch[Modalities.RGB]
 
         # Generate masks
-        mask_info = self.mask_generator()
+        batch_size = images.size(0)
+        mask_info = self.mask_generator(batch_size=batch_size)
 
-        # Extract masks
-        encoder_masks = mask_info["encoder_masks"]
-        predictor_masks = mask_info["predictor_masks"]
+        # Extract masks and move to device
+        device = images.device
+        encoder_masks = [mask.to(device) for mask in mask_info["encoder_masks"]]
+        predictor_masks = [mask.to(device) for mask in mask_info["predictor_masks"]]
 
         # Forward pass through target encoder to get h
         with torch.no_grad():
-            h = self.target_encoder(images)
+            h = self.ema.model(images)
             h = F.layer_norm(h, h.size()[-1:])
             h_masked = apply_masks(h, predictor_masks)
             h_masked = repeat_interleave_batch(
@@ -131,6 +133,7 @@ class IJEPA(L.LightningModule):
 
         # Forward pass through encoder with encoder_masks
         z = self.encoder(images, masks=encoder_masks)
+
         # Pass z through predictor with encoder_masks and predictor_masks
         z_pred = self.predictor(z, encoder_masks, predictor_masks)
 
@@ -151,89 +154,65 @@ class IJEPA(L.LightningModule):
 
         return loss
 
-    def configure_optimizers(self) -> OptimizerLRScheduler:
-        """Configure the optimizer."""
+    def configure_optimizers(self):
+        """Configure the optimizer and learning rate scheduler."""
+        weight_decay_value = 0.05  # Desired weight decay
+
         # Define parameters for weight decay and non-weight decay groups
         parameters = [
             {
-                "params": (
+                "params": [
                     p
                     for p in self.encoder.parameters()
-                    if (p.ndim >= 2) and p.requires_grad
-                ),
-                "weight_decay": self.optimizer.keywords.get("weight_decay", 0.0),
-                "name": "encoder_weight_decay_params",
+                    if p.ndim >= 2 and p.requires_grad
+                ],
+                "weight_decay": weight_decay_value,
             },
             {
-                "params": (
+                "params": [
                     p
                     for p in self.encoder.parameters()
-                    if (p.ndim < 2) and p.requires_grad
-                ),
+                    if p.ndim < 2 and p.requires_grad
+                ],
                 "weight_decay": 0.0,  # No weight decay for bias or 1D params
-                "name": "encoder_no_weight_decay_params",
             },
             {
-                "params": (
+                "params": [
                     p
                     for p in self.predictor.parameters()
-                    if (p.ndim >= 2) and p.requires_grad
-                ),
-                "weight_decay": self.optimizer.keywords.get("weight_decay", 0.0),
-                "name": "predictor_weight_decay_params",
+                    if p.ndim >= 2 and p.requires_grad
+                ],
+                "weight_decay": weight_decay_value,
             },
             {
-                "params": (
+                "params": [
                     p
                     for p in self.predictor.parameters()
-                    if (p.ndim < 2) and p.requires_grad
-                ),
-                "weight_decay": 0.0,  # No weight decay for bias or 1D params
-                "name": "predictor_no_weight_decay_params",
+                    if p.ndim < 2 and p.requires_grad
+                ],
+                "weight_decay": 0.0,
             },
         ]
 
-        # Initialize optimizer dynamically from the class attribute
-        if self.optimizer is None:
-            rank_zero_warn(
-                "Optimizer not provided. Training will continue without an optimizer."
-            )
-            return None
+        optimizer = torch.optim.AdamW(parameters)
 
-        optimizer = self.optimizer(parameters)
-
-        if not isinstance(optimizer, torch.optim.Optimizer):
-            raise TypeError(
-                f"Expected optimizer to be an instance of `torch.optim.Optimizer`, but got {type(optimizer)}."
-            )
-
-        # Initialize the learning rate scheduler if available
+        # Instantiate the learning rate scheduler if provided
         lr_scheduler = None
-        if self.lr_scheduler is not None:
-            if isinstance(self.lr_scheduler, dict):
-                if "scheduler" not in self.lr_scheduler:
-                    raise ValueError(
-                        "Expected 'scheduler' key in the lr_scheduler dict."
-                    )
+        if self.lr_scheduler_cfg is not None:
+            lr_scheduler = instantiate(self.lr_scheduler_cfg, optimizer=optimizer)
 
-                lr_scheduler = self.lr_scheduler["scheduler"](optimizer)
-                lr_scheduler_dict = {"scheduler": lr_scheduler}
-                if "extras" in self.lr_scheduler:
-                    lr_scheduler_dict.update(self.lr_scheduler["extras"])
-                return {"optimizer": optimizer, "lr_scheduler": lr_scheduler_dict}
-
-            lr_scheduler = self.lr_scheduler(optimizer)
-            if not isinstance(lr_scheduler, torch.optim.lr_scheduler._LRScheduler):
-                raise TypeError(
-                    f"Expected lr_scheduler to be an instance of `torch.optim.lr_scheduler._LRScheduler`, but got {type(lr_scheduler)}."
-                )
-
-        # Return optimizer and optionally scheduler
-        return (
-            {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
-            if lr_scheduler
-            else {"optimizer": optimizer}
-        )
+        # Return optimizer and scheduler in Lightning-compatible format
+        if lr_scheduler is not None:
+            return {
+                "optimizer": optimizer,
+                "lr_scheduler": {
+                    "scheduler": lr_scheduler,
+                    "interval": "epoch",  # Change to 'step' if desired
+                    "frequency": 1,
+                    # Add 'monitor' key if necessary, e.g., 'monitor': 'val_loss'
+                },
+            }
+        return {"optimizer": optimizer}
 
     def on_validation_epoch_start(self) -> None:
         """Prepare for the validation epoch."""
