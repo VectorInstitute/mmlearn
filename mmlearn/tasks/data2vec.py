@@ -7,13 +7,13 @@ from typing import Any, Dict, List, Literal, Optional, Union
 
 import lightning as L  # noqa: N812
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa: N812
 from hydra_zen import store
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
 
-from mmlearn.datasets.core.modalities import Modalities, Modality
+from mmlearn.datasets.core.modalities import Modality
 from mmlearn.datasets.processors.masking import (
     BlockwiseImagePatchMaskGenerator,
     apply_masks,
@@ -31,6 +31,42 @@ class EvaluationSpec:
     run_on_test: bool = True
 
 
+class RegressionHead(nn.Module):
+    """Regression head for Data2Vec."""
+
+    def __init__(self, embed_dim: int, num_layers: int = 1) -> None:
+        """Initialize the regression head."""
+        super().__init__()
+        if num_layers < 1:
+            raise ValueError("num_layers must be >= 1")
+
+        layers = []
+        curr_dim = embed_dim
+
+        for i in range(num_layers - 1):
+            next_dim = embed_dim * 2 if i == 0 else curr_dim
+            layers.extend([nn.Linear(curr_dim, next_dim), nn.GELU()])
+            curr_dim = next_dim
+
+        layers.append(nn.Linear(curr_dim, embed_dim))
+        self.layers = nn.Sequential(*layers)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor.
+
+        Returns
+        -------
+        torch.Tensor
+            The output tensor.
+        """
+        return self.layers(x)
+
+
 @store(group="task", provider="mmlearn")
 class Data2VecTask(L.LightningModule):
     """Data2Vec task implementation."""
@@ -38,6 +74,7 @@ class Data2VecTask(L.LightningModule):
     def __init__(
         self,
         encoder: nn.Module,
+        head_layers: int = 1,
         optimizer: Optional[partial[torch.optim.Optimizer]] = None,
         lr_scheduler: Optional[
             Union[
@@ -63,6 +100,12 @@ class Data2VecTask(L.LightningModule):
         super().__init__()
 
         self.encoder = encoder
+        # Build regression head
+        self.regression_head = RegressionHead(
+            self.encoder.model.config.hidden_size,
+            num_layers=head_layers,
+        )
+
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
         self.loss_fn = loss or Data2VecLoss()
@@ -87,51 +130,52 @@ class Data2VecTask(L.LightningModule):
         self.post_target_instance_norm = post_target_instance_norm
         self.post_target_layer_norm = post_target_layer_norm
 
-    def _get_teacher_targets(self, hidden_states: List[torch.Tensor]) -> torch.Tensor:
-        """Get teacher targets by averaging top k layers with normalization.
-
-        Parameters
-        ----------
-        hidden_states : List[torch.Tensor]
-            The hidden states to average.
-
-        Returns
-        -------
-        torch.Tensor
-            The averaged hidden states.
-        """
-        top_k_hidden_states = hidden_states[-self.average_top_k_layers :]
+    def _process_hidden_states(
+        self, hidden_states: List[torch.Tensor], remove_cls_token: bool = False
+    ) -> List[torch.Tensor]:
+        """Process hidden states with normalization."""
+        if remove_cls_token:
+            hidden_states = [h[:, 1:] for h in hidden_states]
 
         if self.target_instance_norm or self.target_batch_norm:
-            top_k_hidden_states = [
-                val.permute(0, 2, 1) for val in top_k_hidden_states
-            ]  # btc => bct
+            hidden_states = [h.permute(0, 2, 1) for h in hidden_states]
 
-        if self.target_batch_norm:
-            top_k_hidden_states = [
-                F.batch_norm(
-                    val.float(), running_mean=None, running_var=None, training=True
-                )
-                for val in top_k_hidden_states
-            ]
+            if self.target_batch_norm:
+                hidden_states = [
+                    F.batch_norm(h.float(), None, None, training=True)
+                    for h in hidden_states
+                ]
 
-        if self.target_instance_norm:
-            top_k_hidden_states = [
-                F.instance_norm(val.float()) for val in top_k_hidden_states
-            ]
+            if self.target_instance_norm:
+                hidden_states = [F.instance_norm(h.float()) for h in hidden_states]
 
-        if self.target_instance_norm or self.target_batch_norm:
-            top_k_hidden_states = [
-                val.permute(0, 2, 1) for val in top_k_hidden_states
-            ]  # bct => btc
+            hidden_states = [h.permute(0, 2, 1) for h in hidden_states]
 
         if self.target_layer_norm_last:
-            top_k_hidden_states = [
-                F.layer_norm(val.float(), val.shape[-1:]) for val in top_k_hidden_states
+            hidden_states = [
+                F.layer_norm(h.float(), h.shape[-1:]) for h in hidden_states
             ]
 
+        return hidden_states
+
+    def _get_teacher_targets(
+        self,
+        hidden_states: List[torch.Tensor],
+    ) -> torch.Tensor:
+        """Get teacher targets following reference implementation."""
+        # Remove final layer as per reference
+        hidden_states = hidden_states[:-1]
+
+        # Get top k layers
+        top_k_hidden_states = self._process_hidden_states(
+            hidden_states[-self.average_top_k_layers :],
+            remove_cls_token=True,
+        )
+
+        # Average the layers
         targets = sum(top_k_hidden_states) / len(top_k_hidden_states)
 
+        # Apply post-processing
         if self.post_target_instance_norm:
             targets = targets.permute(0, 2, 1)
             targets = F.instance_norm(targets.float())
@@ -156,13 +200,10 @@ class Data2VecTask(L.LightningModule):
             The loss for the batch.
         """
         # Generate mask
-        mask = self.mask_generator()
+        mask = self.mask_generator()  # type: ignore
 
-        # Apply mask to input (only supported for RGB modality)
-        masked_input = {
-            k: apply_masks(v, mask) if k == Modalities.RGB else v
-            for k, v in batch.items()
-        }
+        # Apply mask to input
+        masked_input = {k: apply_masks(v, mask) for k, v in batch.items()}
 
         # Get student output with masked input
         student_output = self(masked_input)
