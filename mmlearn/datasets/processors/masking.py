@@ -261,7 +261,9 @@ def apply_masks(
             m = m.expand(batch_size, -1)  # Shape: (B, N)
 
         # Expand mask to match x's dimensions
-        m_expanded = m.unsqueeze(-1).expand(-1, -1, x.size(-1)).bool()  # Shape: (B, N, D)
+        m_expanded = (
+            m.unsqueeze(-1).expand(-1, -1, x.size(-1)).bool()
+        )  # Shape: (B, N, D)
 
         # Use boolean indexing
         selected_patches = x[m_expanded].view(batch_size, -1, x.size(-1))
