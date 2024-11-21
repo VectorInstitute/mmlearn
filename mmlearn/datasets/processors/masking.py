@@ -245,12 +245,13 @@ def apply_masks(
     -------
     torch.Tensor
         The masked tensor where only the patches indicated by the masks are kept.
-        The output tensor has shape (B * num_masks, N', D), where N' is the number of patches kept.
+        The output tensor has shape (B * num_masks, N', D),
+        where N' is the number of patches kept.
     """
     all_x = []
     batch_size = x.size(0)
-    for m in masks:
-        m = m.to(x.device)
+    for m_ in masks:
+        m = m_.to(x.device)
 
         # Ensure mask is at least 2D
         if m.dim() == 1:
@@ -285,31 +286,31 @@ class IJEPAMaskGenerator:
         Input image size.
     patch_size : int, default=16
         Size of each patch.
-    min_keep : int, default=4
+    min_keep : int, default=10
         Minimum number of patches to keep.
     allow_overlap : bool, default=False
         Whether to allow overlap between encoder and predictor masks.
-    enc_mask_scale : tuple[float, float], default=(0.2, 0.8)
+    enc_mask_scale : tuple[float, float], default=(0.85, 1.0)
         Scale range for encoder mask.
-    pred_mask_scale : tuple[float, float], default=(0.2, 0.8)
+    pred_mask_scale : tuple[float, float], default=(0.15, 0.2)
         Scale range for predictor mask.
-    aspect_ratio : tuple[float, float], default=(0.3, 3.0)
+    aspect_ratio : tuple[float, float], default=(0.75, 1.0)
         Aspect ratio range for mask blocks.
     nenc : int, default=1
         Number of encoder masks to generate.
-    npred : int, default=2
+    npred : int, default=4
         Number of predictor masks to generate.
     """
 
     input_size: Tuple[int, int] = (224, 224)
     patch_size: int = 16
-    min_keep: int = 4
+    min_keep: int = 10
     allow_overlap: bool = False
-    enc_mask_scale: Tuple[float, float] = (0.2, 0.8)
-    pred_mask_scale: Tuple[float, float] = (0.2, 0.8)
-    aspect_ratio: Tuple[float, float] = (0.3, 3.0)
+    enc_mask_scale: Tuple[float, float] = (0.85, 1.0)
+    pred_mask_scale: Tuple[float, float] = (0.15, 0.2)
+    aspect_ratio: Tuple[float, float] = (0.75, 1.0)
     nenc: int = 1
-    npred: int = 2
+    npred: int = 4
 
     def __post_init__(self) -> None:
         """Initialize the mask generator."""
