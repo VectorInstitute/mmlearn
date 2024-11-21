@@ -2,7 +2,7 @@
 
 import math
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
 import timm
 import torch
@@ -284,7 +284,6 @@ class VisionTransformer(nn.Module):
         # Weight Initialization
         self.init_std = init_std
         self.apply(self._init_weights)
-        self.fix_init_weight()
 
     def fix_init_weight(self) -> None:
         """Fix initialization of weights by rescaling them according to layer depth."""
@@ -493,7 +492,6 @@ class VisionTransformerPredictor(nn.Module):
         self.init_std = init_std
         trunc_normal_(self.mask_token, std=self.init_std)
         self.apply(self._init_weights)
-        # self.fix_init_weight()
 
     def fix_init_weight(self) -> None:
         """Fix initialization of weights by rescaling them according to layer depth."""
@@ -567,9 +565,12 @@ class VisionTransformerPredictor(nn.Module):
         return self.predictor_proj(x)
 
 
-@store(
-    group="modules/encoders",
-    provider="mmlearn",
+@cast(
+    VisionTransformerPredictor,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
 )
 def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
     """
@@ -585,9 +586,12 @@ def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
     )
 
 
-@store(
-    group="modules/encoders",
-    provider="mmlearn",
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
 )
 def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
@@ -610,9 +614,12 @@ def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
-@store(
-    group="modules/encoders",
-    provider="mmlearn",
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
 )
 def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
@@ -635,9 +642,12 @@ def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
-@store(
-    group="modules/encoders",
-    provider="mmlearn",
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
 )
 def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
@@ -660,9 +670,12 @@ def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
-@store(
-    group="modules/encoders",
-    provider="mmlearn",
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
 )
 def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
@@ -685,9 +698,12 @@ def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
-@store(
-    group="modules/encoders",
-    provider="mmlearn",
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
 )
 def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
@@ -710,9 +726,12 @@ def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
-@store(
-    group="modules/encoders",
-    provider="mmlearn",
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
 )
 def vit_giant(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """

@@ -130,10 +130,6 @@ class ExponentialMovingAverage(torch.nn.Module):
         model.load_state_dict(d, strict=False)
         return model
 
-    # def state_dict(self) -> dict[str, Any]:
-    #     """Return the state dict of the model."""
-    #     return self.model.state_dict()  # type: ignore[no-any-return]
-
     @staticmethod
     def get_annealed_rate(
         start: float,

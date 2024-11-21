@@ -154,7 +154,7 @@ class IJEPA(L.LightningModule):
 
         return loss
 
-    def configure_optimizers(self):
+    def configure_optimizers(self) -> Dict[str, Any]:
         """Configure the optimizer and learning rate scheduler."""
         weight_decay_value = 0.05  # Desired weight decay
 
@@ -194,7 +194,7 @@ class IJEPA(L.LightningModule):
             },
         ]
 
-        optimizer = torch.optim.AdamW(parameters)
+        optimizer = torch.optim.AdamW(parameters, lr=0.001)
 
         # Instantiate the learning rate scheduler if provided
         lr_scheduler = None
