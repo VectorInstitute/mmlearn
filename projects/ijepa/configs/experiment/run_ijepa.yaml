@@ -2,9 +2,9 @@
 
 defaults:
   - /datasets@datasets.train: ImageNet
-  - /datasets/transforms@datasets.train.transform: med_clip_vision_transform
+  - /datasets/transforms@datasets.train.transform: ijepa_transforms
   - /datasets@datasets.val: ImageNet
-  - /datasets/transforms@datasets.val.transform: med_clip_vision_transform
+  - /datasets/transforms@datasets.val.transform: ijepa_transforms
   - /modules/encoders@task.encoder: vit_base
   - /modules/encoders@task.predictor: vit_predictor
   - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
@@ -31,14 +31,14 @@ datasets:
 
 dataloader:
   train:
-    batch_size: 32
-    num_workers: 4
+    batch_size: 128
+    num_workers: 10
   val:
-    batch_size: 32
-    num_workers: 4
+    batch_size: 128
+    num_workers: 10
 
 trainer:
-  max_epochs: 20
+  max_epochs: 300
   precision: 16
   deterministic: False
   benchmark: True
