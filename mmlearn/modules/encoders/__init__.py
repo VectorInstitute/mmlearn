@@ -8,6 +8,7 @@ from mmlearn.modules.encoders.clip import (
     PubMedBERTForCLIPTextEncoding,
 )
 from mmlearn.modules.encoders.text import HFTextEncoder
+from mmlearn.modules.encoders.vision import TimmViT
 
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     "HFCLIPVisionEncoder",
     "HFCLIPVisionEncoderWithProjection",
     "PubMedBERTForCLIPTextEncoding",
+    "TimmViT",
 ]
