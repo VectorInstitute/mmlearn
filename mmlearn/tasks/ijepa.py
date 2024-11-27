@@ -8,7 +8,6 @@ import torch.nn.functional as F  # noqa: N812
 from hydra_zen import store
 
 from mmlearn.datasets.core import Modalities
-from mmlearn.datasets.core.modalities import Modality
 from mmlearn.datasets.processors.masking import IJEPAMaskGenerator, apply_masks
 from mmlearn.datasets.processors.transforms import repeat_interleave_batch
 from mmlearn.modules.ema import ExponentialMovingAverage
@@ -114,18 +113,18 @@ class IJEPA(TrainingTask):
         if self.ema is not None:
             self.ema.step(self.encoder)
 
-    def training_step(self, batch: Dict[Modality, Any], batch_idx: int) -> torch.Tensor:
+    def training_step(self, batch: Dict[str, Any], batch_idx: int) -> torch.Tensor:
         """Perform a single training step."""
         return self._shared_step(batch, batch_idx, step_type="train")
 
     def validation_step(
-        self, batch: Dict[Modality, Any], batch_idx: int
+        self, batch: Dict[str, Any], batch_idx: int
     ) -> Optional[torch.Tensor]:
         """Run a single validation step."""
         return self._shared_step(batch, batch_idx, step_type="val")
 
     def test_step(
-        self, batch: Dict[Modality, Any], batch_idx: int
+        self, batch: Dict[str, Any], batch_idx: int
     ) -> Optional[torch.Tensor]:
         """Run a single test step."""
         return self._shared_step(batch, batch_idx, step_type="test")
@@ -176,10 +175,7 @@ class IJEPA(TrainingTask):
             self.ema.restore(self.encoder)
 
     def _shared_step(
-        self,
-        batch: Dict[Modality, Any],
-        batch_idx: int,
-        step_type: str,
+        self, batch: Dict[str, Any], batch_idx: int, step_type: str
     ) -> Optional[torch.Tensor]:
         images = batch[Modalities.RGB.name]
 
