@@ -1,5 +1,6 @@
 import io
-from typing import Literal, Union, Optional
+from typing import Literal, Optional, Union
+
 import h5py
 import numpy as np
 import pandas as pd
@@ -7,10 +8,10 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
 
-from mmlearn.datasets.core import Example, Modalities
 from mmlearn.constants import EXAMPLE_INDEX_KEY
-
+from mmlearn.datasets.core import Example, Modalities
 from projects.bioscan_clip.dna_tokenizer import DNAProcessor
+
 
 # NOTE: this module must be imported before any use of Modalities.DNA anywhere
 # else in the code
@@ -158,9 +159,9 @@ class BIOSCANInsectDataset(Dataset[Example]):
         return Example(
             {
                 EXAMPLE_INDEX_KEY: idx,
-                Modalities.RGB: image,
-                Modalities.DNA: dna_seq,
-                Modalities.TEXT: language_input_ids,
+                Modalities.RGB.name: image,
+                Modalities.DNA.name: dna_seq,
+                Modalities.TEXT.name: language_input_ids,
                 "language_token_type_ids": language_token_type_ids,
                 Modalities.TEXT.attention_mask: language_attention_mask,
                 "labels": self.labels[idx],

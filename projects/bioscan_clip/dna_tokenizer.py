@@ -1,4 +1,5 @@
 import itertools
+
 from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
 from tokenizers.processors import TemplateProcessing

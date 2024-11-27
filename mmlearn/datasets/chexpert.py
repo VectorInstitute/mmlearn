@@ -105,7 +105,7 @@ class CheXpert(Dataset[Example]):
 
         return Example(
             {
-                Modalities.RGB: image,
+                Modalities.RGB.name: image,
                 Modalities.RGB.target: label,
                 "qid": entry["qid"],
                 EXAMPLE_INDEX_KEY: idx,

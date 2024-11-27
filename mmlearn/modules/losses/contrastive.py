@@ -83,6 +83,7 @@ class CLIPLoss(nn.Module):
         self,
         features_1: torch.Tensor,
         features_2: torch.Tensor,
+        logit_scale: torch.Tensor,
         rank: int,
         world_size: int,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -93,7 +94,9 @@ class CLIPLoss(nn.Module):
         features_1 : torch.Tensor
             First feature tensor.
         features_2 : torch.Tensor
-            Second feature tensor
+            Second feature tensor.
+        logit_scale : torch.Tensor
+            Logit scale.
         rank : int
             Rank of the current process.
         world_size : int
@@ -114,19 +117,28 @@ class CLIPLoss(nn.Module):
             )
 
             if self.local_loss:
-                logits_per_feature_1 = _safe_matmul(features_1, all_features_2)
-                logits_per_feature_2 = _safe_matmul(features_2, all_features_1)
+                logits_per_feature_1 = logit_scale * _safe_matmul(
+                    features_1, all_features_2
+                )
+                logits_per_feature_2 = logit_scale * _safe_matmul(
+                    features_2, all_features_1
+                )
             else:
-                logits_per_feature_1 = _safe_matmul(all_features_1, all_features_2)
+                logits_per_feature_1 = logit_scale * _safe_matmul(
+                    all_features_1, all_features_2
+                )
                 logits_per_feature_2 = logits_per_feature_1.T
         else:
-            logits_per_feature_1 = _safe_matmul(features_1, features_2)
-            logits_per_feature_2 = _safe_matmul(features_2, features_1)
+            logits_per_feature_1 = logit_scale * _safe_matmul(features_1, features_2)
+            logits_per_feature_2 = logit_scale * _safe_matmul(features_2, features_1)
 
         return logits_per_feature_1, logits_per_feature_2
 
     def forward(
-        self, features_1: torch.Tensor, features_2: torch.Tensor
+        self,
+        features_1: torch.Tensor,
+        features_2: torch.Tensor,
+        logit_scale: torch.Tensor,
     ) -> torch.Tensor:
         """Calculate the CLIP-style loss between two sets of features.
 
@@ -136,6 +148,8 @@ class CLIPLoss(nn.Module):
             First set of features.
         features_2 : torch.Tensor
             Second set of features.
+        logit_scale : torch.Tensor
+            Logit scale.
 
         Returns
         -------
@@ -150,7 +164,7 @@ class CLIPLoss(nn.Module):
             features_2 = F.normalize(features_2, p=2, dim=-1)
 
         logits_per_feat1, logits_per_feat2 = self._get_logits(
-            features_1, features_2, rank=rank, world_size=world_size
+            features_1, features_2, logit_scale, rank=rank, world_size=world_size
         )
         labels = self._get_ground_truth(
             features_1.device,

@@ -9,7 +9,7 @@ experimentation and research for new techniques.
 ## Quick Start
 ### Installation
 #### Prerequisites
-The library requires Python 3.9 or later. We recommend using a virtual environment to manage dependencies. You can create
+The library requires Python 3.10 or later. We recommend using a virtual environment to manage dependencies. You can create
 a virtual environment using the following command:
 ```bash
 python3 -m venv /path/to/new/virtual/environment
@@ -154,6 +154,17 @@ Zero-shot Cross-modal Retrieval
 <td>
 Evaluates the quality of the learned representations in retrieving the <i>k</i> most similar examples from a different modality,
 using recall@k metric. This is applicable to any number of pairs of modalities at once, depending on memory constraints.
+</td>
+</tr>
+<tr>
+<td>
+
+Zero-shot Classification
+</td>
+<td>
+Evaluates the ability of a pre-trained encoder-based multimodal model to predict classes that were not explicitly seen
+during training. The new classes are given as text prompts, and the query modality can be any of the supported modalities.
+Binary and multi-class classification tasks are supported.
 </td>
 </tr>
 </table>

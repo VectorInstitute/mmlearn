@@ -22,15 +22,15 @@ class LearnableLogitScaling(torch.nn.Module):
 
     def __init__(
         self,
-        logit_scale_init: float = 1 / 0.07,
-        learnable: bool = True,
+        init_logit_scale: float = 1 / 0.07,
         max_logit_scale: float = 100,
+        learnable: bool = True,
     ) -> None:
         super().__init__()
         self.max_logit_scale = max_logit_scale
-        self.logit_scale_init = logit_scale_init
+        self.init_logit_scale = init_logit_scale
         self.learnable = learnable
-        log_logit_scale = torch.ones([]) * np.log(self.logit_scale_init)
+        log_logit_scale = torch.ones([]) * np.log(self.init_logit_scale)
         if learnable:
             self.log_logit_scale = torch.nn.Parameter(log_logit_scale)
         else:
@@ -49,6 +49,6 @@ class LearnableLogitScaling(torch.nn.Module):
     def extra_repr(self) -> str:
         """Return the string representation of the layer."""
         return (
-            f"logit_scale_init={self.logit_scale_init},learnable={self.learnable},"
+            f"logit_scale_init={self.init_logit_scale},learnable={self.learnable},"
             f" max_logit_scale={self.max_logit_scale}"
         )
