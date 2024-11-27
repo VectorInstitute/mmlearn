@@ -1,11 +1,10 @@
 """IJEPA (Image Joint-Embedding Predictive Architecture) pretraining task."""
 
-from typing import Any, Callable, Dict, Optional
+from functools import partial
+from typing import Any, Callable, Dict, Optional, Union
 
-import lightning as L  # noqa: N812
 import torch
 import torch.nn.functional as F  # noqa: N812
-from hydra.utils import instantiate  # Import instantiate
 from hydra_zen import store
 
 from mmlearn.datasets.core import Modalities
@@ -14,10 +13,11 @@ from mmlearn.datasets.processors.masking import IJEPAMaskGenerator, apply_masks
 from mmlearn.datasets.processors.transforms import repeat_interleave_batch
 from mmlearn.modules.ema import ExponentialMovingAverage
 from mmlearn.modules.encoders.vision import VisionTransformer
+from mmlearn.tasks.base import TrainingTask
 
 
 @store(group="task", provider="mmlearn")
-class IJEPA(L.LightningModule):
+class IJEPA(TrainingTask):
     """Pretraining module for IJEPA.
 
     This class implements the IJEPA (Image Joint-Embedding Predictive Architecture)
@@ -30,10 +30,17 @@ class IJEPA(L.LightningModule):
         Vision transformer encoder.
     predictor : VisionTransformer
         Vision transformer predictor.
-    optimizer_cfg : Optional[Dict[str, Any]], optional
-        Optimizer configuration dictionary, by default None.
-    lr_scheduler_cfg : Optional[Dict[str, Any]], optional
-        Learning rate scheduler configuration dictionary, by default None.
+    optimizer : partial[torch.optim.Optimizer], optional, default=None
+        The optimizer to use for training. This is expected to be a partial function,
+        created using `functools.partial`, that takes the model parameters as the
+        only required argument. If not provided, training will continue without an
+        optimizer.
+    lr_scheduler : Union[Dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]], partial[torch.optim.lr_scheduler.LRScheduler]], optional, default=None
+        The learning rate scheduler to use for training. This can be a partial function
+        that takes the optimizer as the only required argument or a dictionary with
+        a `scheduler` key that specifies the scheduler and an optional `extras` key
+        that specifies additional arguments to pass to the scheduler. If not provided,
+        the learning rate will not be adjusted during training.
     ema_decay : float, optional
         Initial momentum for EMA of target encoder, by default 0.996.
     ema_decay_end : float, optional
@@ -46,14 +53,19 @@ class IJEPA(L.LightningModule):
         Whether to compute validation loss, by default True.
     compute_test_loss : bool, optional
         Whether to compute test loss, by default True.
-    """
+    """  # noqa: W505
 
     def __init__(
         self,
         encoder: VisionTransformer,
         predictor: VisionTransformer,
-        optimizer_cfg: Optional[Dict[str, Any]] = None,
-        lr_scheduler_cfg: Optional[Dict[str, Any]] = None,
+        optimizer: Optional[partial[torch.optim.Optimizer]] = None,
+        lr_scheduler: Optional[
+            Union[
+                Dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]],
+                partial[torch.optim.lr_scheduler.LRScheduler],
+            ]
+        ] = None,
         ema_decay: float = 0.996,
         ema_decay_end: float = 1.0,
         ema_anneal_end_step: int = 1000,
@@ -61,16 +73,15 @@ class IJEPA(L.LightningModule):
         compute_validation_loss: bool = True,
         compute_test_loss: bool = True,
     ):
-        super().__init__()
+        super().__init__(
+            optimizer=optimizer,
+            lr_scheduler=lr_scheduler,
+            loss_fn=loss_fn if loss_fn is not None else F.smooth_l1_loss,
+            compute_validation_loss=compute_validation_loss,
+            compute_test_loss=compute_test_loss,
+        )
 
         self.mask_generator = IJEPAMaskGenerator()
-
-        self.optimizer_cfg = optimizer_cfg  # Store optimizer config
-        self.lr_scheduler_cfg = lr_scheduler_cfg  # Store lr_scheduler config
-        self.loss_fn = loss_fn if loss_fn is not None else F.smooth_l1_loss
-
-        self.compute_validation_loss = compute_validation_loss
-        self.compute_test_loss = compute_test_loss
 
         self.current_step = 0
         self.total_steps = None
@@ -83,12 +94,25 @@ class IJEPA(L.LightningModule):
         self.predictor.num_heads = encoder.num_heads
 
         self.ema = ExponentialMovingAverage(
-            encoder,
+            self.encoder,
             ema_decay,
             ema_decay_end,
             ema_anneal_end_step,
             device_id=self.device,
         )
+
+    def configure_model(self) -> None:
+        """Configure the model."""
+        self.ema.model.to(device=self.device, dtype=self.dtype)
+
+    def on_before_zero_grad(self, optimizer: torch.optim.Optimizer) -> None:
+        """Perform exponential moving average update of target encoder.
+
+        This is done right after the optimizer step, which comes just before `zero_grad`
+        to account for gradient accumulation.
+        """
+        if self.ema is not None:
+            self.ema.step(self.encoder)
 
     def training_step(self, batch: Dict[Modality, Any], batch_idx: int) -> torch.Tensor:
         """Perform a single training step."""
@@ -105,6 +129,51 @@ class IJEPA(L.LightningModule):
     ) -> Optional[torch.Tensor]:
         """Run a single test step."""
         return self._shared_step(batch, batch_idx, step_type="test")
+
+    def on_validation_epoch_start(self) -> None:
+        """Prepare for the validation epoch."""
+        self._on_eval_epoch_start("val")
+
+    def on_validation_epoch_end(self) -> None:
+        """Actions at the end of the validation epoch."""
+        self._on_eval_epoch_end("val")
+
+    def on_test_epoch_start(self) -> None:
+        """Prepare for the test epoch."""
+        self._on_eval_epoch_start("test")
+
+    def on_test_epoch_end(self) -> None:
+        """Actions at the end of the test epoch."""
+        self._on_eval_epoch_end("test")
+
+    def on_save_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """Add relevant EMA state to the checkpoint.
+
+        Parameters
+        ----------
+        checkpoint : Dict[str, Any]
+            The state dictionary to save the EMA state to.
+        """
+        if self.ema is not None:
+            checkpoint["ema_params"] = {
+                "decay": self.ema.decay,
+                "num_updates": self.ema.num_updates,
+            }
+
+    def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """Restore EMA state from the checkpoint.
+
+        Parameters
+        ----------
+        checkpoint : Dict[str, Any]
+            The state dictionary to restore the EMA state from.
+        """
+        if "ema_params" in checkpoint and self.ema is not None:
+            ema_params = checkpoint.pop("ema_params")
+            self.ema.decay = ema_params["decay"]
+            self.ema.num_updates = ema_params["num_updates"]
+
+            self.ema.restore(self.encoder)
 
     def _shared_step(
         self,
@@ -138,98 +207,28 @@ class IJEPA(L.LightningModule):
         # Pass z through predictor with encoder_masks and predictor_masks
         z_pred = self.predictor(z, encoder_masks, predictor_masks)
 
-        # Compute loss between z_pred and h_masked
-        loss = self.loss_fn(z_pred, h_masked)
-
-        # Log loss
-        self.log(
-            f"{step_type}/loss",
-            loss,
-            prog_bar=True,
-            sync_dist=True,
-        )
-
         if step_type == "train":
-            # EMA update of target encoder
-            self.ema.step(self.encoder)
+            self.log("train/ema_decay", self.ema.decay, prog_bar=True)
 
-        return loss
+        if self.loss_fn is not None and (
+            step_type == "train"
+            or (step_type == "val" and self.compute_validation_loss)
+            or (step_type == "test" and self.compute_test_loss)
+        ):
+            # Compute loss between z_pred and h_masked
+            loss = self.loss_fn(z_pred, h_masked)
 
-    def configure_optimizers(self) -> Dict[str, Any]:
-        """Configure the optimizer and learning rate scheduler."""
-        weight_decay_value = 0.05  # Desired weight decay
+            # Log loss
+            self.log(
+                f"{step_type}/loss",
+                loss,
+                prog_bar=True,
+                sync_dist=True,
+            )
 
-        # Define parameters for weight decay and non-weight decay groups
-        parameters = [
-            {
-                "params": [
-                    p
-                    for p in self.encoder.parameters()
-                    if p.ndim >= 2 and p.requires_grad
-                ],
-                "weight_decay": weight_decay_value,
-            },
-            {
-                "params": [
-                    p
-                    for p in self.encoder.parameters()
-                    if p.ndim < 2 and p.requires_grad
-                ],
-                "weight_decay": 0.0,  # No weight decay for bias or 1D params
-            },
-            {
-                "params": [
-                    p
-                    for p in self.predictor.parameters()
-                    if p.ndim >= 2 and p.requires_grad
-                ],
-                "weight_decay": weight_decay_value,
-            },
-            {
-                "params": [
-                    p
-                    for p in self.predictor.parameters()
-                    if p.ndim < 2 and p.requires_grad
-                ],
-                "weight_decay": 0.0,
-            },
-        ]
+            return loss
 
-        optimizer = torch.optim.AdamW(parameters, lr=0.001)
-
-        # Instantiate the learning rate scheduler if provided
-        lr_scheduler = None
-        if self.lr_scheduler_cfg is not None:
-            lr_scheduler = instantiate(self.lr_scheduler_cfg, optimizer=optimizer)
-
-        # Return optimizer and scheduler in Lightning-compatible format
-        if lr_scheduler is not None:
-            return {
-                "optimizer": optimizer,
-                "lr_scheduler": {
-                    "scheduler": lr_scheduler,
-                    "interval": "epoch",  # Change to 'step' if desired
-                    "frequency": 1,
-                    # Add 'monitor' key if necessary, e.g., 'monitor': 'val_loss'
-                },
-            }
-        return {"optimizer": optimizer}
-
-    def on_validation_epoch_start(self) -> None:
-        """Prepare for the validation epoch."""
-        self._on_eval_epoch_start("val")
-
-    def on_validation_epoch_end(self) -> None:
-        """Actions at the end of the validation epoch."""
-        self._on_eval_epoch_end("val")
-
-    def on_test_epoch_start(self) -> None:
-        """Prepare for the test epoch."""
-        self._on_eval_epoch_start("test")
-
-    def on_test_epoch_end(self) -> None:
-        """Actions at the end of the test epoch."""
-        self._on_eval_epoch_end("test")
+        return None
 
     def _on_eval_epoch_start(self, step_type: str) -> None:
         """Initialize states or configurations at the start of an evaluation epoch.
