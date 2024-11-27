@@ -181,7 +181,7 @@ class IJEPA(TrainingTask):
         batch_idx: int,
         step_type: str,
     ) -> Optional[torch.Tensor]:
-        images = batch[Modalities.RGB]
+        images = batch[Modalities.RGB.name]
 
         # Generate masks
         batch_size = images.size(0)
