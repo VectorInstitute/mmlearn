@@ -73,7 +73,7 @@ def linear_warmup_cosine_annealing_lr(
     )
     cosine_lr = CosineAnnealingLR(
         optimizer,
-        T_max=max_steps - warmup_steps - 1,
+        T_max=max_steps - warmup_steps,
         eta_min=eta_min,
         last_epoch=last_epoch,
     )

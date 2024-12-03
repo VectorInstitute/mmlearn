@@ -26,7 +26,7 @@ from mmlearn.modules.layers.transformer_block import Block
 @store(
     group="modules/encoders",
     provider="mmlearn",
-    model_name_or_path="vit_base_patch16_224",
+    model_name="vit_base_patch16_224",
     hydra_convert="object",
 )
 class TimmViT(nn.Module):
