@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mmlearn"
-version = "0.1.0a0.dev8" # https://www.python.org/dev/peps/pep-0440/#version-schemes
+version = "0.1.0a0" # https://www.python.org/dev/peps/pep-0440/#version-schemes
 description = "A modular framework for research on multimodal representation learning."
 readme = "README.md"
 authors = ["Vector AI Engineering <ai_engineering@vectorinstitute.ai>"]
