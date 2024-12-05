@@ -15,7 +15,7 @@ defaults:
   - /datasets/tokenizers@dataloader.val.collate_fn.batch_processors.text: HFCLIPTokenizer
   - /modules/encoders@task.encoders.text: HFCLIPTextEncoderWithProjection
   - /modules/encoders@task.encoders.rgb: HFCLIPVisionEncoderWithProjection
-  - /modules/losses@task.loss: CLIPLoss
+  - /modules/losses@task.loss: ContrastiveLoss
   - /modules/optimizers@task.optimizer: AdamW
   - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
   - /eval_task@task.evaluation_tasks.retrieval.task: ZeroShotCrossModalRetrieval

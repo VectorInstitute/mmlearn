@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
 import torch
 import torch.distributed
 from hydra_zen import store
+from torch.nn import functional as F  # noqa: N812
 from torchmetrics import Metric
 from torchmetrics.retrieval.base import _retrieval_aggregate
 from torchmetrics.utilities.checks import _check_same_shape
@@ -52,7 +53,7 @@ class RetrievalRecallAtK(Metric):
     def __init__(
         self,
         top_k: int,
-        reduction: Literal["mean", "sum", "none", None] = "sum",
+        reduction: Literal["mean", "sum", "none", None] = None,
         aggregation: Union[
             Literal["mean", "median", "min", "max"],
             Callable[[torch.Tensor, int], torch.Tensor],
@@ -166,12 +167,9 @@ class RetrievalRecallAtK(Metric):
         torch.Tensor
             The computed metric.
         """
-        x = dim_zero_cat(self.x)
-        y = dim_zero_cat(self.y)
-
         # compute the cosine similarity
-        x_norm = x / x.norm(dim=-1, p=2, keepdim=True)
-        y_norm = y / y.norm(dim=-1, p=2, keepdim=True)
+        x_norm = F.normalize(dim_zero_cat(self.x), p=2, dim=-1)
+        y_norm = F.normalize(dim_zero_cat(self.y), p=2, dim=-1)
         similarity = _safe_matmul(x_norm, y_norm)
         reduction_mapping: Dict[
             Optional[str], Callable[[torch.Tensor], torch.Tensor]

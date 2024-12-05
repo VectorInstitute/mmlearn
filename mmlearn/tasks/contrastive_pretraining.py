@@ -14,9 +14,8 @@ import torch.distributed.nn
 from hydra_zen import store
 from torch import nn
 
-from mmlearn.datasets.core import Modalities, find_matching_indices
+from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.modalities import Modality
-from mmlearn.modules.losses import CLIPLoss
 from mmlearn.tasks.base import TrainingTask
 from mmlearn.tasks.hooks import EvaluationHooks
 
@@ -119,7 +118,7 @@ class ContrastivePretraining(TrainingTask):
     learnable_logit_scale : bool, optional, default=True
         Whether the logit scale parameter is learnable. If set to False, the logit
         scale parameter is treated as a constant.
-    loss : CLIPLoss, optional, default=None
+    loss : nn.Module, optional, default=None
         The loss function to use.
     modality_loss_pairs : List[LossPairSpec], optional, default=None
         A list of pairs of modalities to compute the contrastive loss between and
@@ -163,7 +162,7 @@ class ContrastivePretraining(TrainingTask):
         init_logit_scale: float = 1 / 0.07,
         max_logit_scale: float = 100,
         learnable_logit_scale: bool = True,
-        loss: Optional[CLIPLoss] = None,
+        loss: Optional[nn.Module] = None,
         modality_loss_pairs: Optional[List[LossPairSpec]] = None,
         auxiliary_tasks: Optional[Dict[str, AuxiliaryTaskSpec]] = None,
         log_auxiliary_tasks_loss: bool = False,
@@ -189,6 +188,7 @@ class ContrastivePretraining(TrainingTask):
                 "loss",
                 "auxiliary_tasks",
                 "evaluation_tasks",
+                "modality_loss_pairs",
             ]
         )
 
@@ -260,7 +260,7 @@ class ContrastivePretraining(TrainingTask):
                     if isinstance(heads[head_key], nn.Module)
                     else nn.Sequential(*heads[head_key].values())
                     for modality_key, head_key in modality_head_mapping.items()
-                    if head_key is not None
+                    if head_key is not None and head_key in heads
                 }
             )
 
@@ -275,6 +275,7 @@ class ContrastivePretraining(TrainingTask):
                     else nn.Sequential(*postprocessors[postprocessor_key].values())
                     for modality_key, postprocessor_key in modality_postprocessor_mapping.items()
                     if postprocessor_key is not None
+                    and postprocessor_key in postprocessors
                 }
             )
 
@@ -363,11 +364,11 @@ class ContrastivePretraining(TrainingTask):
         if self.heads and modality.name in self.heads:
             output = self.heads[modality.name](output)
 
-        if self.postprocessors and modality.name in self.postprocessors:
-            output = self.postprocessors[modality.name](output)
-
         if normalize:
             output = torch.nn.functional.normalize(output, p=2, dim=-1)
+
+        if self.postprocessors and modality.name in self.postprocessors:
+            output = self.postprocessors[modality.name](output)
 
         return output
 
@@ -387,6 +388,7 @@ class ContrastivePretraining(TrainingTask):
         outputs = {
             modality.embedding: self.encode(inputs, modality, normalize=True)
             for modality in self._available_modalities
+            if modality.name in inputs
         }
 
         if not all(
@@ -403,36 +405,12 @@ class ContrastivePretraining(TrainingTask):
         if self.loss_fn is None:
             return None
 
-        with torch.no_grad():
-            self.log_logit_scale.clamp_(0, math.log(self.max_logit_scale))
-        self.log(
-            "train/logit_scale",
+        contrastive_loss = self.loss_fn(
+            outputs,
+            batch["example_ids"],
             self.log_logit_scale.exp(),
-            prog_bar=True,
-            on_step=True,
-            on_epoch=False,
+            self.modality_loss_pairs,
         )
-
-        contrastive_losses: list[torch.Tensor] = []
-        for loss_pair in self.modality_loss_pairs:
-            modality_a = Modalities.get_modality(loss_pair.modalities[0])
-            modality_b = Modalities.get_modality(loss_pair.modalities[1])
-
-            indices_a, indices_b = find_matching_indices(
-                batch["example_ids"][modality_a.name],
-                batch["example_ids"][modality_b.name],
-            )
-            if indices_a.numel() == 0 or indices_b.numel() == 0:
-                continue
-
-            contrastive_losses.append(
-                self.loss_fn(
-                    outputs[modality_a.embedding][indices_a],
-                    outputs[modality_b.embedding][indices_b],
-                    self.log_logit_scale.exp(),
-                )
-                * loss_pair.weight
-            )
 
         auxiliary_losses: list[torch.Tensor] = []
         if self.auxiliary_tasks:
@@ -452,9 +430,22 @@ class ContrastivePretraining(TrainingTask):
 
                 auxiliary_losses.append(task_spec.loss_weight * auxiliary_task_loss)
                 if self.log_auxiliary_tasks_loss:
-                    self.log(f"train/{task_name}_loss", auxiliary_task_loss)
+                    self.log(
+                        f"train/{task_name}_loss", auxiliary_task_loss, sync_dist=True
+                    )
 
-        return torch.stack(contrastive_losses + auxiliary_losses).sum()
+        if not auxiliary_losses:
+            return contrastive_loss
+
+        return torch.stack(auxiliary_losses).sum() + contrastive_loss
+
+    def on_train_epoch_start(self) -> None:
+        """Prepare for the training epoch."""
+        self.encoders.train()
+        if self.heads:
+            self.heads.train()
+        if self.postprocessors:
+            self.postprocessors.train()
 
     def training_step(self, batch: Dict[str, Any], batch_idx: int) -> torch.Tensor:
         """Compute the loss for the batch.
@@ -472,12 +463,23 @@ class ContrastivePretraining(TrainingTask):
             The loss for the batch.
         """
         outputs = self(batch)
+
+        with torch.no_grad():
+            self.log_logit_scale.clamp_(0, math.log(self.max_logit_scale))
+
         loss = self._compute_loss(batch, batch_idx, outputs)
 
         if loss is None:
             raise ValueError("The loss function must be provided for training.")
 
-        self.log("train/loss", loss, prog_bar=True)
+        self.log("train/loss", loss, prog_bar=True, sync_dist=True)
+        self.log(
+            "train/logit_scale",
+            self.log_logit_scale.exp(),
+            prog_bar=True,
+            on_step=True,
+            on_epoch=False,
+        )
 
         return loss
 
@@ -537,6 +539,11 @@ class ContrastivePretraining(TrainingTask):
 
     def _on_eval_epoch_start(self, eval_type: Literal["val", "test"]) -> None:
         """Prepare for the evaluation epoch."""
+        self.encoders.eval()
+        if self.heads:
+            self.heads.eval()
+        if self.postprocessors:
+            self.postprocessors.eval()
         if self.evaluation_tasks:
             for task_spec in self.evaluation_tasks.values():
                 if (eval_type == "val" and task_spec.run_on_validation) or (
@@ -571,7 +578,7 @@ class ContrastivePretraining(TrainingTask):
             outputs = self(batch)
             loss = self._compute_loss(batch, batch_idx, outputs)
             if loss is not None and not self.trainer.sanity_checking:
-                self.log(f"{eval_type}/loss", loss, prog_bar=True)
+                self.log(f"{eval_type}/loss", loss, prog_bar=True, sync_dist=True)
 
         if self.evaluation_tasks:
             for task_spec in self.evaluation_tasks.values():
