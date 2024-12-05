@@ -143,6 +143,18 @@ unimodal tasks applied to specific modalities.
 </td>
 </tr>
 <tr>
+<td>
+
+I-JEPA
+</td>
+<td>
+The [Image-based Joint-Embedding Predictive Architecture](https://arxiv.org/pdf/2301.08243) (I-JEPA) is a unimodal non-generative
+self-supervised learning method that predicts the *representations* of several target blocks of an image given a context block
+from the same image. This task can be combined with the contrastive pretraining task to learn multimodal representations from 
+paired and unpaired data.
+</td>
+</tr>
+<tr>
 <th style="text-align: left; width: 250px"> Evaluation Methods </th>
 <th style="text-align: center"> Notes </th>
 </tr>
