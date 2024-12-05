@@ -1,6 +1,5 @@
 """Contrastive pretraining task."""
 
-import inspect
 import itertools
 import math
 from dataclasses import dataclass
@@ -13,12 +12,11 @@ import torch
 import torch.distributed
 import torch.distributed.nn
 from hydra_zen import store
-from lightning.pytorch.utilities.types import OptimizerLRScheduler
-from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
 
 from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.core.modalities import Modality
+from mmlearn.tasks.base import TrainingTask
 from mmlearn.tasks.hooks import EvaluationHooks
 
 
@@ -65,7 +63,7 @@ class EvaluationSpec:
 
 
 @store(group="task", provider="mmlearn")
-class ContrastivePretraining(L.LightningModule):
+class ContrastivePretraining(TrainingTask):
     """Contrastive pretraining task.
 
     This class supports contrastive pretraining with `N` modalities of data. It
@@ -120,7 +118,7 @@ class ContrastivePretraining(L.LightningModule):
     learnable_logit_scale : bool, optional, default=True
         Whether the logit scale parameter is learnable. If set to False, the logit
         scale parameter is treated as a constant.
-    loss : CLIPLoss, optional, default=None
+    loss : nn.Module, optional, default=None
         The loss function to use.
     modality_loss_pairs : List[LossPairSpec], optional, default=None
         A list of pairs of modalities to compute the contrastive loss between and
@@ -173,7 +171,14 @@ class ContrastivePretraining(L.LightningModule):
         evaluation_tasks: Optional[Dict[str, EvaluationSpec]] = None,
     ) -> None:
         """Initialize the module."""
-        super().__init__()
+        super().__init__(
+            optimizer=optimizer,
+            lr_scheduler=lr_scheduler,
+            loss_fn=loss,
+            compute_validation_loss=compute_validation_loss,
+            compute_test_loss=compute_test_loss,
+        )
+
         self.save_hyperparameters(
             ignore=[
                 "encoders",
@@ -323,17 +328,7 @@ class ContrastivePretraining(L.LightningModule):
                 self.encoders[Modalities.get_modality(task_spec.modality).name]
             )
 
-        if loss is None and (compute_validation_loss or compute_test_loss):
-            raise ValueError(
-                "Loss function must be provided to compute validation or test loss."
-            )
-
-        self.loss_fn = loss
-        self.optimizer = optimizer
-        self.lr_scheduler = lr_scheduler
         self.log_auxiliary_tasks_loss = log_auxiliary_tasks_loss
-        self.compute_validation_loss = compute_validation_loss
-        self.compute_test_loss = compute_test_loss
 
         if evaluation_tasks is not None:
             for eval_task_spec in evaluation_tasks.values():
@@ -473,7 +468,6 @@ class ContrastivePretraining(L.LightningModule):
             self.log_logit_scale.clamp_(0, math.log(self.max_logit_scale))
 
         loss = self._compute_loss(batch, batch_idx, outputs)
-        print("loss: ", loss)
 
         if loss is None:
             raise ValueError("The loss function must be provided for training.")
@@ -543,93 +537,13 @@ class ContrastivePretraining(L.LightningModule):
         """Compute and log epoch-level metrics at the end of the test epoch."""
         self._on_eval_epoch_end("test")
 
-    def configure_optimizers(self) -> OptimizerLRScheduler:  # noqa: PLR0912
-        """Configure the optimizer and learning rate scheduler."""
-        if self.optimizer is None:
-            rank_zero_warn(
-                "Optimizer not provided. Training will continue without an optimizer. "
-                "LR scheduler will not be used.",
-            )
-            return None
-
-        weight_decay: Optional[float] = self.optimizer.keywords.get(
-            "weight_decay", None
-        )
-        if weight_decay is None:  # try getting default value
-            kw_param = inspect.signature(self.optimizer.func).parameters.get(
-                "weight_decay"
-            )
-            if kw_param is not None and kw_param.default != inspect.Parameter.empty:
-                weight_decay = kw_param.default
-
-        parameters = [param for param in self.parameters() if param.requires_grad]
-
-        if weight_decay is not None:
-            decay_params = []
-            no_decay_params = []
-
-            for param in self.parameters():
-                if not param.requires_grad:
-                    continue
-
-                if param.ndim < 2:  # includes all bias and normalization parameters
-                    no_decay_params.append(param)
-                else:
-                    decay_params.append(param)
-
-            parameters = [
-                {
-                    "params": decay_params,
-                    "weight_decay": weight_decay,
-                    "name": "weight_decay_params",
-                },
-                {
-                    "params": no_decay_params,
-                    "weight_decay": 0.0,
-                    "name": "no_weight_decay_params",
-                },
-            ]
-
-        optimizer = self.optimizer(parameters)
-        if not isinstance(optimizer, torch.optim.Optimizer):
-            raise TypeError(
-                "Expected optimizer to be an instance of `torch.optim.Optimizer`, "
-                f"but got {type(optimizer)}.",
-            )
-
-        if self.lr_scheduler is not None:
-            if isinstance(self.lr_scheduler, dict):
-                if "scheduler" not in self.lr_scheduler:
-                    raise ValueError(
-                        "Expected 'scheduler' key in the learning rate scheduler dictionary.",
-                    )
-
-                lr_scheduler = self.lr_scheduler["scheduler"](optimizer)
-                if not isinstance(lr_scheduler, torch.optim.lr_scheduler.LRScheduler):
-                    raise TypeError(
-                        "Expected scheduler to be an instance of `torch.optim.lr_scheduler.LRScheduler`, "
-                        f"but got {type(lr_scheduler)}.",
-                    )
-                lr_scheduler_dict: Dict[
-                    str, Union[torch.optim.lr_scheduler.LRScheduler, Any]
-                ] = {"scheduler": lr_scheduler}
-
-                if self.lr_scheduler.get("extras"):
-                    lr_scheduler_dict.update(self.lr_scheduler["extras"])
-                return {"optimizer": optimizer, "lr_scheduler": lr_scheduler_dict}
-
-            lr_scheduler = self.lr_scheduler(optimizer)
-            if not isinstance(lr_scheduler, torch.optim.lr_scheduler.LRScheduler):
-                raise TypeError(
-                    "Expected scheduler to be an instance of `torch.optim.lr_scheduler.LRScheduler`, "
-                    f"but got {type(lr_scheduler)}.",
-                )
-            return [optimizer], [lr_scheduler]
-
-        return optimizer
-
     def _on_eval_epoch_start(self, eval_type: Literal["val", "test"]) -> None:
         """Prepare for the evaluation epoch."""
+        self.encoders.eval()
+        if self.heads:
+            self.heads.eval()
+        if self.postprocessors:
+            self.postprocessors.eval()
         if self.evaluation_tasks:
             for task_spec in self.evaluation_tasks.values():
                 if (eval_type == "val" and task_spec.run_on_validation) or (
