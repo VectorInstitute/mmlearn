@@ -36,6 +36,9 @@ class TimmViT(nn.Module):
     ----------
     model_name : str
         The name of the model to use.
+    modality : str, default="RGB"
+        The modality of the input data. This allows this model to be used with different
+        image modalities e.g. RGB, Depth, etc.
     projection_dim : int, default=768
         The dimension of the projection head.
     pretrained : bool, default=True
@@ -53,6 +56,7 @@ class TimmViT(nn.Module):
     def __init__(
         self,
         model_name: str,
+        modality: str = "RGB",
         projection_dim: int = 768,
         pretrained: bool = True,
         freeze_layers: Union[int, float, List[int], bool] = False,
@@ -62,6 +66,7 @@ class TimmViT(nn.Module):
     ) -> None:
         """Initialize the Vision Transformer model."""
         super().__init__()
+        self.modality = Modalities.get_modality(modality)
         if model_kwargs is None:
             model_kwargs = {}
 
@@ -126,7 +131,7 @@ class TimmViT(nn.Module):
         BaseModelOutput
             The output of the model.
         """
-        x = inputs[Modalities.RGB.name]
+        x = inputs[self.modality.name]
         last_hidden_state, hidden_states = self.model.forward_intermediates(
             x, output_fmt="NLC"
         )
@@ -169,14 +174,16 @@ class TimmViT(nn.Module):
 
 
 class VisionTransformer(nn.Module):
-    """
-    Vision Transformer.
+    """Vision Transformer.
 
     This module implements a Vision Transformer that processes images using a
     series of transformer blocks and patch embeddings.
 
     Parameters
     ----------
+    modality : str, optional, default="RGB"
+        The modality of the input data. This allows this model to be used with different
+        image modalities e.g. RGB, Depth, etc.
     img_size : List[int], optional, default=None
         List of input image sizes.
     patch_size : int, optional, default=16
@@ -215,6 +222,7 @@ class VisionTransformer(nn.Module):
 
     def __init__(
         self,
+        modality: str = "RGB",
         img_size: Optional[List[int]] = None,
         patch_size: int = 16,
         in_chans: int = 3,
@@ -235,6 +243,7 @@ class VisionTransformer(nn.Module):
     ) -> None:
         """Initialize the Vision Transformer module."""
         super().__init__()
+        self.modality = Modalities.get_modality(modality)
         self.num_features = self.embed_dim = embed_dim
         self.num_heads = num_heads
         img_size = [224, 224] if img_size is None else img_size
@@ -310,15 +319,14 @@ class VisionTransformer(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
     def forward(
-        self,
-        x: torch.Tensor,
-        masks: Optional[Union[torch.Tensor, List[torch.Tensor]]] = None,
-        return_hidden_states: bool = False,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]:
+        self, inputs: Dict[str, Any], return_hidden_states: bool = False
+    ) -> Tuple[torch.Tensor, Optional[List[torch.Tensor]]]:
         """Forward pass through the Vision Transformer."""
+        masks = inputs.get(self.modality.mask)
         if masks is not None and not isinstance(masks, list):
             masks = [masks]
 
+        x = inputs[self.modality.name]
         # -- Patchify x
         x = self.patch_embed(x)
 
@@ -348,7 +356,7 @@ class VisionTransformer(nn.Module):
         # -- Return both final output and hidden states if requested
         if return_hidden_states:
             return x, hidden_states
-        return x
+        return (x, None)
 
     def interpolate_pos_encoding(
         self, x: torch.Tensor, pos_embed: torch.Tensor
@@ -387,8 +395,7 @@ class VisionTransformer(nn.Module):
 
 
 class VisionTransformerPredictor(nn.Module):
-    """
-    Vision Transformer Predictor.
+    """Vision Transformer Predictor.
 
     This module implements a Vision Transformer that predicts masked tokens
     using a series of transformer blocks.

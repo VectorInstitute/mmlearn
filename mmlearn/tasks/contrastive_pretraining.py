@@ -312,7 +312,7 @@ class ContrastivePretraining(TrainingTask):
 
         # set up auxiliary tasks
         self.aux_task_specs = auxiliary_tasks or {}
-        self.auxiliary_tasks: Dict[str, L.LightningModule] = {}
+        self.auxiliary_tasks: nn.ModuleDict[str, L.LightningModule] = nn.ModuleDict()
         for task_name, task_spec in self.aux_task_specs.items():
             if not Modalities.has_modality(task_spec.modality):
                 raise ValueError(
@@ -338,6 +338,12 @@ class ContrastivePretraining(TrainingTask):
                         f"but got {type(eval_task_spec.task)}."
                     )
         self.evaluation_tasks = evaluation_tasks
+
+    def configure_model(self) -> None:
+        """Configure the model."""
+        if self.auxiliary_tasks:
+            for task_name in self.auxiliary_tasks:
+                self.auxiliary_tasks[task_name].configure_model()
 
     def encode(
         self, inputs: Dict[str, Any], modality: Modality, normalize: bool = False
@@ -399,46 +405,6 @@ class ContrastivePretraining(TrainingTask):
 
         return outputs
 
-    def _compute_loss(
-        self, batch: Dict[str, Any], batch_idx: int, outputs: Dict[str, torch.Tensor]
-    ) -> Optional[torch.Tensor]:
-        if self.loss_fn is None:
-            return None
-
-        contrastive_loss = self.loss_fn(
-            outputs,
-            batch["example_ids"],
-            self.log_logit_scale.exp(),
-            self.modality_loss_pairs,
-        )
-
-        auxiliary_losses: list[torch.Tensor] = []
-        if self.auxiliary_tasks:
-            for task_name, task_spec in self.aux_task_specs.items():
-                auxiliary_task_output = self.auxiliary_tasks[task_name].training_step(
-                    batch, batch_idx
-                )
-                if isinstance(auxiliary_task_output, torch.Tensor):
-                    auxiliary_task_loss = auxiliary_task_output
-                elif isinstance(auxiliary_task_output, Mapping):
-                    auxiliary_task_loss = auxiliary_task_output["loss"]
-                else:
-                    raise ValueError(
-                        "Expected auxiliary task output to be a tensor or a mapping "
-                        f"containing a 'loss' key, but got {type(auxiliary_task_output)}."
-                    )
-
-                auxiliary_losses.append(task_spec.loss_weight * auxiliary_task_loss)
-                if self.log_auxiliary_tasks_loss:
-                    self.log(
-                        f"train/{task_name}_loss", auxiliary_task_loss, sync_dist=True
-                    )
-
-        if not auxiliary_losses:
-            return contrastive_loss
-
-        return torch.stack(auxiliary_losses).sum() + contrastive_loss
-
     def on_train_epoch_start(self) -> None:
         """Prepare for the training epoch."""
         self.encoders.train()
@@ -482,6 +448,12 @@ class ContrastivePretraining(TrainingTask):
         )
 
         return loss
+
+    def on_before_zero_grad(self, optimizer: torch.optim.Optimizer) -> None:
+        """Zero out the gradients of the model."""
+        if self.auxiliary_tasks:
+            for task in self.auxiliary_tasks.values():
+                task.on_before_zero_grad(optimizer)
 
     def on_validation_epoch_start(self) -> None:
         """Prepare for the validation epoch."""
@@ -536,6 +508,77 @@ class ContrastivePretraining(TrainingTask):
     def on_test_epoch_end(self) -> None:
         """Compute and log epoch-level metrics at the end of the test epoch."""
         self._on_eval_epoch_end("test")
+
+    def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """Modify the model checkpoint after loading.
+
+        The `on_load_checkpoint` method of auxiliary tasks is called here to allow
+        them to modify the checkpoint after loading.
+
+        Parameters
+        ----------
+        checkpoint : Dict[str, Any]
+            The loaded checkpoint.
+        """
+        if self.auxiliary_tasks:
+            for task in self.auxiliary_tasks.values():
+                task.on_load_checkpoint(checkpoint)
+
+    def on_save_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+        """Modify the checkpoint before saving.
+
+        The `on_save_checkpoint` method of auxiliary tasks is called here to allow
+        them to modify the checkpoint before saving.
+
+        Parameters
+        ----------
+        checkpoint : Dict[str, Any]
+            The checkpoint to save.
+        """
+        if self.auxiliary_tasks:
+            for task in self.auxiliary_tasks.values():
+                task.on_save_checkpoint(checkpoint)
+
+    def _compute_loss(
+        self, batch: Dict[str, Any], batch_idx: int, outputs: Dict[str, torch.Tensor]
+    ) -> Optional[torch.Tensor]:
+        if self.loss_fn is None:
+            return None
+
+        contrastive_loss = self.loss_fn(
+            outputs,
+            batch["example_ids"],
+            self.log_logit_scale.exp(),
+            self.modality_loss_pairs,
+        )
+
+        auxiliary_losses: list[torch.Tensor] = []
+        if self.auxiliary_tasks:
+            for task_name, task_spec in self.aux_task_specs.items():
+                auxiliary_task_output = self.auxiliary_tasks[task_name].training_step(
+                    batch, batch_idx
+                )
+                if isinstance(auxiliary_task_output, torch.Tensor):
+                    auxiliary_task_loss = auxiliary_task_output
+                elif isinstance(auxiliary_task_output, Mapping):
+                    auxiliary_task_loss = auxiliary_task_output["loss"]
+                else:
+                    raise ValueError(
+                        "Expected auxiliary task output to be a tensor or a mapping "
+                        f"containing a 'loss' key, but got {type(auxiliary_task_output)}."
+                    )
+
+                auxiliary_task_loss *= task_spec.loss_weight
+                auxiliary_losses.append(auxiliary_task_loss)
+                if self.log_auxiliary_tasks_loss:
+                    self.log(
+                        f"train/{task_name}_loss", auxiliary_task_loss, sync_dist=True
+                    )
+
+        if not auxiliary_losses:
+            return contrastive_loss
+
+        return torch.stack(auxiliary_losses).sum() + contrastive_loss
 
     def _on_eval_epoch_start(self, eval_type: Literal["val", "test"]) -> None:
         """Prepare for the evaluation epoch."""

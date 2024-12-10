@@ -1,0 +1,154 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.train.sunrgbd: SUNRGBD
+  - /datasets/transforms@datasets.train.sunrgbd.rgb_transform: rgb_transform
+  - /datasets/transforms@datasets.train.sunrgbd.depth_transform: depth_transform
+  - /datasets@datasets.train.nyuv2: NYUv2
+  - /datasets/transforms@datasets.train.nyuv2.rgb_transform: rgb_transform
+  - /datasets/transforms@datasets.train.nyuv2.depth_transform: depth_transform
+  - /datasets@datasets.train.imagenet: ImageNet
+  - /datasets/transforms@datasets.train.imagenet.transform: rgb_transform
+  - /datasets@datasets.val.sunrgbd: SUNRGBD
+  - /datasets/transforms@datasets.val.sunrgbd.rgb_transform: rgb_transform
+  - /datasets/transforms@datasets.val.sunrgbd.depth_transform: depth_transform
+  - /datasets@datasets.val.nyuv2: NYUv2
+  - /datasets/transforms@datasets.val.nyuv2.rgb_transform: rgb_transform
+  - /datasets/transforms@datasets.val.nyuv2.depth_transform: depth_transform
+  - /modules/encoders@task.encoders.rgb: vit_base
+  - /modules/layers@task.heads.rgb: MLP
+  - /modules/encoders@task.encoders.depth: TimmViT
+  - /modules/layers@task.heads.depth: MLP
+  - /modules/losses@task.loss: ContrastiveLoss
+  - /modules/optimizers@task.optimizer: AdamW
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+  - /eval_task@task.evaluation_tasks.retrieval.task: ZeroShotCrossModalRetrieval
+  - /task@task.auxiliary_tasks.ijepa.task: IJEPA
+  - /modules/encoders@task.auxiliary_tasks.ijepa.task.predictor: vit_predictor
+  - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
+  - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
+  - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
+  - /trainer/callbacks@trainer.callbacks.model_summary: ModelSummary
+  - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - override /task: ContrastivePretraining
+  - _self_
+
+seed: 0
+
+datasets:
+  train:
+    sunrgbd:
+      depth_transform:
+        norm_mean: 0.0418
+        norm_std: 0.0295
+  val:
+    sunrgbd:
+      split: test
+      rgb_transform:
+        job_type: eval
+      depth_transform:
+        norm_mean: 0.0418
+        norm_std: 0.0295
+    nyuv2:
+      split: test
+      rgb_transform:
+        job_type: eval
+
+dataloader:
+  train:
+    batch_size: 96
+    num_workers: 6
+  val:
+    batch_size: 96
+    num_workers: 6
+
+task:
+  encoders:
+    depth:
+      model_name: vit_base_patch16_clip_224.openai
+      modality: depth
+      projection_dim: 0
+      pretrained: True
+      model_kwargs:
+        in_chans: 1
+        global_pool: "token"
+  heads:
+    depth:
+      in_dim: 768
+      out_dim: 512
+      bias: False
+    rgb:
+      in_dim: 768
+      out_dim: 512
+      bias: False
+  optimizer:
+    betas:
+    - 0.9
+    - 0.98
+    lr: 5.0e-5
+    weight_decay: 0.1
+    eps: 1.0e-6
+  lr_scheduler:
+    scheduler:
+      T_max: 67_060 # make sure to change this if max_epochs or accumulate_grad_batches is changed
+    extras:
+      interval: step
+  loss:
+    gather_with_grad: False
+    local_loss: True
+  evaluation_tasks:
+    retrieval:
+      task:
+        task_specs:
+          - query_modality: rgb
+            target_modality: depth
+            top_k: [1, 5, 10]
+          - query_modality: depth
+            target_modality: rgb
+            top_k: [1, 5, 10]
+      run_on_validation: True
+      run_on_test: True
+  auxiliary_tasks:
+    ijepa:
+      modality: rgb
+      loss_weight: 1.0
+      task:
+        _partial_: True # the RGB encoder of the main task will be used at runtime
+        ema_decay: 0.998
+        ema_anneal_end_step: 5000
+  log_auxiliary_tasks_loss: True
+
+trainer:
+  max_epochs: 20
+  precision: 16-mixed
+  deterministic: False
+  benchmark: True
+  sync_batchnorm: False # set to True if using DDP with batchnorm
+  log_every_n_steps: 10
+  accumulate_grad_batches: 1
+  check_val_every_n_epoch: 1
+  callbacks:
+    model_checkpoint:
+      monitor: val/loss
+      save_top_k: 1
+      save_last: True
+      every_n_epochs: 1
+      dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on Vector SLURM environment
+    early_stopping:
+      monitor: val/loss
+      patience: 5
+      mode: min
+    model_summary:
+      max_depth: 2
+
+tags:
+  - ${experiment_name}
+  - contrastive pretraining
+  - ijepa
+  - rgb
+  - depth
+  - timm_vit
+  - sunrgbd
+  - nyuv2
+  - imagenet
+  - multi-task

@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from hydra_zen import MISSING, store
 from lightning_utilities.core.imports import RequirementCache
-from PIL.Image import Image as PILImage
+from PIL import Image as PILImage
 from torch.utils.data import Dataset
 from torchvision.transforms.v2.functional import to_pil_image
 

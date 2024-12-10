@@ -149,6 +149,15 @@ class ContrastiveLoss(nn.Module):
                 self._compute_modality_alignment_loss(all_embeddings, logit_scale)
             )
 
+        if not losses:  # no loss to compute (e.g. no paired data in batch)
+            losses.append(
+                torch.tensor(
+                    0.0,
+                    device=logit_scale.device,
+                    dtype=next(iter(embeddings.values())).dtype,
+                )
+            )
+
         return torch.stack(losses).sum()
 
     def _get_ground_truth(

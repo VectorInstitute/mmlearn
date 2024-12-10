@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from hydra_zen import MISSING, store
 from lightning_utilities.core.imports import RequirementCache
-from PIL.Image import Image as PILImage
+from PIL import Image as PILImage
 from torch.utils.data import Dataset
 from torchvision.transforms.v2.functional import to_pil_image
 
@@ -118,7 +118,7 @@ class NYUv2Dataset(Dataset[Example]):
 
         root_dir = os.path.join(root_dir, split)
         depth_files = [os.path.join(root_dir, "depth", f"{f}.png") for f in file_ids]
-        rgb_files = [os.path.join(root_dir, "rgb", f"{f}.jpg") for f in file_ids]
+        rgb_files = [os.path.join(root_dir, "rgb", f"{f}.png") for f in file_ids]
 
         label_files = [
             os.path.join(root_dir, "scene_class", f"{f}.txt") for f in file_ids
