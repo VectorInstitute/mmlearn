@@ -20,7 +20,7 @@ from mmlearn.cli._instantiators import (
     instantiate_loggers,
     instantiate_sampler,
 )
-from mmlearn.conf import JobType, MMLearnConf, hydra_main
+from mmlearn.conf import JobType, MMLearnConf, _hydra_main
 from mmlearn.datasets.core import *  # noqa: F403
 from mmlearn.datasets.processors import *  # noqa: F403
 from mmlearn.modules.encoders import *  # noqa: F403
@@ -34,7 +34,7 @@ from mmlearn.tasks import *  # noqa: F403
 logger = logging.getLogger(__package__)
 
 
-@hydra_main(
+@_hydra_main(
     config_path="pkg://mmlearn.conf", config_name="base_config", version_base=None
 )
 def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912

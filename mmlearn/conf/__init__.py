@@ -54,13 +54,16 @@ class JobType(str, Enum):
 class DatasetConf:
     """Configuration template for the datasets."""
 
+    #: Configuration for the training dataset.
     train: Optional[Any] = field(
         default=None,
         metadata={"help": "Configuration for the training dataset."},
     )
+    #: Configuration for the validation dataset.
     val: Optional[Any] = field(
         default=None, metadata={"help": "Configuration for the validation dataset."}
     )
+    #: Configuration for the test dataset.
     test: Optional[Any] = field(
         default=None,
         metadata={"help": "Configuration for the test dataset."},
@@ -71,14 +74,17 @@ class DatasetConf:
 class DataLoaderConf:
     """Configuration for the dataloader."""
 
+    #: Configuration for the training dataloader.
     train: Any = field(
         default_factory=_DataLoaderConf,
         metadata={"help": "Configuration for the training dataloader."},
     )
+    #: Configuration for the validation dataloader.
     val: Any = field(
         default_factory=_DataLoaderConf,
         metadata={"help": "Configuration for the validation dataloader."},
     )
+    #: Configuration for the test dataloader.
     test: Any = field(
         default_factory=_DataLoaderConf,
         metadata={"help": "Configuration for the test dataloader."},
@@ -96,27 +102,21 @@ class MMLearnConf:
             {"override hydra/launcher": "submitit_slurm"},
         ]
     )
-    experiment_name: str = field(
-        default=MISSING, metadata={"help": "Name of the experiment."}
-    )
-    job_type: JobType = field(
-        default=JobType.train, metadata={"help": "Type of the job."}
-    )
-    seed: Optional[int] = field(
-        default=None, metadata={"help": "Seed for the random number generators."}
-    )
-    datasets: DatasetConf = field(
-        default_factory=DatasetConf,
-        metadata={"help": "Configuration for the datasets."},
-    )
-    dataloader: DataLoaderConf = field(
-        default_factory=DataLoaderConf,
-        metadata={"help": "Configuration for the dataloader."},
-    )
-    task: Any = field(
-        default=MISSING,
-        metadata={"help": "Configuration for the task, typically a LightningModule."},
-    )
+    #: Name of the experiment. This must be specified for any experiment to run.
+    experiment_name: str = field(default=MISSING)
+    #: Type of the job.
+    job_type: JobType = field(default=JobType.train)
+    #: Seed for the random number generators. This is set for Python, Numpy and PyTorch,
+    #: including the workers in PyTorch Dataloaders.
+    seed: Optional[int] = field(default=None)
+    #: Configuration for the datasets.
+    datasets: DatasetConf = field(default_factory=DatasetConf)
+    #: Configuration for the dataloaders.
+    dataloader: DataLoaderConf = field(default_factory=DataLoaderConf)
+    #: Configuration for the task. This is required to run any experiment.
+    task: Any = field(default=MISSING)
+    #: Configuration for the trainer. The options here are the same as in
+    #: :py:class:`~lightning.pytorch.trainer.trainer.Trainer`
     trainer: Any = field(
         default_factory=builds(
             lightning_trainer.Trainer,
@@ -125,21 +125,18 @@ class MMLearnConf:
             enable_progress_bar=True,
             enable_checkpointing=True,
             default_root_dir=_get_default_ckpt_dir(),
-        ),
-        metadata={"help": "Configuration for the Trainer."},
+        )
     )
-    tags: Optional[List[str]] = field(
-        default_factory=lambda: [II("experiment_name")],
-        metadata={"help": "Tags for the experiment. Useful for wandb logging."},
-    )
-    resume_from_checkpoint: Optional[Path] = field(
-        default=None,
-        metadata={"help": "Path to the checkpoint to resume training from."},
-    )
-    strict_loading: bool = field(
-        default=True,
-        metadata={"help": "Whether to strictly enforce loading of model weights."},
-    )
+    #: Tags for the experiment. This is useful for `wandb <https://docs.wandb.ai/ref/python/init>`_
+    #: logging.
+    tags: Optional[List[str]] = field(default_factory=lambda: [II("experiment_name")])
+    #: Path to the checkpoint to resume training from.
+    resume_from_checkpoint: Optional[Path] = field(default=None)
+    #: Whether to strictly enforce loading of model weights i.e. `strict=True` in
+    #: :py:meth:`~lightning.pytorch.core.module.LightningModule.load_from_checkpoint`.
+    strict_loading: bool = field(default=True)
+    #: Configuration for torch.compile. These are essentially the same as the
+    #: arguments for :py:func:`torch.compile`.
     torch_compile_kwargs: Dict[str, Any] = field(
         default_factory=lambda: {
             "disable": True,
@@ -148,9 +145,9 @@ class MMLearnConf:
             "backend": "inductor",
             "mode": None,
             "options": None,
-        },
-        metadata={"help": "Configuration for torch.jit.compile."},
+        }
     )
+    #: Hydra configuration.
     hydra: HydraConf = field(
         default_factory=lambda: HydraConf(
             searchpath=["pkg://mmlearn.conf"],
@@ -187,6 +184,9 @@ cs.store(
 
 
 #################### External Modules ####################
+#: A custom ZenStore object that will immediately add entries to Hydra's global
+#: config store as soon as they are registered. Use this as a decorator for
+#: newly-defined configurable functions/classes outside the main mmlearn package.
 external_store = ZenStore(name="external_store", deferred_hydra_store=False)
 
 
@@ -457,7 +457,7 @@ else:
 
 
 #################### Custom Hydra Main Decorator ####################
-def hydra_main(
+def _hydra_main(
     config_path: Optional[str] = _UNSPECIFIED_,
     config_name: Optional[str] = None,
     version_base: Optional[str] = _UNSPECIFIED_,

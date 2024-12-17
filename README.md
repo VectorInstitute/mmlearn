@@ -108,7 +108,7 @@ One can add a path to `hydra.searchpath` either as a package (`pkg://path.to.con
 `path/to/config/directory/__init__.py` which is only interpreted when the config directory is added as a package.
 Hence, please refrain from using the `file://` notation.
 
-Hydra also allows for overriding configurations parameters from the command line. To see the available options and other information, run:
+Hydra also allows for overriding configuration parameters from the command line. To see the available options and other information, run:
 ```bash
 mmlearn_run 'hydra.searchpath=[pkg://path.to.config.directory]' +experiment=<name_of_experiment_yaml_file> --help
 ```
