@@ -2,7 +2,7 @@
 
 import math
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
 import timm
 import torch
@@ -26,7 +26,7 @@ from mmlearn.modules.layers.transformer_block import Block
 @store(
     group="modules/encoders",
     provider="mmlearn",
-    model_name_or_path="vit_base_patch16_224",
+    model_name="vit_base_patch16_224",
     hydra_convert="object",
 )
 class TimmViT(nn.Module):
@@ -284,7 +284,6 @@ class VisionTransformer(nn.Module):
         # Weight Initialization
         self.init_std = init_std
         self.apply(self._init_weights)
-        self.fix_init_weight()
 
     def fix_init_weight(self) -> None:
         """Fix initialization of weights by rescaling them according to layer depth."""
@@ -294,7 +293,7 @@ class VisionTransformer(nn.Module):
 
         for layer_id, layer in enumerate(self.blocks):
             rescale(layer.attn.proj.weight.data, layer_id + 1)
-            rescale(layer.mlp.fc2.weight.data, layer_id + 1)
+            rescale(layer.mlp[-1].weight.data, layer_id + 1)
 
     def _init_weights(self, m: nn.Module) -> None:
         """Initialize weights for the layers."""
@@ -428,7 +427,7 @@ class VisionTransformerPredictor(nn.Module):
 
     def __init__(
         self,
-        num_patches: int,
+        num_patches: int = 196,
         embed_dim: int = 768,
         predictor_embed_dim: int = 384,
         depth: int = 6,
@@ -445,7 +444,11 @@ class VisionTransformerPredictor(nn.Module):
     ) -> None:
         """Initialize the Vision Transformer Predictor module."""
         super().__init__()
-        self.predictor_embed = nn.Linear(embed_dim, predictor_embed_dim, bias=True)
+        self.num_patches = num_patches
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+
+        self.predictor_embed = nn.Linear(self.embed_dim, predictor_embed_dim, bias=True)
         self.mask_token = nn.Parameter(torch.zeros(1, 1, predictor_embed_dim))
         dpr = [
             x.item() for x in torch.linspace(0, drop_path_rate, depth)
@@ -453,10 +456,12 @@ class VisionTransformerPredictor(nn.Module):
 
         # Positional Embedding
         self.predictor_pos_embed = nn.Parameter(
-            torch.zeros(1, num_patches, predictor_embed_dim), requires_grad=False
+            torch.zeros(1, self.num_patches, predictor_embed_dim), requires_grad=False
         )
         predictor_pos_embed = get_2d_sincos_pos_embed(
-            self.predictor_pos_embed.shape[-1], int(num_patches**0.5), cls_token=False
+            self.predictor_pos_embed.shape[-1],
+            int(self.num_patches**0.5),
+            cls_token=False,
         )
         self.predictor_pos_embed.data.copy_(
             torch.from_numpy(predictor_pos_embed).float().unsqueeze(0)
@@ -467,7 +472,7 @@ class VisionTransformerPredictor(nn.Module):
             [
                 Block(
                     dim=predictor_embed_dim,
-                    num_heads=num_heads,
+                    num_heads=self.num_heads,
                     mlp_ratio=mlp_ratio,
                     qkv_bias=qkv_bias,
                     qk_scale=qk_scale,
@@ -487,7 +492,6 @@ class VisionTransformerPredictor(nn.Module):
         self.init_std = init_std
         trunc_normal_(self.mask_token, std=self.init_std)
         self.apply(self._init_weights)
-        self.fix_init_weight()
 
     def fix_init_weight(self) -> None:
         """Fix initialization of weights by rescaling them according to layer depth."""
@@ -561,6 +565,13 @@ class VisionTransformerPredictor(nn.Module):
         return self.predictor_proj(x)
 
 
+@cast(
+    VisionTransformerPredictor,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
+)
 def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
     """
     Create a VisionTransformerPredictor model.
@@ -575,6 +586,13 @@ def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
     )
 
 
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
+)
 def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with tiny configuration.
@@ -596,6 +614,13 @@ def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
+)
 def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with small configuration.
@@ -617,6 +642,13 @@ def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
+)
 def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with base configuration.
@@ -638,6 +670,13 @@ def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
+)
 def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with large configuration.
@@ -659,6 +698,13 @@ def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
+)
 def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with huge configuration.
@@ -680,6 +726,13 @@ def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
+@cast(
+    VisionTransformer,
+    store(
+        group="modules/encoders",
+        provider="mmlearn",
+    ),
+)
 def vit_giant(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     """
     Create a VisionTransformer model with giant configuration.

@@ -67,7 +67,7 @@ def load_huggingface_model(
             return_unused_kwargs=True,
             **model_config_kwargs,
         )
-        model = model_type._from_config(config, **kwargs)
+        model = model_type.from_config(config, **kwargs)
 
     if get_model_attr is not None and hasattr(model, get_model_attr):
         model = getattr(model, get_model_attr)

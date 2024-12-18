@@ -48,6 +48,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
         self.task_specs = task_specs
         self.metrics: Dict[Tuple[str, str], MetricCollection] = {}
+        self._available_modalities = set()
 
         for spec in self.task_specs:
             query_modality = spec.query_modality
@@ -63,6 +64,8 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
                     for k in spec.top_k
                 }
             )
+            self._available_modalities.add(query_modality)
+            self._available_modalities.add(target_modality)
 
     def on_evaluation_epoch_start(self, pl_module: pl.LightningModule) -> None:
         """Move the metrics to the device of the Lightning module."""
@@ -90,14 +93,17 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
         if pl_module.trainer.sanity_checking:
             return
 
-        outputs: Dict[str, Any] = pl_module(batch)
+        outputs: Dict[str, Any] = {}
+        for modality_name in self._available_modalities:
+            if modality_name in batch:
+                outputs[modality_name] = pl_module.encode(
+                    batch, Modalities.get_modality(modality_name), normalize=False
+                )
         for (query_modality, target_modality), metric in self.metrics.items():
-            query_embeddings: torch.Tensor = outputs[
-                Modalities.get_modality(query_modality).embedding
-            ]
-            target_embeddings: torch.Tensor = outputs[
-                Modalities.get_modality(target_modality).embedding
-            ]
+            if query_modality not in outputs or target_modality not in outputs:
+                continue
+            query_embeddings: torch.Tensor = outputs[query_modality]
+            target_embeddings: torch.Tensor = outputs[target_modality]
             indexes = torch.arange(query_embeddings.size(0), device=pl_module.device)
 
             metric.update(query_embeddings, target_embeddings, indexes)

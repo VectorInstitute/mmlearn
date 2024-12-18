@@ -45,7 +45,7 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
 
     if is_torch_tf32_available():
         torch.backends.cuda.matmul.allow_tf32 = True
-        if "16-mixed" in cfg.trainer.precision:
+        if "16-mixed" in str(cfg.trainer.precision):
             cfg.trainer.precision = "bf16-mixed"
 
     # setup trainer first so that we can get some variables for distributed training

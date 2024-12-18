@@ -12,7 +12,7 @@ defaults:
   - /modules/encoders@task.encoders.rgb: timm-vit-lora
   - /modules/encoders@task.encoders.dna: barcode-bert-lora
   - /modules/layers@task.heads.text: MLP # the other modalities have projection heads in their encoders
-  - /modules/losses@task.loss: CLIPLoss
+  - /modules/losses@task.loss: ContrastiveLoss
   - /modules/optimizers@task.optimizer: AdamW
   - /modules/lr_schedulers@task.lr_scheduler.scheduler: OneCycleLR
   - /eval_task@task.evaluation_tasks.tax_cls.task: TaxonomicClassification
@@ -100,8 +100,6 @@ trainer:
       dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on Vector SLURM environment
     model_summary:
       max_depth: 2
-
-strict_loading: False
 
 tags:
   - ${experiment_name}

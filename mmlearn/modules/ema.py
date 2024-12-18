@@ -52,6 +52,52 @@ class ExponentialMovingAverage:
         self.ema_end_decay = ema_end_decay
         self.ema_anneal_end_step = ema_anneal_end_step
 
+    @staticmethod
+    def deepcopy_model(model: torch.nn.Module) -> torch.nn.Module:
+        """Deep copy the model."""
+        try:
+            return copy.deepcopy(model)
+        except RuntimeError as e:
+            raise RuntimeError("Unable to copy the model ", e) from e
+
+    @staticmethod
+    def get_annealed_rate(
+        start: float,
+        end: float,
+        curr_step: int,
+        total_steps: int,
+    ) -> float:
+        """Calculate EMA annealing rate."""
+        r = end - start
+        pct_remaining = 1 - curr_step / total_steps
+        return end - r * pct_remaining
+
+    def step(self, new_model: torch.nn.Module) -> None:
+        """Perform single EMA update step."""
+        self._update_weights(new_model)
+        self._update_ema_decay()
+
+    def restore(self, model: torch.nn.Module) -> torch.nn.Module:
+        """Reassign weights from another model.
+
+        Parameters
+        ----------
+        model : nn.Module
+            Model to load weights from.
+
+        Returns
+        -------
+        nn.Module
+            model with new weights
+        """
+        d = self.model.state_dict()
+        model.load_state_dict(d, strict=False)
+        return model
+
+    def state_dict(self) -> dict[str, Any]:
+        """Return the state dict of the model."""
+        return self.model.state_dict()  # type: ignore[no-any-return]
+
     @torch.no_grad()  # type: ignore[misc]
     def _update_weights(self, new_model: torch.nn.Module) -> None:
         if self.decay < 1:
@@ -98,49 +144,3 @@ class ExponentialMovingAverage:
                     self.ema_anneal_end_step,
                 )
             self.decay = decay
-
-    def step(self, new_model: torch.nn.Module) -> None:
-        """Perform single EMA update step."""
-        self._update_weights(new_model)
-        self._update_ema_decay()
-
-    @staticmethod
-    def deepcopy_model(model: torch.nn.Module) -> torch.nn.Module:
-        """Deep copy the model."""
-        try:
-            return copy.deepcopy(model)
-        except RuntimeError as e:
-            raise RuntimeError("Unable to copy the model ", e) from e
-
-    def restore(self, model: torch.nn.Module) -> torch.nn.Module:
-        """Reassign weights from another model.
-
-        Parameters
-        ----------
-        model : nn.Module
-            Model to load weights from.
-
-        Returns
-        -------
-        nn.Module
-            model with new weights
-        """
-        d = self.model.state_dict()
-        model.load_state_dict(d, strict=False)
-        return model
-
-    def state_dict(self) -> dict[str, Any]:
-        """Return the state dict of the model."""
-        return self.model.state_dict()  # type: ignore[no-any-return]
-
-    @staticmethod
-    def get_annealed_rate(
-        start: float,
-        end: float,
-        curr_step: int,
-        total_steps: int,
-    ) -> float:
-        """Calculate EMA annealing rate."""
-        r = end - start
-        pct_remaining = 1 - curr_step / total_steps
-        return end - r * pct_remaining
