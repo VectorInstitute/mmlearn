@@ -2,7 +2,7 @@
 
 import inspect
 from functools import partial
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 import lightning as L  # noqa: N812
 import torch
@@ -17,12 +17,12 @@ class TrainingTask(L.LightningModule):
 
     Parameters
     ----------
-    optimizer : partial[torch.optim.Optimizer], optional, default=None
+    optimizer : Optional[partial[torch.optim.Optimizer]], optional, default=None
         The optimizer to use for training. This is expected to be a partial function,
         created using `functools.partial`, that takes the model parameters as the
         only required argument. If not provided, training will continue without an
         optimizer.
-    lr_scheduler : Union[Dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]], partial[torch.optim.lr_scheduler.LRScheduler]], optional, default=None
+    lr_scheduler : Optional[Union[dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]], partial[torch.optim.lr_scheduler.LRScheduler]]], optional, default=None
         The learning rate scheduler to use for training. This can be a partial function
         that takes the optimizer as the only required argument or a dictionary with
         a `scheduler` key that specifies the scheduler and an optional `extras` key
@@ -36,6 +36,12 @@ class TrainingTask(L.LightningModule):
     compute_test_loss : bool, optional, default=True
         Whether to compute the test loss if a test dataloader is provided. The loss
         function must be provided to compute the test loss.
+
+    Raises
+    ------
+    ValueError
+        If the loss function is not provided and either the validation or test loss
+        needs to be computed.
     """  # noqa: W505
 
     def __init__(
@@ -43,7 +49,7 @@ class TrainingTask(L.LightningModule):
         optimizer: Optional[partial[torch.optim.Optimizer]] = None,
         lr_scheduler: Optional[
             Union[
-                Dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]],
+                dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]],
                 partial[torch.optim.lr_scheduler.LRScheduler],
             ]
         ] = None,
@@ -130,7 +136,7 @@ class TrainingTask(L.LightningModule):
                         "Expected scheduler to be an instance of `torch.optim.lr_scheduler.LRScheduler`, "
                         f"but got {type(lr_scheduler)}.",
                     )
-                lr_scheduler_dict: Dict[
+                lr_scheduler_dict: dict[
                     str, Union[torch.optim.lr_scheduler.LRScheduler, Any]
                 ] = {"scheduler": lr_scheduler}
 
