@@ -2,7 +2,7 @@
 
 import json
 import os
-from typing import Callable, List, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import torch
 from hydra_zen import MISSING, store
@@ -35,11 +35,6 @@ _LABELS = [
 ]
 
 
-def text_labels() -> List[str]:
-    """Return a list of the NIH Chest X-ray textual labels."""
-    return _LABELS
-
-
 @store(
     group="datasets",
     provider="mmlearn",
@@ -47,16 +42,17 @@ def text_labels() -> List[str]:
     split="train",
 )
 class NIHCXR(Dataset[Example]):
-    """Module to load image-text pairs from NIH Chest Xray dataset.
+    """NIH Chest X-ray dataset.
 
     Parameters
     ----------
     root_dir : str
-        Directory which contains json files stating all dataset entries.
+        Directory which contains `.json` files stating all dataset entries.
     split : {"train", "test", "bbox"}
-        Dataset split. 'bbox' is a subset of 'test' which contains bounding box info.
-    transform : callable, optional, default=None
-        Transforms applied to images.
+        Dataset split. "bbox" is a subset of "test" which contains bounding box info.
+    transform : Optional[Callable[[PIL.Image], torch.Tensor]], optional, default=None
+        A callable that takes in a PIL image and returns a transformed version
+        of the image as a PyTorch tensor.
     """
 
     def __init__(
@@ -65,7 +61,6 @@ class NIHCXR(Dataset[Example]):
         split: Literal["train", "test", "bbox"],
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
     ) -> None:
-        """Initialize the dataset."""
         assert split in ["train", "test", "bbox"], f"split {split} is not available."
         assert (
             callable(transform) or transform is None

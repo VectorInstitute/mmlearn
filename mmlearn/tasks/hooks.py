@@ -34,8 +34,8 @@ class EvaluationHooks:
 
         Returns
         -------
-        Mapping[str, Any] or None
-            A dictionary of evaluation results for the batch or `None` if no
+        Optional[Mapping[str, Any]]
+            A dictionary of evaluation results for the batch or ``None`` if no
             batch results are available.
 
         """
@@ -57,5 +57,5 @@ class EvaluationHooks:
         Returns
         -------
         Optional[Union[Mapping[str, Any]]]
-            A dictionary of evaluation results or `None` if no results are available.
+            A dictionary of evaluation results or ``None`` if no results are available.
         """

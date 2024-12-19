@@ -1,7 +1,7 @@
 """Implementations of the contrastive loss and its variants."""
 
 import itertools
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import torch
 import torch.distributed as dist
@@ -18,21 +18,21 @@ from mmlearn.tasks.contrastive_pretraining import LossPairSpec
 
 @store(group="modules/losses", provider="mmlearn")
 class ContrastiveLoss(nn.Module):
-    """Contrastive Loss module.
+    """Contrastive Loss.
 
     Parameters
     ----------
-    l2_normalize : bool, default=False
+    l2_normalize : bool, optional, default=False
         Whether to L2 normalize the features.
-    local_loss : bool, default=False
-        Whether to calculate the loss locally i.e. `local_features@global_features`.
-    gather_with_grad : bool, default=False
+    local_loss : bool, optional, default=False
+        Whether to calculate the loss locally i.e. ``local_features@global_features``.
+    gather_with_grad : bool, optional, default=False
         Whether to gather tensors with gradients.
-    modality_alignment : bool, default=False
+    modality_alignment : bool, optional, default=False
         Whether to include modality alignment loss. This loss considers all features
         from the same modality as positive pairs and all features from different
         modalities as negative pairs.
-    cache_labels : bool, default=False
+    cache_labels : bool, optional, default=False
         Whether to cache the labels.
 
     """
@@ -45,7 +45,6 @@ class ContrastiveLoss(nn.Module):
         modality_alignment: bool = False,
         cache_labels: bool = False,
     ):
-        """Initialize the loss."""
         super().__init__()
         self.local_loss = local_loss
         self.gather_with_grad = gather_with_grad
@@ -55,7 +54,7 @@ class ContrastiveLoss(nn.Module):
 
         # cache state
         self._prev_num_logits = 0
-        self._labels: Dict[torch.device, torch.Tensor] = {}
+        self._labels: dict[torch.device, torch.Tensor] = {}
 
     def forward(
         self,
@@ -76,13 +75,13 @@ class ContrastiveLoss(nn.Module):
             is a tensor tuple of the dataset index and the example index.
         logit_scale : torch.Tensor
             Scale factor for the logits.
-        modality_loss_pairs : List[LossPairSpec]
+        modality_loss_pairs : list[LossPairSpec]
             Specification of the modality pairs for which the loss should be calculated.
 
         Returns
         -------
         torch.Tensor
-            Contrastive loss.
+            The contrastive loss.
         """
         world_size = dist.get_world_size() if dist.is_initialized() else 1
         rank = dist.get_rank() if world_size > 1 else 0
@@ -524,7 +523,7 @@ def _gather_all_tensors(
     Returns
     -------
     list[torch.Tensor]
-        List of gathered tensors.
+        list of gathered tensors.
     """
     if group is None:
         group = torch.distributed.group.WORLD

@@ -33,13 +33,14 @@ extensions = [
     "sphinxcontrib.apidoc",
 ]
 add_module_names = False
-autoclass_content = "both"
+autoclass_content = "class"
 autodoc_default_options = {
     "members": True,
     "undoc-members": False,
     "private-members": False,
-    "special-members": False,
+    "special-members": "__call__,__getitem__,__iter__,__len__",
     "inherited-members": False,
+    "ignore-module-all": True,
 }
 autodoc_inherit_docstrings = True
 autosectionlabel_prefix_document = True
@@ -59,9 +60,14 @@ intersphinx_mapping = {
     "pandas": ("https://pandas.pydata.org/docs/", None),
     "torch": ("https://pytorch.org/docs/stable/", None),
     "torchvision": ("https://pytorch.org/vision/stable/", None),
+    "torchaudio": ("https://pytorch.org/audio/stable/", None),
     "hydra-zen": ("https://mit-ll-responsible-ai.github.io/hydra-zen/", None),
     "pillow": ("https://pillow.readthedocs.io/en/stable/", None),
     "lightning": ("https://lightning.ai/docs/pytorch/stable/", None),
+    "torchmetrics": ("https://lightning.ai/docs/torchmetrics/stable/", None),
+    "Pillow": ("https://pillow.readthedocs.io/en/latest/", None),
+    "transformers": ("https://huggingface.co/docs/transformers/en/", None),
+    "peft": ("https://huggingface.co/docs/peft/en/", None),
 }
 
 templates_path = ["_templates"]

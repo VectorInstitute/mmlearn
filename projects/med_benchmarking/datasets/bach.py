@@ -1,7 +1,7 @@
 """BACH Dataset."""
 
 import os
-from typing import Callable, Dict, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import torch
 from omegaconf import MISSING
@@ -76,7 +76,7 @@ class BACH(Dataset[Example]):
         return len(self.data)
 
     @property
-    def id2label(self) -> Dict[int, str]:
+    def id2label(self) -> dict[int, str]:
         """Return the label mapping for the BACH dataset."""
         return {
             0: "breast non-malignant benign tissue",

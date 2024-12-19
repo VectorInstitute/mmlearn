@@ -1,6 +1,6 @@
 """Huggingface text encoder model."""
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from hydra_zen import store
 from lightning_utilities.core.rank_zero import rank_zero_warn
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @store(group="modules/encoders", provider="mmlearn", hydra_convert="object")
 class HFTextEncoder(nn.Module):
-    """Wrapper around huggingface models in the `AutoModelForTextEncoding` class.
+    """Wrapper around huggingface models in the ``AutoModelForTextEncoding`` class.
 
     Parameters
     ----------
@@ -26,27 +26,33 @@ class HFTextEncoder(nn.Module):
         The huggingface model name or a local path from which to load the model.
     pretrained : bool, default=True
         Whether to load the pretrained weights or not.
-    pooling_layer : nn.Module, optional, default=None
+    pooling_layer : Optional[torch.nn.Module], optional, default=None
         Pooling layer to apply to the last hidden state of the model.
-    freeze_layers : int | float | List[int] | bool, default=False
-        Whether to freeze layers of the model and which layers to freeze. If `True`,
-        all model layers are frozen. If it is an integer, the first `N` layers of
-        the model are frozen. If it is a float, the first `N` percent of the layers
+    freeze_layers : Union[int, float, list[int], bool], default=False
+        Whether to freeze layers of the model and which layers to freeze. If ``True``,
+        all model layers are frozen. If it is an integer, the first ``N`` layers of
+        the model are frozen. If it is a float, the first ``N`` percent of the layers
         are frozen. If it is a list of integers, the layers at the indices in the
         list are frozen.
     freeze_layer_norm : bool, default=True
         Whether to freeze the layer normalization layers of the model.
-    peft_config : PeftConfig, optional, default=None
-        The configuration from the `peft` library to use to wrap the model
-        for parameter-efficient finetuning.
-    model_config_kwargs : Dict[str, Any], optional, default=None
+    peft_config : Optional[PeftConfig], optional, default=None
+        The configuration from the `peft <https://huggingface.co/docs/peft/index>`_
+        library to use to wrap the model for parameter-efficient finetuning.
+    model_config_kwargs : Optional[dict[str, Any]], optional, default=None
         Additional keyword arguments to pass to the model configuration.
+
+    Raises
+    ------
+    ValueError
+        If the model is a decoder model or if freezing individual layers is not
+        supported for the model type.
 
     Warns
     -----
     UserWarning
-        If both `peft_config` and `freeze_layers` are set. The `peft_config` will
-        override the `freeze_layers` setting.
+        If both ``peft_config`` and ``freeze_layers`` are set. The ``peft_config``
+        will override the ``freeze_layers`` setting.
 
 
     """
@@ -56,12 +62,11 @@ class HFTextEncoder(nn.Module):
         model_name_or_path: str,
         pretrained: bool = True,
         pooling_layer: Optional[nn.Module] = None,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
         peft_config: Optional["PeftConfig"] = None,
-        model_config_kwargs: Optional[Dict[str, Any]] = None,
+        model_config_kwargs: Optional[dict[str, Any]] = None,
     ):
-        """Initialize the model."""
         super().__init__()
         if model_config_kwargs is None:
             model_config_kwargs = {}
@@ -138,20 +143,20 @@ class HFTextEncoder(nn.Module):
         self.model = model
         self.pooling_layer = pooling_layer
 
-    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
+    def forward(self, inputs: dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The `input_ids` will be expected under the `Modalities.TEXT`
-            key.
+        inputs : dict[str, Any]
+            The input data. The ``input_ids`` will be expected under the
+            ``Modalities.TEXT`` key.
 
         Returns
         -------
         BaseModelOutput
             The output of the model, including the last hidden state, all hidden states,
-            and the attention weights, if `output_attentions` is set to `True`.
+            and the attention weights, if ``output_attentions`` is set to ``True``.
         """
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT.name],

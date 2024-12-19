@@ -6,16 +6,14 @@
    :members:
    :show-inheritance:
    :inherited-members:
-   :special-members: __call__, __add__, __mul__
+   :special-members: __call__, __getitem__, __iter__
 
    {% block methods %}
    {% if methods %}
    .. rubric:: {{ _('Methods') }}
 
    {% for item in methods %}
-   {%- if not item.startswith('_') %}
    .. automethod:: ~{{ name }}.{{ item }}
-   {%- endif -%}
    {%- endfor %}
    {% endif %}
    {% endblock %}

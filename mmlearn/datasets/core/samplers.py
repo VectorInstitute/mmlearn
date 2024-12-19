@@ -13,18 +13,19 @@ from mmlearn.datasets.core.combined_dataset import CombinedDataset
 
 @store(group="dataloader/sampler", provider="mmlearn")
 class CombinedDatasetRatioSampler(Sampler[int]):
-    """Sampler for weighted sampling from a `CombinedDataset`.
+    """Sampler for weighted sampling from a :py:class:`~mmlearn.datasets.core.combined_dataset.CombinedDataset`.
 
     Parameters
     ----------
     dataset : CombinedDataset
-        An instance of `CombinedDataset` to sample from.
-    ratios : Sequence[float], optional, default=None
+        An instance of :py:class:`~mmlearn.datasets.core.combined_dataset.CombinedDataset`
+        to sample from.
+    ratios : Optional[Sequence[float]], optional, default=None
         A sequence of ratios for sampling from each dataset in the combined dataset.
         The length of the sequence must be equal to the number of datasets in the
         combined dataset (`dataset`). If `None`, the length of each dataset in the
         combined dataset is used as the ratio. The ratios are normalized to sum to 1.
-    num_samples : int, optional, default=None
+    num_samples : Optional[int], optional, default=None
         The number of samples to draw from the combined dataset. If `None`, the
         sampler will draw as many samples as there are in the combined dataset.
         This number must yield at least one sample per dataset in the combined
@@ -36,10 +37,10 @@ class CombinedDatasetRatioSampler(Sampler[int]):
         each dataset will appear in the order they are stored in the combined dataset.
         This is similar to sequential sampling from each dataset. The datasets
         that make up the combined dataset are still sampled randomly.
-    rank : int, optional, default=None
+    rank : Optional[int], optional, default=None
         Rank of the current process within :attr:`num_replicas`. By default,
         :attr:`rank` is retrieved from the current distributed group.
-    num_replicas : int, optional, default=None
+    num_replicas : Optional[int], optional, default=None
         Number of processes participating in distributed training. By
         default, :attr:`num_replicas` is retrieved from the current distributed group.
     drop_last : bool, default=False
@@ -79,7 +80,7 @@ class CombinedDatasetRatioSampler(Sampler[int]):
         ordering of the samples.
     total_size : int
         The total number of samples across all processes.
-    """
+    """  # noqa: W505
 
     def __init__(  # noqa: PLR0912
         self,
@@ -93,7 +94,6 @@ class CombinedDatasetRatioSampler(Sampler[int]):
         drop_last: bool = False,
         seed: int = 0,
     ):
-        """Initialize the sampler."""
         if not isinstance(dataset, CombinedDataset):
             raise TypeError(
                 "Expected argument `dataset` to be of type `CombinedDataset`, "
@@ -188,7 +188,7 @@ class CombinedDatasetRatioSampler(Sampler[int]):
         seed = self.seed + self.epoch
         generator.manual_seed(seed)
 
-        cumulative_sizes = [0] + self.dataset.cumulative_sizes
+        cumulative_sizes = [0] + self.dataset._cumulative_sizes
         num_samples_per_dataset = [int(prob * self.total_size) for prob in self.probs]
         indices = []
         for i in range(len(self.dataset.datasets)):
@@ -264,36 +264,21 @@ class CombinedDatasetRatioSampler(Sampler[int]):
 class DistributedEvalSampler(Sampler[int]):
     """Sampler for distributed evaluation.
 
-    Adapted from: https://github.com/SeungjunNah/DeepDeblur-PyTorch/blob/master/src/data/sampler.py
-    See also: https://discuss.pytorch.org/t/how-to-validate-in-distributeddataparallel-correctly/94267/11
-
-    DistributedEvalSampler is different from DistributedSampler. It does NOT add
-    extra samples to make it evenly divisible.
-
-    DistributedEvalSampler should NOT be used for training. The distributed processes
-    could hang forever.
-    See this issue for details: https://github.com/pytorch/pytorch/issues/22584
-
-    Shuffle is disabled by default.
-
-    DistributedEvalSampler is for evaluation purpose where synchronization does
-    not happen every epoch. Synchronization should be done outside the dataloader loop.
-    Sampler that restricts data loading to a subset of the dataset. It is especially
-    useful in conjunction with `torch.nn.parallel.DistributedDataParallel`.
-
-    Dataset is assumed to be of constant size.
+    The main differences between this and :py:class:`torch.utils.data.DistributedSampler`
+    are that this sampler does not add extra samples to make it evenly divisible and
+    shuffling is disabled by default.
 
     Parameters
     ----------
     dataset : torch.utils.data.Dataset
         Dataset used for sampling.
-    num_replicas : int, optional, default=`None`
+    num_replicas : Optional[int], optional, default=None
         Number of processes participating in distributed training. By
         default, :attr:`rank` is retrieved from the current distributed group.
-    rank : int, optional, default=`None`
+    rank : Optional[int], optional, default=None
         Rank of the current process within :attr:`num_replicas`. By default,
         :attr:`rank` is retrieved from the current distributed group.
-    shuffle : bool, optional, default=`False`
+    shuffle : bool, optional, default=False
         If `True` (default), sampler will shuffle the indices.
     seed : int, optional, default=0
         Random seed used to shuffle the sampler if :attr:`shuffle=True`.
@@ -302,10 +287,23 @@ class DistributedEvalSampler(Sampler[int]):
 
     Warnings
     --------
-    In distributed mode, calling the :meth`set_epoch(epoch) <set_epoch>`
-    method at the beginning of each epoch **before** creating the
-    `torch.utils.data.DataLoader` iterator is necessary to make shuffling work properly
-    across multiple epochs. Otherwise, the same ordering will be always used.
+    DistributedEvalSampler should NOT be used for training. The distributed processes
+    could hang forever. See [1]_ for details
+
+    Notes
+    -----
+    - This sampler is for evaluation purpose where synchronization does not happen
+      every epoch. Synchronization should be done outside the dataloader loop.
+      It is especially useful in conjunction with
+      :py:class:`torch.nn.parallel.DistributedDataParallel` [2]_.
+    - The input Dataset is assumed to be of constant size.
+    - This implementation is adapted from [3]_.
+
+    References
+    ----------
+    .. [1] https://github.com/pytorch/pytorch/issues/22584
+    .. [2] https://discuss.pytorch.org/t/how-to-validate-in-distributeddataparallel-correctly/94267/11
+    .. [3] https://github.com/SeungjunNah/DeepDeblur-PyTorch/blob/master/src/data/sampler.py
 
 
     Examples
@@ -319,7 +317,7 @@ class DistributedEvalSampler(Sampler[int]):
     ...             sampler.set_epoch(epoch)
     ...         evaluate(loader)
 
-    """
+    """  # noqa: W505
 
     def __init__(
         self,
@@ -329,7 +327,6 @@ class DistributedEvalSampler(Sampler[int]):
         shuffle: bool = False,
         seed: int = 0,
     ) -> None:
-        """Initialize the sampler."""
         if num_replicas is None:
             if not dist.is_available():
                 raise RuntimeError("Requires distributed package to be available")

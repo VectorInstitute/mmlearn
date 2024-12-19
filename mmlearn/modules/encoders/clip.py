@@ -1,6 +1,6 @@
-"""Wrappers and interfaces for the CLIP models."""
+"""Wrappers and interfaces for CLIP models."""
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 import torch
 import torch.distributed
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     hydra_convert="object",  # required for `peft_config` to be converted to a `PeftConfig` object
 )
 class HFCLIPTextEncoder(nn.Module):
-    """Wrapper around the `CLIPTextModel` from HuggingFace.
+    """Wrapper around the ``CLIPTextModel`` from HuggingFace.
 
     Parameters
     ----------
@@ -35,28 +35,27 @@ class HFCLIPTextEncoder(nn.Module):
         The huggingface model name or a local path from which to load the model.
     pretrained : bool, default=True
         Whether to load the pretrained weights or not.
-    pooling_layer : nn.Module, optional, default=None
+    pooling_layer : Optional[torch.nn.Module], optional, default=None
         Pooling layer to apply to the last hidden state of the model.
-    freeze_layers : int | float | List[int] | bool, default=False
-        Whether to freeze layers of the model and which layers to freeze. If `True`,
-        all model layers are frozen. If it is an integer, the first `N` layers of
-        the model are frozen. If it is a float, the first `N` percent of the layers
+    freeze_layers : Union[int, float, list[int], bool], default=False
+        Whether to freeze layers of the model and which layers to freeze. If ``True``,
+        all model layers are frozen. If it is an integer, the first ``N`` layers of
+        the model are frozen. If it is a float, the first ``N`` percent of the layers
         are frozen. If it is a list of integers, the layers at the indices in the
         list are frozen.
     freeze_layer_norm : bool, default=True
         Whether to freeze the layer normalization layers of the model.
-    peft_config : PeftConfig, optional, default=None
-        The configuration from the `peft` library to use to wrap the model
-        for parameter-efficient finetuning.
-    model_config_kwargs : Dict[str, Any], optional, default=None
+    peft_config : Optional[PeftConfig], optional, default=None
+        The configuration from the `peft <https://huggingface.co/docs/peft/index>`_
+        library to use to wrap the model for parameter-efficient finetuning.
+    model_config_kwargs : Optional[dict[str, Any]], optional, default=None
         Additional keyword arguments to pass to the model configuration.
 
     Warns
     -----
     UserWarning
-        If both `peft_config` and `freeze_layers` are set. The `peft_config` will
-        override the `freeze_layers` setting.
-
+        If both ``peft_config`` and ``freeze_layers`` are set. The ``peft_config``
+        will override the ``freeze_layers`` setting.
 
     """
 
@@ -65,12 +64,11 @@ class HFCLIPTextEncoder(nn.Module):
         model_name_or_path: str,
         pretrained: bool = True,
         pooling_layer: Optional[nn.Module] = None,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
         peft_config: Optional["PeftConfig"] = None,
-        model_config_kwargs: Optional[Dict[str, Any]] = None,
+        model_config_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
-        """Initialize the CLIP text model."""
         super().__init__()
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
@@ -87,20 +85,21 @@ class HFCLIPTextEncoder(nn.Module):
         self.model = model
         self.pooling_layer = pooling_layer
 
-    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
+    def forward(self, inputs: dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The `input_ids` will be expected under the `Modalities.TEXT`
-            key.
+        inputs : dict[str, Any]
+            The input data. The ``input_ids`` will be expected under the
+            ``Modalities.TEXT`` key.
 
         Returns
         -------
         BaseModelOutput
-            The output of the model, including the last hidden state, all hidden states,
-            and the attention weights, if `output_attentions` is set to `True`.
+            The output of the model, including the last hidden state, all hidden
+            states, and the attention weights, if ``output_attentions`` is set
+            to ``True``.
         """
         outputs = self.model(
             input_ids=inputs[Modalities.TEXT.name],
@@ -128,7 +127,7 @@ class HFCLIPTextEncoder(nn.Module):
     hydra_convert="object",
 )
 class HFCLIPVisionEncoder(nn.Module):
-    """Wrapper around the `CLIPVisionModel` from HuggingFace.
+    """Wrapper around the ``CLIPVisionModel`` from HuggingFace.
 
     Parameters
     ----------
@@ -136,12 +135,12 @@ class HFCLIPVisionEncoder(nn.Module):
         The huggingface model name or a local path from which to load the model.
     pretrained : bool, default=True
         Whether to load the pretrained weights or not.
-    pooling_layer : nn.Module, optional, default=None
+    pooling_layer : Optional[torch.nn.Module], optional, default=None
         Pooling layer to apply to the last hidden state of the model.
-    freeze_layers : int | float | List[int] | bool, default=False
-        Whether to freeze layers of the model and which layers to freeze. If `True`,
-        all model layers are frozen. If it is an integer, the first `N` layers of
-        the model are frozen. If it is a float, the first `N` percent of the layers
+    freeze_layers : Union[int, float, list[int], bool], default=False
+        Whether to freeze layers of the model and which layers to freeze. If ``True``,
+        all model layers are frozen. If it is an integer, the first ``N`` layers of
+        the model are frozen. If it is a float, the first ``N`` percent of the layers
         are frozen. If it is a list of integers, the layers at the indices in the
         list are frozen.
     freeze_layer_norm : bool, default=True
@@ -150,19 +149,19 @@ class HFCLIPVisionEncoder(nn.Module):
         The proportion of patch embeddings to drop out.
     patch_dropout_shuffle : bool, default=False
         Whether to shuffle the patches while applying patch dropout.
-    patch_dropout_bias : float, optional, default=None
+    patch_dropout_bias : Optional[float], optional, default=None
         The bias to apply to the patch dropout mask.
-    peft_config : PeftConfig, optional, default=None
-        The configuration from the `peft` library to use to wrap the model
-        for parameter-efficient finetuning.
-    model_config_kwargs : Dict[str, Any], optional, default=None
+    peft_config : Optional[PeftConfig], optional, default=None
+        The configuration from the `peft <https://huggingface.co/docs/peft/index>`_
+        library to use to wrap the model for parameter-efficient finetuning.
+    model_config_kwargs : Optional[dict[str, Any]], optional, default=None
         Additional keyword arguments to pass to the model configuration.
 
     Warns
     -----
     UserWarning
-        If both `peft_config` and `freeze_layers` are set. The `peft_config` will
-        override the `freeze_layers` setting.
+        If both ``peft_config`` and ``freeze_layers`` are set. The ``peft_config``
+        will override the ``freeze_layers`` setting.
 
     """
 
@@ -171,15 +170,14 @@ class HFCLIPVisionEncoder(nn.Module):
         model_name_or_path: str,
         pretrained: bool = True,
         pooling_layer: Optional[nn.Module] = None,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
         patch_dropout_rate: float = 0.0,
         patch_dropout_shuffle: bool = False,
         patch_dropout_bias: Optional[float] = None,
         peft_config: Optional["PeftConfig"] = None,
-        model_config_kwargs: Optional[Dict[str, Any]] = None,
+        model_config_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
-        """Initialize the CLIP vision model."""
         super().__init__()
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
@@ -203,20 +201,20 @@ class HFCLIPVisionEncoder(nn.Module):
                 bias=patch_dropout_bias,
             )
 
-    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
+    def forward(self, inputs: dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The image tensor will be expected under the `Modalities.RGB`
-            key.
+        inputs : dict[str, Any]
+            The input data. The image tensor will be expected under the
+            ``Modalities.RGB`` key.
 
         Returns
         -------
         BaseModelOutput
             The output of the model, including the last hidden state, all hidden states,
-            and the attention weights, if `output_attentions` is set to `True`.
+            and the attention weights, if ``output_attentions`` is set to ``True``.
 
         """
         # FIXME: handle other vision modalities
@@ -253,7 +251,7 @@ class HFCLIPVisionEncoder(nn.Module):
     hydra_convert="object",
 )
 class HFCLIPTextEncoderWithProjection(nn.Module):
-    """Wrapper around the `CLIPTextModelWithProjection` from HuggingFace.
+    """Wrapper around the ``CLIPTextModelWithProjection`` from HuggingFace.
 
     Parameters
     ----------
@@ -262,25 +260,25 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
     pretrained : bool, default=True
         Whether to load the pretrained weights or not.
     use_all_token_embeddings : bool, default=False
-        Whether to use all token embeddings for the text. If `False` the first token
+        Whether to use all token embeddings for the text. If ``False`` the first token
         embedding will be used.
-    freeze_layers : int | float | List[int] | bool, default=False
-        Whether to freeze layers of the model and which layers to freeze. If `True`,
-        all model layers are frozen. If it is an integer, the first `N` layers of
-        the model are frozen. If it is a float, the first `N` percent of the layers
+    freeze_layers : Union[int, float, list[int], bool], default=False
+        Whether to freeze layers of the model and which layers to freeze. If ``True``,
+        all model layers are frozen. If it is an integer, the first ``N`` layers of
+        the model are frozen. If it is a float, the first ``N`` percent of the layers
         are frozen. If it is a list of integers, the layers at the indices in the
         list are frozen.
     freeze_layer_norm : bool, default=True
         Whether to freeze the layer normalization layers of the model.
-    peft_config : PeftConfig, optional, default=None
-        The configuration from the `peft` library to use to wrap the model
-        for parameter-efficient finetuning.
+    peft_config : Optional[PeftConfig], optional, default=None
+        The configuration from the `peft <https://huggingface.co/docs/peft/index>`_
+        library to use to wrap the model for parameter-efficient finetuning.
 
     Warns
     -----
     UserWarning
-        If both `peft_config` and `freeze_layers` are set. The `peft_config` will
-        override the `freeze_layers` setting.
+        If both ``peft_config`` and ``freeze_layers`` are set. The ``peft_config``
+        will override the ``freeze_layers`` setting.
 
     """
 
@@ -289,12 +287,11 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
         model_name_or_path: str,
         pretrained: bool = True,
         use_all_token_embeddings: bool = False,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
         peft_config: Optional["PeftConfig"] = None,
-        model_config_kwargs: Optional[Dict[str, Any]] = None,
+        model_config_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
-        """Initialize the model."""
         super().__init__()
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
@@ -314,18 +311,18 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
 
         self.model = model
 
-    def forward(self, inputs: Dict[str, Any]) -> Tuple[torch.Tensor]:
+    def forward(self, inputs: dict[str, Any]) -> tuple[torch.Tensor]:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The `input_ids` will be expected under the `Modalities.TEXT`
-            key.
+        inputs : dict[str, Any]
+            The input data. The ``input_ids`` will be expected under the
+            ``Modalities.TEXT`` key.
 
         Returns
         -------
-        Tuple[torch.Tensor]
+        tuple[torch.Tensor]
             The text embeddings. Will be a tuple with a single element.
         """
         input_ids = inputs[Modalities.TEXT.name]
@@ -361,7 +358,7 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
     hydra_convert="object",
 )
 class HFCLIPVisionEncoderWithProjection(nn.Module):
-    """Wrapper around the `CLIPVisionModelWithProjection` class from HuggingFace.
+    """Wrapper around the ``CLIPVisionModelWithProjection`` class from HuggingFace.
 
     Parameters
     ----------
@@ -370,12 +367,12 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
     pretrained : bool, default=True
         Whether to load the pretrained weights or not.
     use_all_token_embeddings : bool, default=False
-        Whether to use all token embeddings for the text. If `False` the first token
+        Whether to use all token embeddings for the text. If ``False`` the first token
         embedding will be used.
-    freeze_layers : int | float | List[int] | bool, default=False
-        Whether to freeze layers of the model and which layers to freeze. If `True`,
-        all model layers are frozen. If it is an integer, the first `N` layers of
-        the model are frozen. If it is a float, the first `N` percent of the layers
+    freeze_layers : Union[int, float, list[int], bool], default=False
+        Whether to freeze layers of the model and which layers to freeze. If ``True``,
+        all model layers are frozen. If it is an integer, the first ``N` layers of
+        the model are frozen. If it is a float, the first ``N`` percent of the layers
         are frozen. If it is a list of integers, the layers at the indices in the
         list are frozen.
     freeze_layer_norm : bool, default=True
@@ -386,17 +383,17 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
         Whether to shuffle the patches while applying patch dropout.
     patch_dropout_bias : float, optional, default=None
         The bias to apply to the patch dropout mask.
-    peft_config : PeftConfig, optional, default=None
-        The configuration from the `peft` library to use to wrap the model
-        for parameter-efficient finetuning.
-    model_config_kwargs : Dict[str, Any], optional, default=None
+    peft_config : Optional[PeftConfig], optional, default=None
+        The configuration from the `peft <https://huggingface.co/docs/peft/index>`_
+        library to use to wrap the model for parameter-efficient finetuning.
+    model_config_kwargs : dict[str, Any], optional, default=None
         Additional keyword arguments to pass to the model configuration.
 
     Warns
     -----
     UserWarning
-        If both `peft_config` and `freeze_layers` are set. The `peft_config` will
-        override the `freeze_layers` setting.
+        If both ``peft_config`` and ``freeze_layers`` are set. The ``peft_config``
+        will override the ``freeze_layers`` setting.
 
     """
 
@@ -408,12 +405,11 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
         patch_dropout_rate: float = 0.0,
         patch_dropout_shuffle: bool = False,
         patch_dropout_bias: Optional[float] = None,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
         peft_config: Optional["PeftConfig"] = None,
-        model_config_kwargs: Optional[Dict[str, Any]] = None,
+        model_config_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
-        """Initialize the model."""
         super().__init__()
         _warn_freeze_with_peft(peft_config, freeze_layers)
 
@@ -440,18 +436,18 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
                 bias=patch_dropout_bias,
             )
 
-    def forward(self, inputs: Dict[str, Any]) -> Tuple[torch.Tensor]:
+    def forward(self, inputs: dict[str, Any]) -> tuple[torch.Tensor]:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str | Modality, Any]
-            The input data. The image tensor will be expected under the `Modalities.RGB`
-            key.
+        inputs : dict[str, Any]
+            The input data. The image tensor will be expected under the
+            ``Modalities.RGB`` key.
 
         Returns
         -------
-        Tuple[torch.Tensor]
+        tuple[torch.Tensor]
             The image embeddings. Will be a tuple with a single element.
         """
         pixel_values = inputs[Modalities.RGB.name]
@@ -479,7 +475,7 @@ class HFCLIPVisionEncoderWithProjection(nn.Module):
 
 def _freeze_text_model(
     model: nn.Module,
-    freeze_layers: Union[int, float, List[int], bool],
+    freeze_layers: Union[int, float, list[int], bool],
     freeze_layer_norm: bool,
 ) -> nn.Module:
     """Freeze the layers of a huggingface clip text model."""
@@ -511,7 +507,7 @@ def _freeze_text_model(
 
 def _freeze_vision_model(
     model: nn.Module,
-    freeze_layers: Union[int, float, List[int], bool],
+    freeze_layers: Union[int, float, list[int], bool],
     freeze_layer_norm: bool,
 ) -> nn.Module:
     """Freeze the layers of a huggingface clip vision model."""

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Optional
 
 import hydra
 import lightning.pytorch.callbacks as lightning_callbacks
@@ -95,7 +95,7 @@ class DataLoaderConf:
 class MMLearnConf:
     """Top-level configuration for mmlearn experiments."""
 
-    defaults: List[Any] = field(
+    defaults: list[Any] = field(
         default_factory=lambda: [
             "_self_",  # See https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/default_composition_order for more information
             {"task": MISSING},
@@ -129,7 +129,7 @@ class MMLearnConf:
     )
     #: Tags for the experiment. This is useful for `wandb <https://docs.wandb.ai/ref/python/init>`_
     #: logging.
-    tags: Optional[List[str]] = field(default_factory=lambda: [II("experiment_name")])
+    tags: Optional[list[str]] = field(default_factory=lambda: [II("experiment_name")])
     #: Path to the checkpoint to resume training from.
     resume_from_checkpoint: Optional[Path] = field(default=None)
     #: Whether to strictly enforce loading of model weights i.e. `strict=True` in
@@ -137,7 +137,7 @@ class MMLearnConf:
     strict_loading: bool = field(default=True)
     #: Configuration for torch.compile. These are essentially the same as the
     #: arguments for :py:func:`torch.compile`.
-    torch_compile_kwargs: Dict[str, Any] = field(
+    torch_compile_kwargs: dict[str, Any] = field(
         default_factory=lambda: {
             "disable": True,
             "fullgraph": False,
@@ -197,7 +197,7 @@ def register_external_modules(
     package: Optional[str] = None,
     provider: Optional[str] = None,
     base_cls: Optional[type] = None,
-    ignore_cls: Optional[List[type]] = None,
+    ignore_cls: Optional[list[type]] = None,
     ignore_prefix: Optional[str] = None,
     **kwargs_for_builds: Any,
 ) -> None:
@@ -209,22 +209,22 @@ def register_external_modules(
         The module to add classes from.
     group : str
         The config group to add the classes to.
-    name : str, optional, default=None
+    name : Optional[str], optional, default=None
         The name to give to the dynamically-generated configs. If `None`, the
         class name is used.
-    package : str, optional, default=None
+    package : Optional[str], optional, default=None
         The package to add the configs to.
-    provider : str, optional, default=None
+    provider : Optional[str], optional, default=None
         The provider to add the configs to.
-    base_cls : type, optional, default=None
+    base_cls : Optional[type], optional, default=None
         The base class to filter classes by. The base class is also excluded from
         the configs.
-    ignore_cls : List[type], optional, default=None
-        List of classes to ignore.
-    ignore_prefix : str, optional, default=None
+    ignore_cls : Optional[list[type]], optional, default=None
+        list of classes to ignore.
+    ignore_prefix : Optional[str], optional, default=None
         Ignore classes whose names start with this prefix.
     kwargs_for_builds : Any
-        Additional keyword arguments to pass to `hydra_zen.builds`.
+        Additional keyword arguments to pass to ``hydra_zen.builds``.
 
     """
     for key, cls in module.__dict__.items():
