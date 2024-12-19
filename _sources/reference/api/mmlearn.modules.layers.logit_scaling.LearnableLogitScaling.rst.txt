@@ -1,0 +1,77 @@
+mmlearn.modules.layers.logit\_scaling.LearnableLogitScaling
+===========================================================
+
+.. currentmodule:: mmlearn.modules.layers.logit_scaling
+
+.. autoclass:: LearnableLogitScaling
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~LearnableLogitScaling.__init__
+   .. automethod:: ~LearnableLogitScaling.add_module
+   .. automethod:: ~LearnableLogitScaling.apply
+   .. automethod:: ~LearnableLogitScaling.bfloat16
+   .. automethod:: ~LearnableLogitScaling.buffers
+   .. automethod:: ~LearnableLogitScaling.children
+   .. automethod:: ~LearnableLogitScaling.compile
+   .. automethod:: ~LearnableLogitScaling.cpu
+   .. automethod:: ~LearnableLogitScaling.cuda
+   .. automethod:: ~LearnableLogitScaling.double
+   .. automethod:: ~LearnableLogitScaling.eval
+   .. automethod:: ~LearnableLogitScaling.extra_repr
+   .. automethod:: ~LearnableLogitScaling.float
+   .. automethod:: ~LearnableLogitScaling.forward
+   .. automethod:: ~LearnableLogitScaling.get_buffer
+   .. automethod:: ~LearnableLogitScaling.get_extra_state
+   .. automethod:: ~LearnableLogitScaling.get_parameter
+   .. automethod:: ~LearnableLogitScaling.get_submodule
+   .. automethod:: ~LearnableLogitScaling.half
+   .. automethod:: ~LearnableLogitScaling.ipu
+   .. automethod:: ~LearnableLogitScaling.load_state_dict
+   .. automethod:: ~LearnableLogitScaling.modules
+   .. automethod:: ~LearnableLogitScaling.named_buffers
+   .. automethod:: ~LearnableLogitScaling.named_children
+   .. automethod:: ~LearnableLogitScaling.named_modules
+   .. automethod:: ~LearnableLogitScaling.named_parameters
+   .. automethod:: ~LearnableLogitScaling.parameters
+   .. automethod:: ~LearnableLogitScaling.register_backward_hook
+   .. automethod:: ~LearnableLogitScaling.register_buffer
+   .. automethod:: ~LearnableLogitScaling.register_forward_hook
+   .. automethod:: ~LearnableLogitScaling.register_forward_pre_hook
+   .. automethod:: ~LearnableLogitScaling.register_full_backward_hook
+   .. automethod:: ~LearnableLogitScaling.register_full_backward_pre_hook
+   .. automethod:: ~LearnableLogitScaling.register_load_state_dict_post_hook
+   .. automethod:: ~LearnableLogitScaling.register_module
+   .. automethod:: ~LearnableLogitScaling.register_parameter
+   .. automethod:: ~LearnableLogitScaling.register_state_dict_pre_hook
+   .. automethod:: ~LearnableLogitScaling.requires_grad_
+   .. automethod:: ~LearnableLogitScaling.set_extra_state
+   .. automethod:: ~LearnableLogitScaling.share_memory
+   .. automethod:: ~LearnableLogitScaling.state_dict
+   .. automethod:: ~LearnableLogitScaling.to
+   .. automethod:: ~LearnableLogitScaling.to_empty
+   .. automethod:: ~LearnableLogitScaling.train
+   .. automethod:: ~LearnableLogitScaling.type
+   .. automethod:: ~LearnableLogitScaling.xpu
+   .. automethod:: ~LearnableLogitScaling.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~LearnableLogitScaling.T_destination
+   .. autoattribute:: ~LearnableLogitScaling.call_super_init
+   .. autoattribute:: ~LearnableLogitScaling.dump_patches
+   .. autoattribute:: ~LearnableLogitScaling.training
+   
+   

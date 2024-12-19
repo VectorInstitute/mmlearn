@@ -1,0 +1,39 @@
+mmlearn.modules.layers.transformer\_block
+=========================================
+
+.. automodule:: mmlearn.modules.layers.transformer_block
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   
+   .. autofunction:: drop_path
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      Block
+      DropPath
+   
+   
+
+   
+   
+   
+
+
+

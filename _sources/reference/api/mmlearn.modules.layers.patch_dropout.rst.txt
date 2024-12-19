@@ -1,0 +1,33 @@
+mmlearn.modules.layers.patch\_dropout
+=====================================
+
+.. automodule:: mmlearn.modules.layers.patch_dropout
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      PatchDropout
+   
+   
+
+   
+   
+   
+
+
+

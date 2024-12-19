@@ -1,0 +1,46 @@
+﻿mmlearn.conf
+============
+
+.. automodule:: mmlearn.conf
+
+   
+   
+   .. rubric:: Module attributes
+
+   
+   .. autodata:: external_store
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   
+   .. autofunction:: register_external_modules
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      DataLoaderConf
+      DatasetConf
+      JobType
+      MMLearnConf
+   
+   
+
+   
+   
+   
+
+
+

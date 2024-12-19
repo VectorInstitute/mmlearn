@@ -1,0 +1,33 @@
+mmlearn.modules.losses.contrastive
+==================================
+
+.. automodule:: mmlearn.modules.losses.contrastive
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      ContrastiveLoss
+   
+   
+
+   
+   
+   
+
+
+

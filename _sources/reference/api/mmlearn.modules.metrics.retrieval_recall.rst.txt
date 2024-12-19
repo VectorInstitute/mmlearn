@@ -1,0 +1,33 @@
+mmlearn.modules.metrics.retrieval\_recall
+=========================================
+
+.. automodule:: mmlearn.modules.metrics.retrieval_recall
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      RetrievalRecallAtK
+   
+   
+
+   
+   
+   
+
+
+

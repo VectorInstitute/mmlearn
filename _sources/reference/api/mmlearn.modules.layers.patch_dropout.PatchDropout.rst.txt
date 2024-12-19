@@ -1,0 +1,78 @@
+mmlearn.modules.layers.patch\_dropout.PatchDropout
+==================================================
+
+.. currentmodule:: mmlearn.modules.layers.patch_dropout
+
+.. autoclass:: PatchDropout
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~PatchDropout.__init__
+   .. automethod:: ~PatchDropout.add_module
+   .. automethod:: ~PatchDropout.apply
+   .. automethod:: ~PatchDropout.bfloat16
+   .. automethod:: ~PatchDropout.buffers
+   .. automethod:: ~PatchDropout.children
+   .. automethod:: ~PatchDropout.compile
+   .. automethod:: ~PatchDropout.cpu
+   .. automethod:: ~PatchDropout.cuda
+   .. automethod:: ~PatchDropout.double
+   .. automethod:: ~PatchDropout.eval
+   .. automethod:: ~PatchDropout.extra_repr
+   .. automethod:: ~PatchDropout.float
+   .. automethod:: ~PatchDropout.forward
+   .. automethod:: ~PatchDropout.get_buffer
+   .. automethod:: ~PatchDropout.get_extra_state
+   .. automethod:: ~PatchDropout.get_parameter
+   .. automethod:: ~PatchDropout.get_submodule
+   .. automethod:: ~PatchDropout.half
+   .. automethod:: ~PatchDropout.ipu
+   .. automethod:: ~PatchDropout.load_state_dict
+   .. automethod:: ~PatchDropout.modules
+   .. automethod:: ~PatchDropout.named_buffers
+   .. automethod:: ~PatchDropout.named_children
+   .. automethod:: ~PatchDropout.named_modules
+   .. automethod:: ~PatchDropout.named_parameters
+   .. automethod:: ~PatchDropout.parameters
+   .. automethod:: ~PatchDropout.register_backward_hook
+   .. automethod:: ~PatchDropout.register_buffer
+   .. automethod:: ~PatchDropout.register_forward_hook
+   .. automethod:: ~PatchDropout.register_forward_pre_hook
+   .. automethod:: ~PatchDropout.register_full_backward_hook
+   .. automethod:: ~PatchDropout.register_full_backward_pre_hook
+   .. automethod:: ~PatchDropout.register_load_state_dict_post_hook
+   .. automethod:: ~PatchDropout.register_module
+   .. automethod:: ~PatchDropout.register_parameter
+   .. automethod:: ~PatchDropout.register_state_dict_pre_hook
+   .. automethod:: ~PatchDropout.requires_grad_
+   .. automethod:: ~PatchDropout.set_extra_state
+   .. automethod:: ~PatchDropout.share_memory
+   .. automethod:: ~PatchDropout.state_dict
+   .. automethod:: ~PatchDropout.to
+   .. automethod:: ~PatchDropout.to_empty
+   .. automethod:: ~PatchDropout.train
+   .. automethod:: ~PatchDropout.type
+   .. automethod:: ~PatchDropout.uniform_mask
+   .. automethod:: ~PatchDropout.xpu
+   .. automethod:: ~PatchDropout.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~PatchDropout.T_destination
+   .. autoattribute:: ~PatchDropout.call_super_init
+   .. autoattribute:: ~PatchDropout.dump_patches
+   .. autoattribute:: ~PatchDropout.training
+   
+   

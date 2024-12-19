@@ -1,0 +1,38 @@
+mmlearn.datasets.core.data\_collator
+====================================
+
+.. automodule:: mmlearn.datasets.core.data_collator
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   
+   .. autofunction:: collate_example_list
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      DefaultDataCollator
+   
+   
+
+   
+   
+   
+
+
+

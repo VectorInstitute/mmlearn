@@ -1,0 +1,77 @@
+mmlearn.modules.layers.embedding.ConvEmbed
+==========================================
+
+.. currentmodule:: mmlearn.modules.layers.embedding
+
+.. autoclass:: ConvEmbed
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~ConvEmbed.__init__
+   .. automethod:: ~ConvEmbed.add_module
+   .. automethod:: ~ConvEmbed.apply
+   .. automethod:: ~ConvEmbed.bfloat16
+   .. automethod:: ~ConvEmbed.buffers
+   .. automethod:: ~ConvEmbed.children
+   .. automethod:: ~ConvEmbed.compile
+   .. automethod:: ~ConvEmbed.cpu
+   .. automethod:: ~ConvEmbed.cuda
+   .. automethod:: ~ConvEmbed.double
+   .. automethod:: ~ConvEmbed.eval
+   .. automethod:: ~ConvEmbed.extra_repr
+   .. automethod:: ~ConvEmbed.float
+   .. automethod:: ~ConvEmbed.forward
+   .. automethod:: ~ConvEmbed.get_buffer
+   .. automethod:: ~ConvEmbed.get_extra_state
+   .. automethod:: ~ConvEmbed.get_parameter
+   .. automethod:: ~ConvEmbed.get_submodule
+   .. automethod:: ~ConvEmbed.half
+   .. automethod:: ~ConvEmbed.ipu
+   .. automethod:: ~ConvEmbed.load_state_dict
+   .. automethod:: ~ConvEmbed.modules
+   .. automethod:: ~ConvEmbed.named_buffers
+   .. automethod:: ~ConvEmbed.named_children
+   .. automethod:: ~ConvEmbed.named_modules
+   .. automethod:: ~ConvEmbed.named_parameters
+   .. automethod:: ~ConvEmbed.parameters
+   .. automethod:: ~ConvEmbed.register_backward_hook
+   .. automethod:: ~ConvEmbed.register_buffer
+   .. automethod:: ~ConvEmbed.register_forward_hook
+   .. automethod:: ~ConvEmbed.register_forward_pre_hook
+   .. automethod:: ~ConvEmbed.register_full_backward_hook
+   .. automethod:: ~ConvEmbed.register_full_backward_pre_hook
+   .. automethod:: ~ConvEmbed.register_load_state_dict_post_hook
+   .. automethod:: ~ConvEmbed.register_module
+   .. automethod:: ~ConvEmbed.register_parameter
+   .. automethod:: ~ConvEmbed.register_state_dict_pre_hook
+   .. automethod:: ~ConvEmbed.requires_grad_
+   .. automethod:: ~ConvEmbed.set_extra_state
+   .. automethod:: ~ConvEmbed.share_memory
+   .. automethod:: ~ConvEmbed.state_dict
+   .. automethod:: ~ConvEmbed.to
+   .. automethod:: ~ConvEmbed.to_empty
+   .. automethod:: ~ConvEmbed.train
+   .. automethod:: ~ConvEmbed.type
+   .. automethod:: ~ConvEmbed.xpu
+   .. automethod:: ~ConvEmbed.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~ConvEmbed.T_destination
+   .. autoattribute:: ~ConvEmbed.call_super_init
+   .. autoattribute:: ~ConvEmbed.dump_patches
+   .. autoattribute:: ~ConvEmbed.training
+   
+   

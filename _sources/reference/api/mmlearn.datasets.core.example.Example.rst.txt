@@ -1,0 +1,36 @@
+mmlearn.datasets.core.example.Example
+=====================================
+
+.. currentmodule:: mmlearn.datasets.core.example
+
+.. autoclass:: Example
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~Example.__init__
+   .. automethod:: ~Example.clear
+   .. automethod:: ~Example.copy
+   .. automethod:: ~Example.create_ids
+   .. automethod:: ~Example.fromkeys
+   .. automethod:: ~Example.get
+   .. automethod:: ~Example.items
+   .. automethod:: ~Example.keys
+   .. automethod:: ~Example.move_to_end
+   .. automethod:: ~Example.pop
+   .. automethod:: ~Example.popitem
+   .. automethod:: ~Example.setdefault
+   .. automethod:: ~Example.update
+   .. automethod:: ~Example.values
+   
+   
+
+   
+   
+   

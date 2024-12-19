@@ -1,0 +1,36 @@
+mmlearn.modules.layers
+======================
+
+.. automodule:: mmlearn.modules.layers
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   attention
+   embedding
+   logit_scaling
+   mlp
+   normalization
+   patch_dropout
+   transformer_block
+

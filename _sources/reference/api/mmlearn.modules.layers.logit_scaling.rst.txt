@@ -1,0 +1,33 @@
+mmlearn.modules.layers.logit\_scaling
+=====================================
+
+.. automodule:: mmlearn.modules.layers.logit_scaling
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      LearnableLogitScaling
+   
+   
+
+   
+   
+   
+
+
+

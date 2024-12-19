@@ -1,0 +1,30 @@
+mmlearn.conf.DataLoaderConf
+===========================
+
+.. currentmodule:: mmlearn.conf
+
+.. autoclass:: DataLoaderConf
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~DataLoaderConf.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~DataLoaderConf.train
+   .. autoattribute:: ~DataLoaderConf.val
+   .. autoattribute:: ~DataLoaderConf.test
+   
+   

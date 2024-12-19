@@ -1,0 +1,33 @@
+mmlearn.datasets.chexpert
+=========================
+
+.. automodule:: mmlearn.datasets.chexpert
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      CheXpert
+   
+   
+
+   
+   
+   
+
+
+

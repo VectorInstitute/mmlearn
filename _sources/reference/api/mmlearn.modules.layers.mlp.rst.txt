@@ -1,0 +1,33 @@
+mmlearn.modules.layers.mlp
+==========================
+
+.. automodule:: mmlearn.modules.layers.mlp
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      MLP
+   
+   
+
+   
+   
+   
+
+
+

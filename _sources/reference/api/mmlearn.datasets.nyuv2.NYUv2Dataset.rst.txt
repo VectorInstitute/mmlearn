@@ -1,0 +1,23 @@
+mmlearn.datasets.nyuv2.NYUv2Dataset
+===================================
+
+.. currentmodule:: mmlearn.datasets.nyuv2
+
+.. autoclass:: NYUv2Dataset
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~NYUv2Dataset.__init__
+   
+   
+
+   
+   
+   

@@ -1,0 +1,77 @@
+mmlearn.datasets.processors.tokenizers.Img2Seq
+==============================================
+
+.. currentmodule:: mmlearn.datasets.processors.tokenizers
+
+.. autoclass:: Img2Seq
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~Img2Seq.__init__
+   .. automethod:: ~Img2Seq.add_module
+   .. automethod:: ~Img2Seq.apply
+   .. automethod:: ~Img2Seq.bfloat16
+   .. automethod:: ~Img2Seq.buffers
+   .. automethod:: ~Img2Seq.children
+   .. automethod:: ~Img2Seq.compile
+   .. automethod:: ~Img2Seq.cpu
+   .. automethod:: ~Img2Seq.cuda
+   .. automethod:: ~Img2Seq.double
+   .. automethod:: ~Img2Seq.eval
+   .. automethod:: ~Img2Seq.extra_repr
+   .. automethod:: ~Img2Seq.float
+   .. automethod:: ~Img2Seq.forward
+   .. automethod:: ~Img2Seq.get_buffer
+   .. automethod:: ~Img2Seq.get_extra_state
+   .. automethod:: ~Img2Seq.get_parameter
+   .. automethod:: ~Img2Seq.get_submodule
+   .. automethod:: ~Img2Seq.half
+   .. automethod:: ~Img2Seq.ipu
+   .. automethod:: ~Img2Seq.load_state_dict
+   .. automethod:: ~Img2Seq.modules
+   .. automethod:: ~Img2Seq.named_buffers
+   .. automethod:: ~Img2Seq.named_children
+   .. automethod:: ~Img2Seq.named_modules
+   .. automethod:: ~Img2Seq.named_parameters
+   .. automethod:: ~Img2Seq.parameters
+   .. automethod:: ~Img2Seq.register_backward_hook
+   .. automethod:: ~Img2Seq.register_buffer
+   .. automethod:: ~Img2Seq.register_forward_hook
+   .. automethod:: ~Img2Seq.register_forward_pre_hook
+   .. automethod:: ~Img2Seq.register_full_backward_hook
+   .. automethod:: ~Img2Seq.register_full_backward_pre_hook
+   .. automethod:: ~Img2Seq.register_load_state_dict_post_hook
+   .. automethod:: ~Img2Seq.register_module
+   .. automethod:: ~Img2Seq.register_parameter
+   .. automethod:: ~Img2Seq.register_state_dict_pre_hook
+   .. automethod:: ~Img2Seq.requires_grad_
+   .. automethod:: ~Img2Seq.set_extra_state
+   .. automethod:: ~Img2Seq.share_memory
+   .. automethod:: ~Img2Seq.state_dict
+   .. automethod:: ~Img2Seq.to
+   .. automethod:: ~Img2Seq.to_empty
+   .. automethod:: ~Img2Seq.train
+   .. automethod:: ~Img2Seq.type
+   .. automethod:: ~Img2Seq.xpu
+   .. automethod:: ~Img2Seq.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~Img2Seq.T_destination
+   .. autoattribute:: ~Img2Seq.call_super_init
+   .. autoattribute:: ~Img2Seq.dump_patches
+   .. autoattribute:: ~Img2Seq.training
+   
+   

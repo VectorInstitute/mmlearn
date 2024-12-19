@@ -1,0 +1,77 @@
+mmlearn.modules.layers.attention.Attention
+==========================================
+
+.. currentmodule:: mmlearn.modules.layers.attention
+
+.. autoclass:: Attention
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~Attention.__init__
+   .. automethod:: ~Attention.add_module
+   .. automethod:: ~Attention.apply
+   .. automethod:: ~Attention.bfloat16
+   .. automethod:: ~Attention.buffers
+   .. automethod:: ~Attention.children
+   .. automethod:: ~Attention.compile
+   .. automethod:: ~Attention.cpu
+   .. automethod:: ~Attention.cuda
+   .. automethod:: ~Attention.double
+   .. automethod:: ~Attention.eval
+   .. automethod:: ~Attention.extra_repr
+   .. automethod:: ~Attention.float
+   .. automethod:: ~Attention.forward
+   .. automethod:: ~Attention.get_buffer
+   .. automethod:: ~Attention.get_extra_state
+   .. automethod:: ~Attention.get_parameter
+   .. automethod:: ~Attention.get_submodule
+   .. automethod:: ~Attention.half
+   .. automethod:: ~Attention.ipu
+   .. automethod:: ~Attention.load_state_dict
+   .. automethod:: ~Attention.modules
+   .. automethod:: ~Attention.named_buffers
+   .. automethod:: ~Attention.named_children
+   .. automethod:: ~Attention.named_modules
+   .. automethod:: ~Attention.named_parameters
+   .. automethod:: ~Attention.parameters
+   .. automethod:: ~Attention.register_backward_hook
+   .. automethod:: ~Attention.register_buffer
+   .. automethod:: ~Attention.register_forward_hook
+   .. automethod:: ~Attention.register_forward_pre_hook
+   .. automethod:: ~Attention.register_full_backward_hook
+   .. automethod:: ~Attention.register_full_backward_pre_hook
+   .. automethod:: ~Attention.register_load_state_dict_post_hook
+   .. automethod:: ~Attention.register_module
+   .. automethod:: ~Attention.register_parameter
+   .. automethod:: ~Attention.register_state_dict_pre_hook
+   .. automethod:: ~Attention.requires_grad_
+   .. automethod:: ~Attention.set_extra_state
+   .. automethod:: ~Attention.share_memory
+   .. automethod:: ~Attention.state_dict
+   .. automethod:: ~Attention.to
+   .. automethod:: ~Attention.to_empty
+   .. automethod:: ~Attention.train
+   .. automethod:: ~Attention.type
+   .. automethod:: ~Attention.xpu
+   .. automethod:: ~Attention.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~Attention.T_destination
+   .. autoattribute:: ~Attention.call_super_init
+   .. autoattribute:: ~Attention.dump_patches
+   .. autoattribute:: ~Attention.training
+   
+   

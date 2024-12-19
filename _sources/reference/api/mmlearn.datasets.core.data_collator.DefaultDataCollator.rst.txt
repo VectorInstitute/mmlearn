@@ -1,0 +1,28 @@
+mmlearn.datasets.core.data\_collator.DefaultDataCollator
+========================================================
+
+.. currentmodule:: mmlearn.datasets.core.data_collator
+
+.. autoclass:: DefaultDataCollator
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~DefaultDataCollator.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~DefaultDataCollator.batch_processors
+   
+   

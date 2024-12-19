@@ -1,0 +1,36 @@
+mmlearn.datasets.processors.masking.IJEPAMaskGenerator
+======================================================
+
+.. currentmodule:: mmlearn.datasets.processors.masking
+
+.. autoclass:: IJEPAMaskGenerator
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~IJEPAMaskGenerator.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~IJEPAMaskGenerator.allow_overlap
+   .. autoattribute:: ~IJEPAMaskGenerator.aspect_ratio
+   .. autoattribute:: ~IJEPAMaskGenerator.enc_mask_scale
+   .. autoattribute:: ~IJEPAMaskGenerator.input_size
+   .. autoattribute:: ~IJEPAMaskGenerator.min_keep
+   .. autoattribute:: ~IJEPAMaskGenerator.nenc
+   .. autoattribute:: ~IJEPAMaskGenerator.npred
+   .. autoattribute:: ~IJEPAMaskGenerator.patch_size
+   .. autoattribute:: ~IJEPAMaskGenerator.pred_mask_scale
+   
+   

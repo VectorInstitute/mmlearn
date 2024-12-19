@@ -1,0 +1,77 @@
+mmlearn.modules.losses.data2vec.Data2VecLoss
+============================================
+
+.. currentmodule:: mmlearn.modules.losses.data2vec
+
+.. autoclass:: Data2VecLoss
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~Data2VecLoss.__init__
+   .. automethod:: ~Data2VecLoss.add_module
+   .. automethod:: ~Data2VecLoss.apply
+   .. automethod:: ~Data2VecLoss.bfloat16
+   .. automethod:: ~Data2VecLoss.buffers
+   .. automethod:: ~Data2VecLoss.children
+   .. automethod:: ~Data2VecLoss.compile
+   .. automethod:: ~Data2VecLoss.cpu
+   .. automethod:: ~Data2VecLoss.cuda
+   .. automethod:: ~Data2VecLoss.double
+   .. automethod:: ~Data2VecLoss.eval
+   .. automethod:: ~Data2VecLoss.extra_repr
+   .. automethod:: ~Data2VecLoss.float
+   .. automethod:: ~Data2VecLoss.forward
+   .. automethod:: ~Data2VecLoss.get_buffer
+   .. automethod:: ~Data2VecLoss.get_extra_state
+   .. automethod:: ~Data2VecLoss.get_parameter
+   .. automethod:: ~Data2VecLoss.get_submodule
+   .. automethod:: ~Data2VecLoss.half
+   .. automethod:: ~Data2VecLoss.ipu
+   .. automethod:: ~Data2VecLoss.load_state_dict
+   .. automethod:: ~Data2VecLoss.modules
+   .. automethod:: ~Data2VecLoss.named_buffers
+   .. automethod:: ~Data2VecLoss.named_children
+   .. automethod:: ~Data2VecLoss.named_modules
+   .. automethod:: ~Data2VecLoss.named_parameters
+   .. automethod:: ~Data2VecLoss.parameters
+   .. automethod:: ~Data2VecLoss.register_backward_hook
+   .. automethod:: ~Data2VecLoss.register_buffer
+   .. automethod:: ~Data2VecLoss.register_forward_hook
+   .. automethod:: ~Data2VecLoss.register_forward_pre_hook
+   .. automethod:: ~Data2VecLoss.register_full_backward_hook
+   .. automethod:: ~Data2VecLoss.register_full_backward_pre_hook
+   .. automethod:: ~Data2VecLoss.register_load_state_dict_post_hook
+   .. automethod:: ~Data2VecLoss.register_module
+   .. automethod:: ~Data2VecLoss.register_parameter
+   .. automethod:: ~Data2VecLoss.register_state_dict_pre_hook
+   .. automethod:: ~Data2VecLoss.requires_grad_
+   .. automethod:: ~Data2VecLoss.set_extra_state
+   .. automethod:: ~Data2VecLoss.share_memory
+   .. automethod:: ~Data2VecLoss.state_dict
+   .. automethod:: ~Data2VecLoss.to
+   .. automethod:: ~Data2VecLoss.to_empty
+   .. automethod:: ~Data2VecLoss.train
+   .. automethod:: ~Data2VecLoss.type
+   .. automethod:: ~Data2VecLoss.xpu
+   .. automethod:: ~Data2VecLoss.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~Data2VecLoss.T_destination
+   .. autoattribute:: ~Data2VecLoss.call_super_init
+   .. autoattribute:: ~Data2VecLoss.dump_patches
+   .. autoattribute:: ~Data2VecLoss.training
+   
+   

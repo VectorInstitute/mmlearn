@@ -1,0 +1,40 @@
+mmlearn.conf.MMLearnConf
+========================
+
+.. currentmodule:: mmlearn.conf
+
+.. autoclass:: MMLearnConf
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~MMLearnConf.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~MMLearnConf.experiment_name
+   .. autoattribute:: ~MMLearnConf.job_type
+   .. autoattribute:: ~MMLearnConf.resume_from_checkpoint
+   .. autoattribute:: ~MMLearnConf.seed
+   .. autoattribute:: ~MMLearnConf.strict_loading
+   .. autoattribute:: ~MMLearnConf.task
+   .. autoattribute:: ~MMLearnConf.defaults
+   .. autoattribute:: ~MMLearnConf.datasets
+   .. autoattribute:: ~MMLearnConf.dataloader
+   .. autoattribute:: ~MMLearnConf.trainer
+   .. autoattribute:: ~MMLearnConf.tags
+   .. autoattribute:: ~MMLearnConf.torch_compile_kwargs
+   .. autoattribute:: ~MMLearnConf.hydra
+   
+   

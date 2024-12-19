@@ -1,0 +1,31 @@
+mmlearn.modules.losses
+======================
+
+.. automodule:: mmlearn.modules.losses
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   contrastive
+   data2vec
+

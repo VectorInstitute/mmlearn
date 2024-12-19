@@ -1,0 +1,30 @@
+mmlearn.modules.metrics
+=======================
+
+.. automodule:: mmlearn.modules.metrics
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   retrieval_recall
+

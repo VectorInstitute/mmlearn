@@ -1,0 +1,33 @@
+mmlearn.datasets.core.combined\_dataset
+=======================================
+
+.. automodule:: mmlearn.datasets.core.combined_dataset
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      CombinedDataset
+   
+   
+
+   
+   
+   
+
+
+

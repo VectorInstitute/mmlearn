@@ -1,0 +1,30 @@
+mmlearn.conf.DatasetConf
+========================
+
+.. currentmodule:: mmlearn.conf
+
+.. autoclass:: DatasetConf
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~DatasetConf.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~DatasetConf.test
+   .. autoattribute:: ~DatasetConf.train
+   .. autoattribute:: ~DatasetConf.val
+   
+   

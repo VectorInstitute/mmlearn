@@ -1,0 +1,1304 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="google-site-verification" content="i0qQRaR9OA3tSz_9tDocdcXGY27Ox_cy4FrvTHD2C_0" />
+    
+      <meta name="description" content="mmlearn Python API documentation">
+    <link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+
+    <meta name="generator" content="sphinx-8.1.3, furo 2024.08.06"/>
+
+    
+    <meta name="msvalidate.01" content="8D2A5032F006424CAF54C0DDCD16F666" /><title>Index - mmlearn 0.1.0a1 documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #faad1a;
+  --color-brand-content: #eb088a;
+  --color-foreground-secondary: #52c7de;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #faad1a;
+  --color-brand-content: #eb088a;
+  --color-foreground-secondary: #52c7de;
+  
+      }
+    }
+  }
+</style><script src="_static/documentation_options.js?v=49b5e7b8"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=ccdb6887"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script src="_static/require.min.js?v=53367eec"></script>
+    <script src="_static/custom.js?v=275847af"></script>
+    
+    <script src="https://kit.fontawesome.com/2c1f516901.js" crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">mmlearn 0.1.0a1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">mmlearn 0.1.0a1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/api/mmlearn.conf.html">mmlearn.conf</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="reference/api/mmlearn.datasets.html">mmlearn.datasets</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of mmlearn.datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.datasets.chexpert.html">mmlearn.datasets.chexpert</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="reference/api/mmlearn.datasets.core.html">mmlearn.datasets.core</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of mmlearn.datasets.core</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.core.combined_dataset.html">mmlearn.datasets.core.combined_dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.core.data_collator.html">mmlearn.datasets.core.data_collator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.core.example.html">mmlearn.datasets.core.example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.core.modalities.html">mmlearn.datasets.core.modalities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.core.samplers.html">mmlearn.datasets.core.samplers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.datasets.imagenet.html">mmlearn.datasets.imagenet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.datasets.librispeech.html">mmlearn.datasets.librispeech</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.datasets.llvip.html">mmlearn.datasets.llvip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.datasets.nihcxr.html">mmlearn.datasets.nihcxr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.datasets.nyuv2.html">mmlearn.datasets.nyuv2</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="reference/api/mmlearn.datasets.processors.html">mmlearn.datasets.processors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of mmlearn.datasets.processors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.processors.masking.html">mmlearn.datasets.processors.masking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.processors.tokenizers.html">mmlearn.datasets.processors.tokenizers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.datasets.processors.transforms.html">mmlearn.datasets.processors.transforms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.datasets.sunrgbd.html">mmlearn.datasets.sunrgbd</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/api/mmlearn.hf_utils.html">mmlearn.hf_utils</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="reference/api/mmlearn.modules.html">mmlearn.modules</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of mmlearn.modules</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.modules.ema.html">mmlearn.modules.ema</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="reference/api/mmlearn.modules.layers.html">mmlearn.modules.layers</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of mmlearn.modules.layers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.layers.attention.html">mmlearn.modules.layers.attention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.layers.embedding.html">mmlearn.modules.layers.embedding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.layers.logit_scaling.html">mmlearn.modules.layers.logit_scaling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.layers.mlp.html">mmlearn.modules.layers.mlp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.layers.normalization.html">mmlearn.modules.layers.normalization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.layers.patch_dropout.html">mmlearn.modules.layers.patch_dropout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.layers.transformer_block.html">mmlearn.modules.layers.transformer_block</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="reference/api/mmlearn.modules.losses.html">mmlearn.modules.losses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of mmlearn.modules.losses</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.losses.contrastive.html">mmlearn.modules.losses.contrastive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.losses.data2vec.html">mmlearn.modules.losses.data2vec</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="reference/api/mmlearn.modules.lr_schedulers.html">mmlearn.modules.lr_schedulers</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of mmlearn.modules.lr_schedulers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.html">mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="reference/api/mmlearn.modules.metrics.html">mmlearn.modules.metrics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of mmlearn.modules.metrics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="reference/api/mmlearn.modules.metrics.retrieval_recall.html">mmlearn.modules.metrics.retrieval_recall</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#X"><strong>X</strong></a> | <a href="#Y"><strong>Y</strong></a> | <a href="#Z"><strong>Z</strong></a></div>
+</section>
+<section id="_" class="genindex-section">
+  <h2>_</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator.html#mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator.__call__">__call__() (BlockwiseImagePatchMaskGenerator method)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator.__call__">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.data_collator.DefaultDataCollator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator.__call__">(DefaultDataCollator method)</a>, <a href="reference/api/mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator.__call__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.tokenizers.HFTokenizer.html#mmlearn.datasets.processors.tokenizers.HFTokenizer.__call__">(HFTokenizer method)</a>, <a href="reference/api/mmlearn.datasets.processors.tokenizers.html#mmlearn.datasets.processors.tokenizers.HFTokenizer.__call__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.__call__">(IJEPAMaskGenerator method)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.__call__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.tokenizers.Img2Seq.html#mmlearn.datasets.processors.tokenizers.Img2Seq.__call__">(Img2Seq method)</a>, <a href="reference/api/mmlearn.datasets.processors.tokenizers.html#mmlearn.datasets.processors.tokenizers.Img2Seq.__call__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.masking.RandomMaskGenerator.html#mmlearn.datasets.processors.masking.RandomMaskGenerator.__call__">(RandomMaskGenerator method)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.RandomMaskGenerator.__call__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.transforms.TrimText.html#mmlearn.datasets.processors.transforms.TrimText.__call__">(TrimText method)</a>, <a href="reference/api/mmlearn.datasets.processors.transforms.html#mmlearn.datasets.processors.transforms.TrimText.__call__">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="reference/api/mmlearn.datasets.chexpert.CheXpert.html#mmlearn.datasets.chexpert.CheXpert.__getitem__">__getitem__() (CheXpert method)</a>, <a href="reference/api/mmlearn.datasets.chexpert.html#mmlearn.datasets.chexpert.CheXpert.__getitem__">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.combined_dataset.CombinedDataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset.__getitem__">(CombinedDataset method)</a>, <a href="reference/api/mmlearn.datasets.core.combined_dataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset.__getitem__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.imagenet.ImageNet.html#mmlearn.datasets.imagenet.ImageNet.__getitem__">(ImageNet method)</a>, <a href="reference/api/mmlearn.datasets.imagenet.html#mmlearn.datasets.imagenet.ImageNet.__getitem__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.librispeech.LibriSpeech.html#mmlearn.datasets.librispeech.LibriSpeech.__getitem__">(LibriSpeech method)</a>, <a href="reference/api/mmlearn.datasets.librispeech.html#mmlearn.datasets.librispeech.LibriSpeech.__getitem__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.llvip.LLVIPDataset.html#mmlearn.datasets.llvip.LLVIPDataset.__getitem__">(LLVIPDataset method)</a>, <a href="reference/api/mmlearn.datasets.llvip.html#mmlearn.datasets.llvip.LLVIPDataset.__getitem__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.nihcxr.NIHCXR.html#mmlearn.datasets.nihcxr.NIHCXR.__getitem__">(NIHCXR method)</a>, <a href="reference/api/mmlearn.datasets.nihcxr.html#mmlearn.datasets.nihcxr.NIHCXR.__getitem__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.nyuv2.NYUv2Dataset.html#mmlearn.datasets.nyuv2.NYUv2Dataset.__getitem__">(NYUv2Dataset method)</a>, <a href="reference/api/mmlearn.datasets.nyuv2.html#mmlearn.datasets.nyuv2.NYUv2Dataset.__getitem__">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.sunrgbd.SUNRGBDDataset.html#mmlearn.datasets.sunrgbd.SUNRGBDDataset.__getitem__">(SUNRGBDDataset method)</a>, <a href="reference/api/mmlearn.datasets.sunrgbd.html#mmlearn.datasets.sunrgbd.SUNRGBDDataset.__getitem__">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.__iter__">__iter__() (CombinedDatasetRatioSampler method)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.__iter__">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.DistributedEvalSampler.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.__iter__">(DistributedEvalSampler method)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.__iter__">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="reference/api/mmlearn.datasets.chexpert.html#mmlearn.datasets.chexpert.CheXpert.__len__">__len__() (CheXpert method)</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.combined_dataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset.__len__">(CombinedDataset method)</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.__len__">(CombinedDatasetRatioSampler method)</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.__len__">(DistributedEvalSampler method)</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.librispeech.html#mmlearn.datasets.librispeech.LibriSpeech.__len__">(LibriSpeech method)</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.llvip.html#mmlearn.datasets.llvip.LLVIPDataset.__len__">(LLVIPDataset method)</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.nihcxr.html#mmlearn.datasets.nihcxr.NIHCXR.__len__">(NIHCXR method)</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.nyuv2.html#mmlearn.datasets.nyuv2.NYUv2Dataset.__len__">(NYUv2Dataset method)</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.sunrgbd.html#mmlearn.datasets.sunrgbd.SUNRGBDDataset.__len__">(SUNRGBDDataset method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.ModalityRegistry.html#mmlearn.datasets.core.modalities.ModalityRegistry.add_default_property">add_default_property() (ModalityRegistry method)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.add_default_property">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.add_property">add_property() (Modality method)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.add_property">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.allow_overlap">allow_overlap (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.allow_overlap">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.html#id0">apply_masks() (in module mmlearn.datasets.processors.masking)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.apply_masks">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.aspect_ratio">aspect_ratio (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.aspect_ratio">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.attention.Attention.html#mmlearn.modules.layers.attention.Attention">Attention (class in mmlearn.modules.layers.attention)</a>, <a href="reference/api/mmlearn.modules.layers.attention.html#mmlearn.modules.layers.attention.Attention">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.attention_mask">attention_mask (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.attention_mask">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.data_collator.DefaultDataCollator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator.batch_processors">batch_processors (DefaultDataCollator attribute)</a>, <a href="reference/api/mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator.batch_processors">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.layers.transformer_block.Block.html#mmlearn.modules.layers.transformer_block.Block">Block (class in mmlearn.modules.layers.transformer_block)</a>, <a href="reference/api/mmlearn.modules.layers.transformer_block.html#mmlearn.modules.layers.transformer_block.Block">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator.html#mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator">BlockwiseImagePatchMaskGenerator (class in mmlearn.datasets.processors.masking)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.chexpert.CheXpert.html#mmlearn.datasets.chexpert.CheXpert">CheXpert (class in mmlearn.datasets.chexpert)</a>, <a href="reference/api/mmlearn.datasets.chexpert.html#mmlearn.datasets.chexpert.CheXpert">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.data_collator.html#id0">collate_example_list() (in module mmlearn.datasets.core.data_collator)</a>, <a href="reference/api/mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.collate_example_list">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.combined_dataset.CombinedDataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset">CombinedDataset (class in mmlearn.datasets.core.combined_dataset)</a>, <a href="reference/api/mmlearn.datasets.core.combined_dataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler">CombinedDatasetRatioSampler (class in mmlearn.datasets.core.samplers)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.compute">compute() (RetrievalRecallAtK method)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.compute">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.losses.contrastive.ContrastiveLoss.html#mmlearn.modules.losses.contrastive.ContrastiveLoss">ContrastiveLoss (class in mmlearn.modules.losses.contrastive)</a>, <a href="reference/api/mmlearn.modules.losses.contrastive.html#mmlearn.modules.losses.contrastive.ContrastiveLoss">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.embedding.ConvEmbed.html#mmlearn.modules.layers.embedding.ConvEmbed">ConvEmbed (class in mmlearn.modules.layers.embedding)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.ConvEmbed">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.sunrgbd.html#id0">convert_depth_to_disparity() (in module mmlearn.datasets.sunrgbd)</a>, <a href="reference/api/mmlearn.datasets.sunrgbd.html#mmlearn.datasets.sunrgbd.convert_depth_to_disparity">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.example.Example.html#mmlearn.datasets.core.example.Example.create_ids">create_ids() (Example method)</a>, <a href="reference/api/mmlearn.datasets.core.example.html#mmlearn.datasets.core.example.Example.create_ids">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.losses.data2vec.Data2VecLoss.html#mmlearn.modules.losses.data2vec.Data2VecLoss">Data2VecLoss (class in mmlearn.modules.losses.data2vec)</a>, <a href="reference/api/mmlearn.modules.losses.data2vec.html#mmlearn.modules.losses.data2vec.Data2VecLoss">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.dataloader">dataloader (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.dataloader">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.DataLoaderConf.html#mmlearn.conf.DataLoaderConf">DataLoaderConf (class in mmlearn.conf)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DataLoaderConf">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.dataset">dataset (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.dataset">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.DatasetConf.html#mmlearn.conf.DatasetConf">DatasetConf (class in mmlearn.conf)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DatasetConf">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.datasets">datasets (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.datasets">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.ema.ExponentialMovingAverage.html#mmlearn.modules.ema.ExponentialMovingAverage.deepcopy_model">deepcopy_model() (ExponentialMovingAverage static method)</a>, <a href="reference/api/mmlearn.modules.ema.html#mmlearn.modules.ema.ExponentialMovingAverage.deepcopy_model">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.data_collator.DefaultDataCollator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator">DefaultDataCollator (class in mmlearn.datasets.core.data_collator)</a>, <a href="reference/api/mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.defaults">defaults (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.defaults">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.nyuv2.html#id0">depth_normalize() (in module mmlearn.datasets.nyuv2)</a>, <a href="reference/api/mmlearn.datasets.nyuv2.html#mmlearn.datasets.nyuv2.depth_normalize">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.DistributedEvalSampler.html#mmlearn.datasets.core.samplers.DistributedEvalSampler">DistributedEvalSampler (class in mmlearn.datasets.core.samplers)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.drop_last">drop_last (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.drop_last">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.transformer_block.html#id0">drop_path() (in module mmlearn.modules.layers.transformer_block)</a>, <a href="reference/api/mmlearn.modules.layers.transformer_block.html#mmlearn.modules.layers.transformer_block.drop_path">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.transformer_block.DropPath.html#mmlearn.modules.layers.transformer_block.DropPath">DropPath (class in mmlearn.modules.layers.transformer_block)</a>, <a href="reference/api/mmlearn.modules.layers.transformer_block.html#mmlearn.modules.layers.transformer_block.DropPath">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.ema_embedding">ema_embedding (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.ema_embedding">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.embedding">embedding (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.embedding">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.enc_mask_scale">enc_mask_scale (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.enc_mask_scale">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.epoch">epoch (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.epoch">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.JobType.html#mmlearn.conf.JobType.eval">eval (JobType attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.JobType.eval">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.example.Example.html#mmlearn.datasets.core.example.Example">Example (class in mmlearn.datasets.core.example)</a>, <a href="reference/api/mmlearn.datasets.core.example.html#mmlearn.datasets.core.example.Example">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.experiment_name">experiment_name (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.experiment_name">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.ema.ExponentialMovingAverage.html#mmlearn.modules.ema.ExponentialMovingAverage">ExponentialMovingAverage (class in mmlearn.modules.ema)</a>, <a href="reference/api/mmlearn.modules.ema.html#mmlearn.modules.ema.ExponentialMovingAverage">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.html#id0">external_store (in module mmlearn.conf)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.external_store">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.logit_scaling.LearnableLogitScaling.html#mmlearn.modules.layers.logit_scaling.LearnableLogitScaling.extra_repr">extra_repr() (LearnableLogitScaling method)</a>, <a href="reference/api/mmlearn.modules.layers.logit_scaling.html#mmlearn.modules.layers.logit_scaling.LearnableLogitScaling.extra_repr">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.example.html#id0">find_matching_indices() (in module mmlearn.datasets.core.example)</a>, <a href="reference/api/mmlearn.datasets.core.example.html#mmlearn.datasets.core.example.find_matching_indices">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.attention.Attention.html#mmlearn.modules.layers.attention.Attention.forward">forward() (Attention method)</a>, <a href="reference/api/mmlearn.modules.layers.attention.html#mmlearn.modules.layers.attention.Attention.forward">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.transformer_block.Block.html#mmlearn.modules.layers.transformer_block.Block.forward">(Block method)</a>, <a href="reference/api/mmlearn.modules.layers.transformer_block.html#mmlearn.modules.layers.transformer_block.Block.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.losses.contrastive.ContrastiveLoss.html#mmlearn.modules.losses.contrastive.ContrastiveLoss.forward">(ContrastiveLoss method)</a>, <a href="reference/api/mmlearn.modules.losses.contrastive.html#mmlearn.modules.losses.contrastive.ContrastiveLoss.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.embedding.ConvEmbed.html#mmlearn.modules.layers.embedding.ConvEmbed.forward">(ConvEmbed method)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.ConvEmbed.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.losses.data2vec.Data2VecLoss.html#mmlearn.modules.losses.data2vec.Data2VecLoss.forward">(Data2VecLoss method)</a>, <a href="reference/api/mmlearn.modules.losses.data2vec.html#mmlearn.modules.losses.data2vec.Data2VecLoss.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.transformer_block.DropPath.html#mmlearn.modules.layers.transformer_block.DropPath.forward">(DropPath method)</a>, <a href="reference/api/mmlearn.modules.layers.transformer_block.html#mmlearn.modules.layers.transformer_block.DropPath.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.normalization.L2Norm.html#mmlearn.modules.layers.normalization.L2Norm.forward">(L2Norm method)</a>, <a href="reference/api/mmlearn.modules.layers.normalization.html#mmlearn.modules.layers.normalization.L2Norm.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.logit_scaling.LearnableLogitScaling.html#mmlearn.modules.layers.logit_scaling.LearnableLogitScaling.forward">(LearnableLogitScaling method)</a>, <a href="reference/api/mmlearn.modules.layers.logit_scaling.html#mmlearn.modules.layers.logit_scaling.LearnableLogitScaling.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.patch_dropout.PatchDropout.html#mmlearn.modules.layers.patch_dropout.PatchDropout.forward">(PatchDropout method)</a>, <a href="reference/api/mmlearn.modules.layers.patch_dropout.html#mmlearn.modules.layers.patch_dropout.PatchDropout.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.embedding.PatchEmbed.html#mmlearn.modules.layers.embedding.PatchEmbed.forward">(PatchEmbed method)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.PatchEmbed.forward">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.forward">(RetrievalRecallAtK method)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.forward">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.full_state_update">full_state_update (RetrievalRecallAtK attribute)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.full_state_update">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.layers.embedding.html#id0">get_1d_sincos_pos_embed() (in module mmlearn.modules.layers.embedding)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.get_1d_sincos_pos_embed">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.embedding.html#id1">get_1d_sincos_pos_embed_from_grid() (in module mmlearn.modules.layers.embedding)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.get_1d_sincos_pos_embed_from_grid">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.embedding.html#id2">get_2d_sincos_pos_embed() (in module mmlearn.modules.layers.embedding)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.get_2d_sincos_pos_embed">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.embedding.html#id3">get_2d_sincos_pos_embed_from_grid() (in module mmlearn.modules.layers.embedding)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.get_2d_sincos_pos_embed_from_grid">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.ema.ExponentialMovingAverage.html#mmlearn.modules.ema.ExponentialMovingAverage.get_annealed_rate">get_annealed_rate() (ExponentialMovingAverage static method)</a>, <a href="reference/api/mmlearn.modules.ema.html#mmlearn.modules.ema.ExponentialMovingAverage.get_annealed_rate">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.ModalityRegistry.html#mmlearn.datasets.core.modalities.ModalityRegistry.get_modality">get_modality() (ModalityRegistry method)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.get_modality">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.ModalityRegistry.html#mmlearn.datasets.core.modalities.ModalityRegistry.get_modality_properties">get_modality_properties() (ModalityRegistry method)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.get_modality_properties">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator.html#mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator.get_shape">get_shape() (BlockwiseImagePatchMaskGenerator method)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator.get_shape">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.ModalityRegistry.html#mmlearn.datasets.core.modalities.ModalityRegistry.has_modality">has_modality() (ModalityRegistry method)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.has_modality">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.tokenizers.HFTokenizer.html#mmlearn.datasets.processors.tokenizers.HFTokenizer">HFTokenizer (class in mmlearn.datasets.processors.tokenizers)</a>, <a href="reference/api/mmlearn.datasets.processors.tokenizers.html#mmlearn.datasets.processors.tokenizers.HFTokenizer">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.higher_is_better">higher_is_better (RetrievalRecallAtK attribute)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.higher_is_better">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.hydra">hydra (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.hydra">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.imagenet.ImageNet.html#mmlearn.datasets.imagenet.ImageNet.id2label">id2label (ImageNet property)</a>, <a href="reference/api/mmlearn.datasets.imagenet.html#mmlearn.datasets.imagenet.ImageNet.id2label">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator">IJEPAMaskGenerator (class in mmlearn.datasets.processors.masking)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.imagenet.ImageNet.html#mmlearn.datasets.imagenet.ImageNet">ImageNet (class in mmlearn.datasets.imagenet)</a>, <a href="reference/api/mmlearn.datasets.imagenet.html#mmlearn.datasets.imagenet.ImageNet">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.processors.tokenizers.Img2Seq.html#mmlearn.datasets.processors.tokenizers.Img2Seq">Img2Seq (class in mmlearn.datasets.processors.tokenizers)</a>, <a href="reference/api/mmlearn.datasets.processors.tokenizers.html#mmlearn.datasets.processors.tokenizers.Img2Seq">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.indexes">indexes (RetrievalRecallAtK attribute)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.indexes">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.input_size">input_size (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.input_size">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.is_differentiable">is_differentiable (RetrievalRecallAtK attribute)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.is_differentiable">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="J" class="genindex-section">
+  <h2>J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.job_type">job_type (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.job_type">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.conf.JobType.html#mmlearn.conf.JobType">JobType (class in mmlearn.conf)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.JobType">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.layers.normalization.L2Norm.html#mmlearn.modules.layers.normalization.L2Norm">L2Norm (class in mmlearn.modules.layers.normalization)</a>, <a href="reference/api/mmlearn.modules.layers.normalization.html#mmlearn.modules.layers.normalization.L2Norm">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.logit_scaling.LearnableLogitScaling.html#mmlearn.modules.layers.logit_scaling.LearnableLogitScaling">LearnableLogitScaling (class in mmlearn.modules.layers.logit_scaling)</a>, <a href="reference/api/mmlearn.modules.layers.logit_scaling.html#mmlearn.modules.layers.logit_scaling.LearnableLogitScaling">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.librispeech.LibriSpeech.html#mmlearn.datasets.librispeech.LibriSpeech">LibriSpeech (class in mmlearn.datasets.librispeech)</a>, <a href="reference/api/mmlearn.datasets.librispeech.html#mmlearn.datasets.librispeech.LibriSpeech">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.html#id0">linear_warmup_cosine_annealing_lr() (in module mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr)</a>, <a href="reference/api/mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.html#mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.linear_warmup_cosine_annealing_lr">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.ModalityRegistry.html#mmlearn.datasets.core.modalities.ModalityRegistry.list_modalities">list_modalities() (ModalityRegistry method)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.list_modalities">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.llvip.LLVIPDataset.html#mmlearn.datasets.llvip.LLVIPDataset">LLVIPDataset (class in mmlearn.datasets.llvip)</a>, <a href="reference/api/mmlearn.datasets.llvip.html#mmlearn.datasets.llvip.LLVIPDataset">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.hf_utils.html#id0">load_huggingface_model() (in module mmlearn.hf_utils)</a>, <a href="reference/api/mmlearn.hf_utils.html#mmlearn.hf_utils.load_huggingface_model">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.mask">mask (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.mask">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.masked_embedding">masked_embedding (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.masked_embedding">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.min_keep">min_keep (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.min_keep">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.mlp.MLP.html#mmlearn.modules.layers.mlp.MLP">MLP (class in mmlearn.modules.layers.mlp)</a>, <a href="reference/api/mmlearn.modules.layers.mlp.html#mmlearn.modules.layers.mlp.MLP">[1]</a>
+</li>
+        <li>
+    mmlearn.conf
+
+        <ul>
+          <li><a href="reference/api/mmlearn.conf.html#module-mmlearn.conf">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.html#module-mmlearn.datasets">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.chexpert
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.chexpert.html#module-mmlearn.datasets.chexpert">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.core
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.html#module-mmlearn.datasets.core">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.core.combined_dataset
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.combined_dataset.html#module-mmlearn.datasets.core.combined_dataset">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.core.data_collator
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.data_collator.html#module-mmlearn.datasets.core.data_collator">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.core.example
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.example.html#module-mmlearn.datasets.core.example">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.core.modalities
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.modalities.html#module-mmlearn.datasets.core.modalities">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.core.samplers
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.html#module-mmlearn.datasets.core.samplers">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.imagenet
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.imagenet.html#module-mmlearn.datasets.imagenet">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.librispeech
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.librispeech.html#module-mmlearn.datasets.librispeech">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.llvip
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.llvip.html#module-mmlearn.datasets.llvip">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.nihcxr
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.nihcxr.html#module-mmlearn.datasets.nihcxr">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.nyuv2
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.nyuv2.html#module-mmlearn.datasets.nyuv2">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.processors
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.processors.html#module-mmlearn.datasets.processors">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.processors.masking
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.processors.masking.html#module-mmlearn.datasets.processors.masking">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.processors.tokenizers
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.processors.tokenizers.html#module-mmlearn.datasets.processors.tokenizers">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.processors.transforms
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.processors.transforms.html#module-mmlearn.datasets.processors.transforms">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.datasets.sunrgbd
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.sunrgbd.html#module-mmlearn.datasets.sunrgbd">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.hf_utils
+
+        <ul>
+          <li><a href="reference/api/mmlearn.hf_utils.html#module-mmlearn.hf_utils">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.html#module-mmlearn.modules">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.ema
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.ema.html#module-mmlearn.modules.ema">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.layers
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.html#module-mmlearn.modules.layers">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.layers.attention
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.attention.html#module-mmlearn.modules.layers.attention">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.layers.embedding
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.embedding.html#module-mmlearn.modules.layers.embedding">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.layers.logit_scaling
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.logit_scaling.html#module-mmlearn.modules.layers.logit_scaling">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.layers.mlp
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.mlp.html#module-mmlearn.modules.layers.mlp">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.layers.normalization
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.normalization.html#module-mmlearn.modules.layers.normalization">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    mmlearn.modules.layers.patch_dropout
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.patch_dropout.html#module-mmlearn.modules.layers.patch_dropout">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.layers.transformer_block
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.layers.transformer_block.html#module-mmlearn.modules.layers.transformer_block">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.losses
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.losses.html#module-mmlearn.modules.losses">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.losses.contrastive
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.losses.contrastive.html#module-mmlearn.modules.losses.contrastive">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.losses.data2vec
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.losses.data2vec.html#module-mmlearn.modules.losses.data2vec">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.lr_schedulers
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.lr_schedulers.html#module-mmlearn.modules.lr_schedulers">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.html#module-mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.metrics
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.metrics.html#module-mmlearn.modules.metrics">module</a>
+</li>
+        </ul></li>
+        <li>
+    mmlearn.modules.metrics.retrieval_recall
+
+        <ul>
+          <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#module-mmlearn.modules.metrics.retrieval_recall">module</a>
+</li>
+        </ul></li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf">MMLearnConf (class in mmlearn.conf)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality">Modality (class in mmlearn.datasets.core.modalities)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.modality_specific_properties">modality_specific_properties (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.modality_specific_properties">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.ModalityRegistry.html#mmlearn.datasets.core.modalities.ModalityRegistry">ModalityRegistry (class in mmlearn.datasets.core.modalities)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry">[1]</a>
+</li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="reference/api/mmlearn.conf.html#module-mmlearn.conf">mmlearn.conf</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.html#module-mmlearn.datasets">mmlearn.datasets</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.chexpert.html#module-mmlearn.datasets.chexpert">mmlearn.datasets.chexpert</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.html#module-mmlearn.datasets.core">mmlearn.datasets.core</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.combined_dataset.html#module-mmlearn.datasets.core.combined_dataset">mmlearn.datasets.core.combined_dataset</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.data_collator.html#module-mmlearn.datasets.core.data_collator">mmlearn.datasets.core.data_collator</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.example.html#module-mmlearn.datasets.core.example">mmlearn.datasets.core.example</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.modalities.html#module-mmlearn.datasets.core.modalities">mmlearn.datasets.core.modalities</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.html#module-mmlearn.datasets.core.samplers">mmlearn.datasets.core.samplers</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.imagenet.html#module-mmlearn.datasets.imagenet">mmlearn.datasets.imagenet</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.librispeech.html#module-mmlearn.datasets.librispeech">mmlearn.datasets.librispeech</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.llvip.html#module-mmlearn.datasets.llvip">mmlearn.datasets.llvip</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.nihcxr.html#module-mmlearn.datasets.nihcxr">mmlearn.datasets.nihcxr</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.nyuv2.html#module-mmlearn.datasets.nyuv2">mmlearn.datasets.nyuv2</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.html#module-mmlearn.datasets.processors">mmlearn.datasets.processors</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.masking.html#module-mmlearn.datasets.processors.masking">mmlearn.datasets.processors.masking</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.tokenizers.html#module-mmlearn.datasets.processors.tokenizers">mmlearn.datasets.processors.tokenizers</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.processors.transforms.html#module-mmlearn.datasets.processors.transforms">mmlearn.datasets.processors.transforms</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.sunrgbd.html#module-mmlearn.datasets.sunrgbd">mmlearn.datasets.sunrgbd</a>
+</li>
+          <li><a href="reference/api/mmlearn.hf_utils.html#module-mmlearn.hf_utils">mmlearn.hf_utils</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.html#module-mmlearn.modules">mmlearn.modules</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.ema.html#module-mmlearn.modules.ema">mmlearn.modules.ema</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.html#module-mmlearn.modules.layers">mmlearn.modules.layers</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.attention.html#module-mmlearn.modules.layers.attention">mmlearn.modules.layers.attention</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.embedding.html#module-mmlearn.modules.layers.embedding">mmlearn.modules.layers.embedding</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.logit_scaling.html#module-mmlearn.modules.layers.logit_scaling">mmlearn.modules.layers.logit_scaling</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.mlp.html#module-mmlearn.modules.layers.mlp">mmlearn.modules.layers.mlp</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.normalization.html#module-mmlearn.modules.layers.normalization">mmlearn.modules.layers.normalization</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.patch_dropout.html#module-mmlearn.modules.layers.patch_dropout">mmlearn.modules.layers.patch_dropout</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.layers.transformer_block.html#module-mmlearn.modules.layers.transformer_block">mmlearn.modules.layers.transformer_block</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.losses.html#module-mmlearn.modules.losses">mmlearn.modules.losses</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.losses.contrastive.html#module-mmlearn.modules.losses.contrastive">mmlearn.modules.losses.contrastive</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.losses.data2vec.html#module-mmlearn.modules.losses.data2vec">mmlearn.modules.losses.data2vec</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.lr_schedulers.html#module-mmlearn.modules.lr_schedulers">mmlearn.modules.lr_schedulers</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.html#module-mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr">mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.metrics.html#module-mmlearn.modules.metrics">mmlearn.modules.metrics</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#module-mmlearn.modules.metrics.retrieval_recall">mmlearn.modules.metrics.retrieval_recall</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.name">name (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.name">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.nenc">nenc (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.nenc">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.nihcxr.NIHCXR.html#mmlearn.datasets.nihcxr.NIHCXR">NIHCXR (class in mmlearn.datasets.nihcxr)</a>, <a href="reference/api/mmlearn.datasets.nihcxr.html#mmlearn.datasets.nihcxr.NIHCXR">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.npred">npred (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.npred">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.num_replicas">num_replicas (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.num_replicas">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.num_samples">num_samples (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.num_samples">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#id0">(CombinedDatasetRatioSampler property)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#id0">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.DistributedEvalSampler.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.num_samples">(DistributedEvalSampler property)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.num_samples">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.num_samples">(RetrievalRecallAtK attribute)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.num_samples">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="reference/api/mmlearn.datasets.nyuv2.NYUv2Dataset.html#mmlearn.datasets.nyuv2.NYUv2Dataset">NYUv2Dataset (class in mmlearn.datasets.nyuv2)</a>, <a href="reference/api/mmlearn.datasets.nyuv2.html#mmlearn.datasets.nyuv2.NYUv2Dataset">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.librispeech.html#id0">pad_or_trim() (in module mmlearn.datasets.librispeech)</a>, <a href="reference/api/mmlearn.datasets.librispeech.html#mmlearn.datasets.librispeech.pad_or_trim">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.patch_size">patch_size (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.patch_size">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.layers.patch_dropout.PatchDropout.html#mmlearn.modules.layers.patch_dropout.PatchDropout">PatchDropout (class in mmlearn.modules.layers.patch_dropout)</a>, <a href="reference/api/mmlearn.modules.layers.patch_dropout.html#mmlearn.modules.layers.patch_dropout.PatchDropout">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.layers.embedding.PatchEmbed.html#mmlearn.modules.layers.embedding.PatchEmbed">PatchEmbed (class in mmlearn.modules.layers.embedding)</a>, <a href="reference/api/mmlearn.modules.layers.embedding.html#mmlearn.modules.layers.embedding.PatchEmbed">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.IJEPAMaskGenerator.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.pred_mask_scale">pred_mask_scale (IJEPAMaskGenerator attribute)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.IJEPAMaskGenerator.pred_mask_scale">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.probs">probs (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.probs">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.properties">properties (Modality property)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.properties">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.processors.masking.RandomMaskGenerator.html#mmlearn.datasets.processors.masking.RandomMaskGenerator">RandomMaskGenerator (class in mmlearn.datasets.processors.masking)</a>, <a href="reference/api/mmlearn.datasets.processors.masking.html#mmlearn.datasets.processors.masking.RandomMaskGenerator">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.rank">rank (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.rank">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.html#id1">register_external_modules() (in module mmlearn.conf)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.register_external_modules">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.ModalityRegistry.html#mmlearn.datasets.core.modalities.ModalityRegistry.register_modality">register_modality() (ModalityRegistry method)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.register_modality">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.processors.transforms.html#id0">repeat_interleave_batch() (in module mmlearn.datasets.processors.transforms)</a>, <a href="reference/api/mmlearn.datasets.processors.transforms.html#mmlearn.datasets.processors.transforms.repeat_interleave_batch">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.replacement">replacement (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.replacement">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.ema.ExponentialMovingAverage.html#mmlearn.modules.ema.ExponentialMovingAverage.restore">restore() (ExponentialMovingAverage method)</a>, <a href="reference/api/mmlearn.modules.ema.html#mmlearn.modules.ema.ExponentialMovingAverage.restore">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.resume_from_checkpoint">resume_from_checkpoint (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.resume_from_checkpoint">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK">RetrievalRecallAtK (class in mmlearn.modules.metrics.retrieval_recall)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.seed">seed (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.seed">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.seed">(MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.seed">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.set_epoch">set_epoch() (CombinedDatasetRatioSampler method)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.set_epoch">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.DistributedEvalSampler.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.set_epoch">(DistributedEvalSampler method)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.set_epoch">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.shuffle">shuffle (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.shuffle">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.ema.ExponentialMovingAverage.html#mmlearn.modules.ema.ExponentialMovingAverage.state_dict">state_dict() (ExponentialMovingAverage method)</a>, <a href="reference/api/mmlearn.modules.ema.html#mmlearn.modules.ema.ExponentialMovingAverage.state_dict">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.ema.ExponentialMovingAverage.html#mmlearn.modules.ema.ExponentialMovingAverage.step">step() (ExponentialMovingAverage method)</a>, <a href="reference/api/mmlearn.modules.ema.html#mmlearn.modules.ema.ExponentialMovingAverage.step">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.strict_loading">strict_loading (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.strict_loading">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.sunrgbd.SUNRGBDDataset.html#mmlearn.datasets.sunrgbd.SUNRGBDDataset">SUNRGBDDataset (class in mmlearn.datasets.sunrgbd)</a>, <a href="reference/api/mmlearn.datasets.sunrgbd.html#mmlearn.datasets.sunrgbd.SUNRGBDDataset">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.tags">tags (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.tags">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.modalities.Modality.html#mmlearn.datasets.core.modalities.Modality.target">target (Modality attribute)</a>, <a href="reference/api/mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.target">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.task">task (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.task">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.conf.DataLoaderConf.html#mmlearn.conf.DataLoaderConf.test">test (DataLoaderConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DataLoaderConf.test">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.conf.DatasetConf.html#mmlearn.conf.DatasetConf.test">(DatasetConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DatasetConf.test">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.torch_compile_kwargs">torch_compile_kwargs (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.torch_compile_kwargs">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.total_size">total_size (CombinedDatasetRatioSampler attribute)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.total_size">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.html#id1">(CombinedDatasetRatioSampler property)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#id1">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.datasets.core.samplers.DistributedEvalSampler.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.total_size">(DistributedEvalSampler property)</a>, <a href="reference/api/mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.total_size">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.conf.DataLoaderConf.html#mmlearn.conf.DataLoaderConf.train">train (DataLoaderConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DataLoaderConf.train">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.conf.DatasetConf.html#mmlearn.conf.DatasetConf.train">(DatasetConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DatasetConf.train">[1]</a>
+</li>
+          <li><a href="reference/api/mmlearn.conf.JobType.html#mmlearn.conf.JobType.train">(JobType attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.JobType.train">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="reference/api/mmlearn.conf.MMLearnConf.html#mmlearn.conf.MMLearnConf.trainer">trainer (MMLearnConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.MMLearnConf.trainer">[1]</a>
+</li>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.training">training (RetrievalRecallAtK attribute)</a>
+</li>
+        <li><a href="reference/api/mmlearn.datasets.processors.transforms.TrimText.html#mmlearn.datasets.processors.transforms.TrimText">TrimText (class in mmlearn.datasets.processors.transforms)</a>, <a href="reference/api/mmlearn.datasets.processors.transforms.html#mmlearn.datasets.processors.transforms.TrimText">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.layers.patch_dropout.PatchDropout.html#mmlearn.modules.layers.patch_dropout.PatchDropout.uniform_mask">uniform_mask() (PatchDropout method)</a>, <a href="reference/api/mmlearn.modules.layers.patch_dropout.html#mmlearn.modules.layers.patch_dropout.PatchDropout.uniform_mask">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.update">update() (RetrievalRecallAtK method)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.update">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.conf.DataLoaderConf.html#mmlearn.conf.DataLoaderConf.val">val (DataLoaderConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DataLoaderConf.val">[1]</a>
+
+        <ul>
+          <li><a href="reference/api/mmlearn.conf.DatasetConf.html#mmlearn.conf.DatasetConf.val">(DatasetConf attribute)</a>, <a href="reference/api/mmlearn.conf.html#mmlearn.conf.DatasetConf.val">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="X" class="genindex-section">
+  <h2>X</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.x">x (RetrievalRecallAtK attribute)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.x">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="Y" class="genindex-section">
+  <h2>Y</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.y">y (RetrievalRecallAtK attribute)</a>, <a href="reference/api/mmlearn.modules.metrics.retrieval_recall.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.y">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="Z" class="genindex-section">
+  <h2>Z</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/api/mmlearn.datasets.imagenet.ImageNet.html#mmlearn.datasets.imagenet.ImageNet.zero_shot_prompt_templates">zero_shot_prompt_templates (ImageNet property)</a>, <a href="reference/api/mmlearn.datasets.imagenet.html#mmlearn.datasets.imagenet.ImageNet.zero_shot_prompt_templates">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Vector AI Engineering
+            </div>
+            <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+            -->
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/VectorInstitute/mmlearn" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        <div class="footer-container" style="text-align: center;">
+          <div class="logo">
+            <a class="logo" href="https://vectorinstitute.ai/">
+              <span class="logo"></span>
+              <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="_static/logos/vector_logo.png" />
+            </a>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div></body>
+</html>

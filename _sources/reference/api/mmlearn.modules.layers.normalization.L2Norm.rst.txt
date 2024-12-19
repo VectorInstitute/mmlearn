@@ -1,0 +1,77 @@
+mmlearn.modules.layers.normalization.L2Norm
+===========================================
+
+.. currentmodule:: mmlearn.modules.layers.normalization
+
+.. autoclass:: L2Norm
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~L2Norm.__init__
+   .. automethod:: ~L2Norm.add_module
+   .. automethod:: ~L2Norm.apply
+   .. automethod:: ~L2Norm.bfloat16
+   .. automethod:: ~L2Norm.buffers
+   .. automethod:: ~L2Norm.children
+   .. automethod:: ~L2Norm.compile
+   .. automethod:: ~L2Norm.cpu
+   .. automethod:: ~L2Norm.cuda
+   .. automethod:: ~L2Norm.double
+   .. automethod:: ~L2Norm.eval
+   .. automethod:: ~L2Norm.extra_repr
+   .. automethod:: ~L2Norm.float
+   .. automethod:: ~L2Norm.forward
+   .. automethod:: ~L2Norm.get_buffer
+   .. automethod:: ~L2Norm.get_extra_state
+   .. automethod:: ~L2Norm.get_parameter
+   .. automethod:: ~L2Norm.get_submodule
+   .. automethod:: ~L2Norm.half
+   .. automethod:: ~L2Norm.ipu
+   .. automethod:: ~L2Norm.load_state_dict
+   .. automethod:: ~L2Norm.modules
+   .. automethod:: ~L2Norm.named_buffers
+   .. automethod:: ~L2Norm.named_children
+   .. automethod:: ~L2Norm.named_modules
+   .. automethod:: ~L2Norm.named_parameters
+   .. automethod:: ~L2Norm.parameters
+   .. automethod:: ~L2Norm.register_backward_hook
+   .. automethod:: ~L2Norm.register_buffer
+   .. automethod:: ~L2Norm.register_forward_hook
+   .. automethod:: ~L2Norm.register_forward_pre_hook
+   .. automethod:: ~L2Norm.register_full_backward_hook
+   .. automethod:: ~L2Norm.register_full_backward_pre_hook
+   .. automethod:: ~L2Norm.register_load_state_dict_post_hook
+   .. automethod:: ~L2Norm.register_module
+   .. automethod:: ~L2Norm.register_parameter
+   .. automethod:: ~L2Norm.register_state_dict_pre_hook
+   .. automethod:: ~L2Norm.requires_grad_
+   .. automethod:: ~L2Norm.set_extra_state
+   .. automethod:: ~L2Norm.share_memory
+   .. automethod:: ~L2Norm.state_dict
+   .. automethod:: ~L2Norm.to
+   .. automethod:: ~L2Norm.to_empty
+   .. automethod:: ~L2Norm.train
+   .. automethod:: ~L2Norm.type
+   .. automethod:: ~L2Norm.xpu
+   .. automethod:: ~L2Norm.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~L2Norm.T_destination
+   .. autoattribute:: ~L2Norm.call_super_init
+   .. autoattribute:: ~L2Norm.dump_patches
+   .. autoattribute:: ~L2Norm.training
+   
+   

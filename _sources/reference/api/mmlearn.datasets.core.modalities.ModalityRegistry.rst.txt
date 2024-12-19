@@ -1,0 +1,29 @@
+mmlearn.datasets.core.modalities.ModalityRegistry
+=================================================
+
+.. currentmodule:: mmlearn.datasets.core.modalities
+
+.. autoclass:: ModalityRegistry
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~ModalityRegistry.__init__
+   .. automethod:: ~ModalityRegistry.add_default_property
+   .. automethod:: ~ModalityRegistry.get_modality
+   .. automethod:: ~ModalityRegistry.get_modality_properties
+   .. automethod:: ~ModalityRegistry.has_modality
+   .. automethod:: ~ModalityRegistry.list_modalities
+   .. automethod:: ~ModalityRegistry.register_modality
+   
+   
+
+   
+   
+   

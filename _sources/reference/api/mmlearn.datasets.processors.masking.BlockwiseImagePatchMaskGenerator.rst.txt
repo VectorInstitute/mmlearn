@@ -1,0 +1,24 @@
+mmlearn.datasets.processors.masking.BlockwiseImagePatchMaskGenerator
+====================================================================
+
+.. currentmodule:: mmlearn.datasets.processors.masking
+
+.. autoclass:: BlockwiseImagePatchMaskGenerator
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~BlockwiseImagePatchMaskGenerator.__init__
+   .. automethod:: ~BlockwiseImagePatchMaskGenerator.get_shape
+   
+   
+
+   
+   
+   

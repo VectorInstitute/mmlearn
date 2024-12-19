@@ -1,0 +1,37 @@
+mmlearn.datasets.core.modalities.Modality
+=========================================
+
+.. currentmodule:: mmlearn.datasets.core.modalities
+
+.. autoclass:: Modality
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~Modality.__init__
+   .. automethod:: ~Modality.add_property
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~Modality.modality_specific_properties
+   .. autoattribute:: ~Modality.properties
+   .. autoattribute:: ~Modality.name
+   .. autoattribute:: ~Modality.target
+   .. autoattribute:: ~Modality.attention_mask
+   .. autoattribute:: ~Modality.mask
+   .. autoattribute:: ~Modality.embedding
+   .. autoattribute:: ~Modality.masked_embedding
+   .. autoattribute:: ~Modality.ema_embedding
+   
+   

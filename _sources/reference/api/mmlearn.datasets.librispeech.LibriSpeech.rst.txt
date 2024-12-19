@@ -1,0 +1,23 @@
+mmlearn.datasets.librispeech.LibriSpeech
+========================================
+
+.. currentmodule:: mmlearn.datasets.librispeech
+
+.. autoclass:: LibriSpeech
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~LibriSpeech.__init__
+   
+   
+
+   
+   
+   

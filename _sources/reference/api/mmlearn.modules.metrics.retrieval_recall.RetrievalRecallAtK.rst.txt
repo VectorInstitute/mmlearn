@@ -1,0 +1,103 @@
+mmlearn.modules.metrics.retrieval\_recall.RetrievalRecallAtK
+============================================================
+
+.. currentmodule:: mmlearn.modules.metrics.retrieval_recall
+
+.. autoclass:: RetrievalRecallAtK
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~RetrievalRecallAtK.__init__
+   .. automethod:: ~RetrievalRecallAtK.add_module
+   .. automethod:: ~RetrievalRecallAtK.add_state
+   .. automethod:: ~RetrievalRecallAtK.apply
+   .. automethod:: ~RetrievalRecallAtK.bfloat16
+   .. automethod:: ~RetrievalRecallAtK.buffers
+   .. automethod:: ~RetrievalRecallAtK.children
+   .. automethod:: ~RetrievalRecallAtK.clone
+   .. automethod:: ~RetrievalRecallAtK.compile
+   .. automethod:: ~RetrievalRecallAtK.compute
+   .. automethod:: ~RetrievalRecallAtK.cpu
+   .. automethod:: ~RetrievalRecallAtK.cuda
+   .. automethod:: ~RetrievalRecallAtK.double
+   .. automethod:: ~RetrievalRecallAtK.eval
+   .. automethod:: ~RetrievalRecallAtK.extra_repr
+   .. automethod:: ~RetrievalRecallAtK.float
+   .. automethod:: ~RetrievalRecallAtK.forward
+   .. automethod:: ~RetrievalRecallAtK.get_buffer
+   .. automethod:: ~RetrievalRecallAtK.get_extra_state
+   .. automethod:: ~RetrievalRecallAtK.get_parameter
+   .. automethod:: ~RetrievalRecallAtK.get_submodule
+   .. automethod:: ~RetrievalRecallAtK.half
+   .. automethod:: ~RetrievalRecallAtK.ipu
+   .. automethod:: ~RetrievalRecallAtK.load_state_dict
+   .. automethod:: ~RetrievalRecallAtK.modules
+   .. automethod:: ~RetrievalRecallAtK.named_buffers
+   .. automethod:: ~RetrievalRecallAtK.named_children
+   .. automethod:: ~RetrievalRecallAtK.named_modules
+   .. automethod:: ~RetrievalRecallAtK.named_parameters
+   .. automethod:: ~RetrievalRecallAtK.parameters
+   .. automethod:: ~RetrievalRecallAtK.persistent
+   .. automethod:: ~RetrievalRecallAtK.plot
+   .. automethod:: ~RetrievalRecallAtK.register_backward_hook
+   .. automethod:: ~RetrievalRecallAtK.register_buffer
+   .. automethod:: ~RetrievalRecallAtK.register_forward_hook
+   .. automethod:: ~RetrievalRecallAtK.register_forward_pre_hook
+   .. automethod:: ~RetrievalRecallAtK.register_full_backward_hook
+   .. automethod:: ~RetrievalRecallAtK.register_full_backward_pre_hook
+   .. automethod:: ~RetrievalRecallAtK.register_load_state_dict_post_hook
+   .. automethod:: ~RetrievalRecallAtK.register_module
+   .. automethod:: ~RetrievalRecallAtK.register_parameter
+   .. automethod:: ~RetrievalRecallAtK.register_state_dict_pre_hook
+   .. automethod:: ~RetrievalRecallAtK.requires_grad_
+   .. automethod:: ~RetrievalRecallAtK.reset
+   .. automethod:: ~RetrievalRecallAtK.set_dtype
+   .. automethod:: ~RetrievalRecallAtK.set_extra_state
+   .. automethod:: ~RetrievalRecallAtK.share_memory
+   .. automethod:: ~RetrievalRecallAtK.state_dict
+   .. automethod:: ~RetrievalRecallAtK.sync
+   .. automethod:: ~RetrievalRecallAtK.sync_context
+   .. automethod:: ~RetrievalRecallAtK.to
+   .. automethod:: ~RetrievalRecallAtK.to_empty
+   .. automethod:: ~RetrievalRecallAtK.train
+   .. automethod:: ~RetrievalRecallAtK.type
+   .. automethod:: ~RetrievalRecallAtK.unsync
+   .. automethod:: ~RetrievalRecallAtK.update
+   .. automethod:: ~RetrievalRecallAtK.xpu
+   .. automethod:: ~RetrievalRecallAtK.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~RetrievalRecallAtK.T_destination
+   .. autoattribute:: ~RetrievalRecallAtK.call_super_init
+   .. autoattribute:: ~RetrievalRecallAtK.device
+   .. autoattribute:: ~RetrievalRecallAtK.dtype
+   .. autoattribute:: ~RetrievalRecallAtK.dump_patches
+   .. autoattribute:: ~RetrievalRecallAtK.full_state_update
+   .. autoattribute:: ~RetrievalRecallAtK.higher_is_better
+   .. autoattribute:: ~RetrievalRecallAtK.is_differentiable
+   .. autoattribute:: ~RetrievalRecallAtK.metric_state
+   .. autoattribute:: ~RetrievalRecallAtK.plot_legend_name
+   .. autoattribute:: ~RetrievalRecallAtK.plot_lower_bound
+   .. autoattribute:: ~RetrievalRecallAtK.plot_upper_bound
+   .. autoattribute:: ~RetrievalRecallAtK.update_called
+   .. autoattribute:: ~RetrievalRecallAtK.update_count
+   .. autoattribute:: ~RetrievalRecallAtK.indexes
+   .. autoattribute:: ~RetrievalRecallAtK.x
+   .. autoattribute:: ~RetrievalRecallAtK.y
+   .. autoattribute:: ~RetrievalRecallAtK.num_samples
+   .. autoattribute:: ~RetrievalRecallAtK.training
+   
+   

@@ -1,0 +1,77 @@
+mmlearn.modules.layers.transformer\_block.Block
+===============================================
+
+.. currentmodule:: mmlearn.modules.layers.transformer_block
+
+.. autoclass:: Block
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~Block.__init__
+   .. automethod:: ~Block.add_module
+   .. automethod:: ~Block.apply
+   .. automethod:: ~Block.bfloat16
+   .. automethod:: ~Block.buffers
+   .. automethod:: ~Block.children
+   .. automethod:: ~Block.compile
+   .. automethod:: ~Block.cpu
+   .. automethod:: ~Block.cuda
+   .. automethod:: ~Block.double
+   .. automethod:: ~Block.eval
+   .. automethod:: ~Block.extra_repr
+   .. automethod:: ~Block.float
+   .. automethod:: ~Block.forward
+   .. automethod:: ~Block.get_buffer
+   .. automethod:: ~Block.get_extra_state
+   .. automethod:: ~Block.get_parameter
+   .. automethod:: ~Block.get_submodule
+   .. automethod:: ~Block.half
+   .. automethod:: ~Block.ipu
+   .. automethod:: ~Block.load_state_dict
+   .. automethod:: ~Block.modules
+   .. automethod:: ~Block.named_buffers
+   .. automethod:: ~Block.named_children
+   .. automethod:: ~Block.named_modules
+   .. automethod:: ~Block.named_parameters
+   .. automethod:: ~Block.parameters
+   .. automethod:: ~Block.register_backward_hook
+   .. automethod:: ~Block.register_buffer
+   .. automethod:: ~Block.register_forward_hook
+   .. automethod:: ~Block.register_forward_pre_hook
+   .. automethod:: ~Block.register_full_backward_hook
+   .. automethod:: ~Block.register_full_backward_pre_hook
+   .. automethod:: ~Block.register_load_state_dict_post_hook
+   .. automethod:: ~Block.register_module
+   .. automethod:: ~Block.register_parameter
+   .. automethod:: ~Block.register_state_dict_pre_hook
+   .. automethod:: ~Block.requires_grad_
+   .. automethod:: ~Block.set_extra_state
+   .. automethod:: ~Block.share_memory
+   .. automethod:: ~Block.state_dict
+   .. automethod:: ~Block.to
+   .. automethod:: ~Block.to_empty
+   .. automethod:: ~Block.train
+   .. automethod:: ~Block.type
+   .. automethod:: ~Block.xpu
+   .. automethod:: ~Block.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~Block.T_destination
+   .. autoattribute:: ~Block.call_super_init
+   .. autoattribute:: ~Block.dump_patches
+   .. autoattribute:: ~Block.training
+   
+   

@@ -1,0 +1,38 @@
+mmlearn.datasets.nyuv2
+======================
+
+.. automodule:: mmlearn.datasets.nyuv2
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   
+   .. autofunction:: depth_normalize
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      NYUv2Dataset
+   
+   
+
+   
+   
+   
+
+
+

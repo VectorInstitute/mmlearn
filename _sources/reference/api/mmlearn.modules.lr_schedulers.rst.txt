@@ -1,0 +1,30 @@
+mmlearn.modules.lr\_schedulers
+==============================
+
+.. automodule:: mmlearn.modules.lr_schedulers
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   linear_warmup_cosine_lr
+

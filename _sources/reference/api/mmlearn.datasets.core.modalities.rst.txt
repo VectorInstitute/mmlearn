@@ -1,0 +1,34 @@
+mmlearn.datasets.core.modalities
+================================
+
+.. automodule:: mmlearn.datasets.core.modalities
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+         :hidden:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      Modality
+      ModalityRegistry
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,75 @@
+mmlearn.conf.JobType
+====================
+
+.. currentmodule:: mmlearn.conf
+
+.. autoclass:: JobType
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~JobType.encode
+   .. automethod:: ~JobType.replace
+   .. automethod:: ~JobType.split
+   .. automethod:: ~JobType.rsplit
+   .. automethod:: ~JobType.join
+   .. automethod:: ~JobType.capitalize
+   .. automethod:: ~JobType.casefold
+   .. automethod:: ~JobType.title
+   .. automethod:: ~JobType.center
+   .. automethod:: ~JobType.count
+   .. automethod:: ~JobType.expandtabs
+   .. automethod:: ~JobType.find
+   .. automethod:: ~JobType.partition
+   .. automethod:: ~JobType.index
+   .. automethod:: ~JobType.ljust
+   .. automethod:: ~JobType.lower
+   .. automethod:: ~JobType.lstrip
+   .. automethod:: ~JobType.rfind
+   .. automethod:: ~JobType.rindex
+   .. automethod:: ~JobType.rjust
+   .. automethod:: ~JobType.rstrip
+   .. automethod:: ~JobType.rpartition
+   .. automethod:: ~JobType.splitlines
+   .. automethod:: ~JobType.strip
+   .. automethod:: ~JobType.swapcase
+   .. automethod:: ~JobType.translate
+   .. automethod:: ~JobType.upper
+   .. automethod:: ~JobType.startswith
+   .. automethod:: ~JobType.endswith
+   .. automethod:: ~JobType.removeprefix
+   .. automethod:: ~JobType.removesuffix
+   .. automethod:: ~JobType.isascii
+   .. automethod:: ~JobType.islower
+   .. automethod:: ~JobType.isupper
+   .. automethod:: ~JobType.istitle
+   .. automethod:: ~JobType.isspace
+   .. automethod:: ~JobType.isdecimal
+   .. automethod:: ~JobType.isdigit
+   .. automethod:: ~JobType.isnumeric
+   .. automethod:: ~JobType.isalpha
+   .. automethod:: ~JobType.isalnum
+   .. automethod:: ~JobType.isidentifier
+   .. automethod:: ~JobType.isprintable
+   .. automethod:: ~JobType.zfill
+   .. automethod:: ~JobType.format
+   .. automethod:: ~JobType.format_map
+   .. automethod:: ~JobType.maketrans
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~JobType.train
+   .. autoattribute:: ~JobType.eval
+   
+   
