@@ -1,0 +1,81 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.train.bach: BACH
+  - /datasets/transforms@datasets.train.bach.transform: med_clip_vision_transform
+  - /datasets@datasets.val.bach: BACH
+  - /modules/optimizers@task.optimizer: AdamW
+  - /datasets/transforms@datasets.val.bach.transform: med_clip_vision_transform
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+  - /modules/encoders@task.encoder.rgb: HFCLIPVisionEncoderWithProjection
+  # - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - override /task: LinearClassifierModule
+  - _self_
+
+seed: 0
+
+datasets:
+    train:
+      bach:
+        split: train
+        transform:
+          job_type: train
+    val:
+      bach:
+        split: test
+        transform:
+          job_type: eval
+
+dataloader:
+  train:
+    batch_size: 64
+    num_workers: 4
+    shuffle: False
+  val:
+    batch_size: 64
+    num_workers: 4
+    shuffle: False
+
+task:
+  task: multiclass
+  num_classes: 4
+  num_output_features: 512
+  modality: rgb
+  encoder_checkpoint_path: /path/to/checkpoint
+  top_k_list: [1]
+  optimizer:
+    betas:
+    - 0.9
+    - 0.98
+    lr: 0.1
+    weight_decay: 0.1
+    eps: 1.0e-6
+  lr_scheduler:
+    scheduler:
+      T_max: 250 # make sure to change this if max_epochs or accumulate_grad_batches is changed
+    extras:
+      interval: step
+
+
+trainer:
+  precision: 16-mixed
+  deterministic: False
+  benchmark: True
+  sync_batchnorm: False # set to True if using DDP with batchnorm
+  log_every_n_steps: 100
+  max_epochs: 40
+  callbacks:
+    model_checkpoint:
+      monitor: val/loss
+      save_top_k: 1
+      save_last: True
+      every_n_epochs: 1
+      dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on Vector SLURM environment
+    model_summary:
+      max_depth: 2
+
+
+tags:
+  - ${experiment_name}
+  - linear_probing
+  - classification
