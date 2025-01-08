@@ -1,44 +1,12 @@
-"""Embedding layers utilities."""
-
-from typing import List, Tuple
+"""Embedding layers."""
 
 import numpy as np
 import torch
 from torch import nn
 
 
-def patchify(batch: torch.Tensor, patch_size: Tuple[int, int]) -> torch.Tensor:
-    """Patchify a batch of images.
-
-    Parameters
-    ----------
-    batch : torch.Tensor
-        Batch of images.
-    patch_size : tuple of int
-        The size of the patch.
-
-    Returns
-    -------
-    torch.Tensor
-        Patchified batch.
-
-    Notes
-    -----
-    - Input shape: (b, h, w, c)
-    - Output shape: (b, nh, nw, ph, pw, c)
-
-    """
-    b, c, h, w = batch.shape
-    ph, pw = patch_size
-    nh, nw = h // ph, w // pw
-
-    batch_patches = torch.reshape(batch, (b, c, nh, ph, nw, pw))
-    return torch.permute(batch_patches, (0, 1, 2, 4, 3, 5))
-
-
 class PatchEmbed(nn.Module):
-    """
-    Image to Patch Embedding.
+    """Image to Patch Embedding.
 
     This module divides an image into patches and embeds them as a sequence of vectors.
 
@@ -78,18 +46,17 @@ class PatchEmbed(nn.Module):
 
 
 class ConvEmbed(nn.Module):
-    """
-    3x3 Convolution stems for ViT following ViTC models.
+    """3x3 Convolution stems for ViT following ViTC models.
 
     This module builds convolutional stems for Vision Transformers (ViT)
     with intermediate batch normalization and ReLU activation.
 
     Parameters
     ----------
-    channels : List[int]
-        List of channel sizes for each convolution layer.
-    strides : List[int]
-        List of stride sizes for each convolution layer.
+    channels : list[int]
+        list of channel sizes for each convolution layer.
+    strides : list[int]
+        list of stride sizes for each convolution layer.
     img_size : int, optional, default=224
         Size of the input image (assumed to be square).
     in_chans : int, optional, default=3
@@ -101,8 +68,8 @@ class ConvEmbed(nn.Module):
 
     def __init__(
         self,
-        channels: List[int],
-        strides: List[int],
+        channels: list[int],
+        strides: list[int],
         img_size: int = 224,
         in_chans: int = 3,
         batch_norm: bool = True,
@@ -138,63 +105,6 @@ class ConvEmbed(nn.Module):
         """Forward pass through the convolutional embedding layers."""
         p = self.stem(x)
         return p.flatten(2).transpose(1, 2)
-
-
-class Img2Seq(nn.Module):
-    """Convert a batch of images to a batch of sequences.
-
-    Parameters
-    ----------
-    img_size : tuple of int
-        The size of the input image.
-    patch_size : tuple of int
-        The size of the patch.
-    n_channels : int
-        The number of channels in the input image.
-    d_model : int
-        The dimension of the output sequence.
-
-    Notes
-    -----
-    - Input shape: (b, h, w, c)
-    - Output shape: (b, s, d)
-
-    """
-
-    def __init__(
-        self,
-        img_size: Tuple[int, int],
-        patch_size: Tuple[int, int],
-        n_channels: int,
-        d_model: int,
-    ) -> None:
-        """Initialize the Img2Seq module."""
-        super().__init__()
-        self.patch_size = patch_size
-        self.img_size = img_size
-
-        nh, nw = img_size[0] // patch_size[0], img_size[1] // patch_size[1]
-        n_tokens = nh * nw
-
-        token_dim = patch_size[0] * patch_size[1] * n_channels
-        self.linear = nn.Linear(token_dim, d_model)
-        self.cls_token = nn.Parameter(torch.randn(1, 1, d_model))
-        self.pos_emb = nn.Parameter(torch.randn(n_tokens, d_model))
-
-    def __call__(self, batch: torch.Tensor) -> torch.Tensor:
-        """Convert a batch of images to a batch of sequences."""
-        batch = patchify(batch, self.patch_size)
-
-        b, c, nh, nw, ph, pw = batch.shape
-
-        # Flattening the patches
-        batch = torch.permute(batch, [0, 2, 3, 4, 5, 1])
-        batch = torch.reshape(batch, [b, nh * nw, ph * pw * c])
-
-        batch = self.linear(batch)
-        cls: torch.Tensor = self.cls_token.expand([b, -1, -1])
-        emb: torch.Tensor = batch + self.pos_emb
-        return torch.cat([cls, emb], axis=1)
 
 
 def get_2d_sincos_pos_embed(

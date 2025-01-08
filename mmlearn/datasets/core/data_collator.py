@@ -14,27 +14,28 @@ from mmlearn.datasets.core.modalities import Modalities
 class DefaultDataCollator:
     """Default data collator for batching examples.
 
-    This data collator will collate a list of `Example` objects into a batch.
-    It can also apply processing functions to specified keys in the batch before
-    returning it.
+    This data collator will collate a list of :py:class:`~mmlearn.datasets.core.example.Example`
+    objects into a batch. It can also apply processing functions to specified keys
+    in the batch before returning it.
 
     Parameters
     ----------
-    batch_processors : Optional[dict[str, Callable[[Any], Any]]], default=None
-        Dictionary of processing functions to apply to the batch before returning it.
-        The key is the name of the key in the batch, and the value is the processing
-        function to apply to the key. The processing function must take a single
-        argument and return a single value. If the processing function returns
-        a dictionary, it must contain the key that was processed in it (all the
-        other keys will also be included in the batch).
+    batch_processors : Optional[dict[str, Callable[[Any], Any]]], optional, default=None
+        Dictionary of callables to apply to the batch before returning it.
 
     Raises
     ------
     ValueError
         If the batch processor for a key does not return a dictionary with the
         key in it.
-    """
+    """  # noqa: W505
 
+    #: Dictionary of callables to apply to the batch before returning it.
+    #: The key is the name of the key in the batch, and the value is the processing
+    #: function to apply to the key. The processing function must take a single
+    #: argument and return a single value. If the processing function returns
+    #: a dictionary, it must contain the key that was processed in it (all the
+    #: other keys will also be included in the batch).
     batch_processors: Optional[dict[str, Callable[[Any], Any]]] = None
 
     def __call__(self, examples: list[Example]) -> dict[str, Any]:
@@ -63,19 +64,19 @@ class DefaultDataCollator:
 
 
 def collate_example_list(examples: list[Example]) -> dict[str, Any]:
-    """Collate a list of `Example` objects into a batch.
+    """Collate a list of :py:class:`~mmlearn.datasets.core.example.Example` objects into a batch.
 
     Parameters
     ----------
     examples : list[Example]
-        List of examples to collate.
+        list of examples to collate.
 
     Returns
     -------
     dict[str, Any]
         Dictionary of batched examples.
 
-    """
+    """  # noqa: W505
     return _collate_example_dict(_merge_examples(examples))
 
 
@@ -87,7 +88,7 @@ def _merge_examples(examples: list[Example]) -> dict[str, Any]:
     Parameters
     ----------
     examples : list[Example]
-        List of examples to convert.
+        list of examples to convert.
 
     Returns
     -------

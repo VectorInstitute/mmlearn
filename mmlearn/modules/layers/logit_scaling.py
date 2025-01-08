@@ -37,12 +37,12 @@ class LearnableLogitScaling(torch.nn.Module):
             self.register_buffer("log_logit_scale", log_logit_scale)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Apply scaling to the input tensor.
+        """Apply the logit scaling to the input tensor.
 
         Parameters
         ----------
         x : torch.Tensor
-            Input tensor of shape (batch_sz, seq_len, dim).
+            Input tensor of shape ``(batch_sz, seq_len, dim)``.
         """
         return torch.clip(self.log_logit_scale.exp(), max=self.max_logit_scale) * x
 

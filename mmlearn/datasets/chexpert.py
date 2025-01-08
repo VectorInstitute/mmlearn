@@ -2,7 +2,7 @@
 
 import json
 import os
-from typing import Callable, List, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import torch
 from hydra_zen import MISSING, store
@@ -33,11 +33,6 @@ _LABELS = [
 ]
 
 
-def text_labels() -> List[str]:
-    """Return a list of the CheXpert dataset's textual labels."""
-    return _LABELS
-
-
 @store(
     group="datasets",
     provider="mmlearn",
@@ -47,20 +42,20 @@ def text_labels() -> List[str]:
 class CheXpert(Dataset[Example]):
     """CheXpert dataset.
 
-    Each datapoint is a pair of (image, target label).
+    Each datapoint is a pair of `(image, target label)`.
 
     Parameters
     ----------
     data_root : str
-        Directory which contains json files stating all dataset entries.
+        Directory which contains `.json` files stating all dataset entries.
     split : {"train", "valid"}
         Dataset split.
-    labeler : {"chexpert", "chexbert", "vchexbert"}, optional, default=None
-        Labeler used to extract labels from the training images.
-        Valid split has no labeler, labeling for valid split was done by
-        human radiologists.
-    transform : callable, optional, default=None
-        Transform applied to images.
+    labeler : Optional[{"chexpert", "chexbert", "vchexbert"}], optional, default=None
+        Labeler used to extract labels from the training images. "valid" split
+        has no labeler, labeling for valid split was done by human radiologists.
+    transform : Optional[Callable[[PIL.Image], torch.Tensor], optional, default=None
+        A callable that takes in a PIL image and returns a transformed version
+        of the image as a PyTorch tensor.
     """
 
     def __init__(
@@ -70,7 +65,6 @@ class CheXpert(Dataset[Example]):
         labeler: Optional[Literal["chexpert", "chexbert", "vchexbert"]] = None,
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
     ) -> None:
-        """Initialize the dataset."""
         assert split in ["train", "valid"], f"split {split} is not available."
         assert (
             labeler in ["chexpert", "chexbert", "vchexbert"] or labeler is None

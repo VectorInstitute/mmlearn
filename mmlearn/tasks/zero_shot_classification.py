@@ -1,7 +1,7 @@
 """Zero-shot classification evaluation task."""
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Union
 
 import torch
 from hydra_zen import store
@@ -26,8 +26,11 @@ from mmlearn.tasks.hooks import EvaluationHooks
 class ClassificationTaskSpec:
     """Specification for a classification task."""
 
+    #: The modality of the query input.
     query_modality: str
-    top_k: List[int]
+
+    #: The top-k values for which to compute the classification metrics like accuracy.
+    top_k: list[int]
 
 
 @store(group="eval_task", provider="mmlearn")
@@ -38,17 +41,17 @@ class ZeroShotClassification(EvaluationHooks):
 
     Parameters
     ----------
-    task_specs : List[ClassificationTaskSpec]
+    task_specs : list[ClassificationTaskSpec]
         A list of classification task specifications.
-    tokenizer : Callable[[Union[str, list[str]]], Union[torch.Tensor, Dict[str, torch.Tensor]]]
+    tokenizer : Callable[[Union[str, list[str]]], Union[torch.Tensor, dict[str, torch.Tensor]]]
         A function to tokenize text inputs.
     """  # noqa: W505
 
     def __init__(
         self,
-        task_specs: List[ClassificationTaskSpec],
+        task_specs: list[ClassificationTaskSpec],
         tokenizer: Callable[
-            [Union[str, list[str]]], Union[torch.Tensor, Dict[str, torch.Tensor]]
+            [Union[str, list[str]]], Union[torch.Tensor, dict[str, torch.Tensor]]
         ],
     ) -> None:
         super().__init__()
@@ -57,8 +60,8 @@ class ZeroShotClassification(EvaluationHooks):
         for spec in self.task_specs:
             assert Modalities.has_modality(spec.query_modality)
 
-        self.metrics: Dict[tuple[str, int], MetricCollection] = {}
-        self._embeddings_store: Dict[int, torch.Tensor] = {}
+        self.metrics: dict[tuple[str, int], MetricCollection] = {}
+        self._embeddings_store: dict[int, torch.Tensor] = {}
 
     def on_evaluation_epoch_start(self, pl_module: LightningModule) -> None:
         """Set up the evaluation task.
@@ -67,6 +70,13 @@ class ZeroShotClassification(EvaluationHooks):
         ----------
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
+
+        Raises
+        ------
+        ValueError
+            - If the task is not being run for validation or testing.
+            - If the dataset does not have the required attributes to perform zero-shot
+              classification (i.e ``id2label`` and ``zero_shot_prompt_templates``).
         """
         if pl_module.trainer.validating:
             eval_dataset: CombinedDataset = pl_module.trainer.val_dataloaders.dataset
@@ -166,7 +176,7 @@ class ZeroShotClassification(EvaluationHooks):
             self._embeddings_store[dataset_index] = class_embeddings
 
     def evaluation_step(
-        self, pl_module: LightningModule, batch: Dict[str, torch.Tensor], batch_idx: int
+        self, pl_module: LightningModule, batch: dict[str, torch.Tensor], batch_idx: int
     ) -> None:
         """Compute logits and update metrics.
 
@@ -174,7 +184,7 @@ class ZeroShotClassification(EvaluationHooks):
         ----------
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
-        batch : Dict[str, torch.Tensor]
+        batch : dict[str, torch.Tensor]
             A batch of data.
         batch_idx : int
             The index of the batch.
@@ -208,7 +218,7 @@ class ZeroShotClassification(EvaluationHooks):
 
             metric_collection.update(logits, targets)
 
-    def on_evaluation_epoch_end(self, pl_module: LightningModule) -> Dict[str, Any]:
+    def on_evaluation_epoch_end(self, pl_module: LightningModule) -> dict[str, Any]:
         """Compute and reset metrics.
 
         Parameters
@@ -218,7 +228,7 @@ class ZeroShotClassification(EvaluationHooks):
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any]
             The computed metrics.
         """
         results = {}
@@ -236,7 +246,7 @@ class ZeroShotClassification(EvaluationHooks):
 
     @staticmethod
     def _create_metrics(
-        num_classes: int, top_k: List[int], prefix: str, postfix: str
+        num_classes: int, top_k: list[int], prefix: str, postfix: str
     ) -> MetricCollection:
         """Create a collection of classification metrics."""
         task_type = "binary" if num_classes == 2 else "multiclass"

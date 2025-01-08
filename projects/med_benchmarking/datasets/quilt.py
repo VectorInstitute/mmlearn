@@ -2,7 +2,7 @@
 
 import ast
 import os
-from typing import Callable, List, Literal, Optional, Union
+from typing import Callable, Literal, Optional, Union
 
 import pandas as pd
 import torch
@@ -27,7 +27,7 @@ class Quilt(Dataset[Example]):
         Path to the root directory of the dataset.
     split : {"train", "val"}
         Dataset split.
-    subset : List[str], optional, default=["openpath", "pubmed", "quilt", "laion"]
+    subset : list[str], optional, default=["openpath", "pubmed", "quilt", "laion"]
         Subsets of Quilt-1M to load.
     transform : Optional[Callable]
         Transform applied to images.
@@ -45,7 +45,7 @@ class Quilt(Dataset[Example]):
         self,
         root_dir: str,
         split: Literal["train", "val"] = "train",
-        subset: Optional[List[str]] = None,
+        subset: Optional[list[str]] = None,
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         tokenizer: Optional[Callable[[str], Union[torch.Tensor, dict]]] = None,
         processor: Optional[

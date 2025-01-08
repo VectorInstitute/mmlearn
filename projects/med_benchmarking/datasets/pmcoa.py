@@ -1,7 +1,7 @@
 """PMC-OA dataset."""
 
 import os
-from typing import Any, Callable, Dict, Literal, Optional, Tuple, Union
+from typing import Any, Callable, Literal, Optional, Tuple, Union
 
 import pyarrow as pa
 import pyarrow.json as pj
@@ -34,8 +34,8 @@ class PMCOA(Dataset[Example]):
         tokenizer: Optional[Callable[[str], Union[torch.Tensor, dict]]] = None,
         mask_generator: Optional[
             Callable[
-                [Dict[str, torch.Tensor], Any],
-                Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
+                [dict[str, torch.Tensor], Any],
+                tuple[torch.Tensor, torch.Tensor, torch.Tensor],
             ]
         ] = None,
         image_dir: Optional[str] = None,
@@ -56,13 +56,13 @@ class PMCOA(Dataset[Example]):
             Key for captions in the CSV/JSONL files.
         csv_separator : str, default=","
             Separator used in CSV files. Not used for JSONL.
-        transform : Callable, optional, default=None
+        transform : Optional[Callable], optional, default=None
             Transform applied to images.
-        tokenizer : Callable[[torch.Tensor], Dict[str, torch.Tensor]]
+        tokenizer : Callable[[torch.Tensor], dict[str, torch.Tensor]]
             Text tokenizer.
-        mask_generator : Callable[[Dict[str, torch.Tensor], Any], Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]], optional, default=None
+        mask_generator : Optional[Callable[[dict[str, torch.Tensor], Any], tuple[torch.Tensor, torch.Tensor, torch.Tensor]]]], optional, default=None
             Generator for the mask.
-        image_dir : str, optional, default=None
+        image_dir : Optional[str], optional, default=None
             Directory where images are stored, relative to the root directory.
             If not provided, it is assumed to be `'images'`.
         """  # noqa: W505
@@ -142,7 +142,7 @@ class PMCOA(Dataset[Example]):
 
     def _csv_loader(
         self, input_filename: str, img_key: str, caption_key: str, sep: str
-    ) -> Tuple[pa.ChunkedArray, pa.ChunkedArray]:
+    ) -> tuple[pa.ChunkedArray, pa.ChunkedArray]:
         """Load images, captions from CSV data."""
         table = csv.read_csv(
             input_filename,
@@ -152,7 +152,7 @@ class PMCOA(Dataset[Example]):
 
     def _jsonl_loader(
         self, input_filename: str, img_key: str, caption_key: str
-    ) -> Tuple[pa.ChunkedArray, pa.ChunkedArray]:
+    ) -> tuple[pa.ChunkedArray, pa.ChunkedArray]:
         """Load images, captions from JSON data."""
         parse_options = pj.ParseOptions(newlines_in_values=True)
         table = pj.read_json(input_filename, parse_options=parse_options)

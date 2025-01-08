@@ -2,7 +2,7 @@
 
 import os
 import pickle
-from typing import Callable, Dict, Optional
+from typing import Callable, Optional
 
 import torch
 from omegaconf import MISSING
@@ -82,7 +82,7 @@ class PCAM(Dataset[Example]):
         return len(self.data)
 
     @property
-    def id2label(self) -> Dict[int, str]:
+    def id2label(self) -> dict[int, str]:
         """Return the mapping of labels for the PCAM dataset."""
         return {0: "lymph node", 1: "lymph node containing metastatic tumor tissue"}
 
