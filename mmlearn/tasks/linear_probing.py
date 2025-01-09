@@ -3,7 +3,7 @@
 import inspect
 from contextlib import nullcontext
 from functools import partial
-from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 import hydra
 import lightning as L  # noqa: N812
@@ -15,44 +15,70 @@ from torch import nn
 from torchmetrics import AUROC, Accuracy, F1Score, MetricCollection, Precision, Recall
 
 from mmlearn.datasets.core import Modalities
+from mmlearn.modules.layers import MLP
 
 
 def extract_vision_encoder(
-    encoder: Any, encoder_checkpoint_path: Optional[str]
+    encoder: Any,
+    model_checkpoint_path: Optional[str],
+    keys_to_remove: Optional[List[str]] = None,
+    keys_to_rename: Optional[Dict[str, str]] = None,  # Default for renaming
+    keys_to_ignore: Optional[List[str]] = None,
 ) -> nn.Module:
     """
     Extract the vision encoder from a PyTorch Lightning model.
 
     Args:
         encoder (Any): The encoder configuration or model to be instantiated.
-        encoder_checkpoint_path (Optional[str]): Path to the checkpoint file containing
+        model_checkpoint_path (Optional[str]): Path to the checkpoint file containing
         the encoder's state_dict.
+        keys_to_remove (Optional[list]): List of keys to be removed from the state_dict.
+        keys_to_rename (Optional[dict]): Dictionary of prefixes or key replacements
+        mapping
+            old prefixes to new replacements (default removes 'encoders.rgb.').
+        keys_to_ignore (Optional[list]): List of keys to ignore when loading the
+        state_dict.
 
     Returns
     -------
         nn.Module: The vision encoder module extracted and initialized.
     """
     model: L.LightningModule = hydra.utils.instantiate(encoder)
-    if encoder_checkpoint_path is None:
+    if model_checkpoint_path is None:
         rank_zero_warn(
-            "No encoder_checkpoint_path path was provided for linear evaluation."
+            "No model_checkpoint_path path was provided for linear evaluation."
         )
     else:
-        checkpoint = torch.load(encoder_checkpoint_path)
+        checkpoint = torch.load(model_checkpoint_path)
         if "state_dict" not in checkpoint:
             raise KeyError("'state_dict' not found in checkpoint")
 
         state_dict = checkpoint["state_dict"]
 
-        # Filter keys that are related to vision encoder
-        encoder_keys = {
-            k.replace("encoders.rgb.", "") if k.startswith("encoders.rgb") else k: v
-            for k, v in state_dict.items()
-            if "encoders.rgb" in k
-        }
+        # Remove unwanted keys
+        if keys_to_remove:
+            state_dict = {
+                k: v for k, v in state_dict.items() if k not in keys_to_remove
+            }
+
+        # Ignore specific keys
+        if keys_to_ignore:
+            state_dict = {
+                k: v for k, v in state_dict.items() if k not in keys_to_ignore
+            }
+
+        # Rename keys based on input mappings
+        if keys_to_rename:
+            state_dict = {
+                k.replace(old_prefix, new_prefix): v
+                for k, v in state_dict.items()
+                for old_prefix, new_prefix in keys_to_rename.items()
+                if k.startswith(old_prefix)
+            }
+
         try:
-            if encoder_keys:
-                model["rgb"].load_state_dict(encoder_keys, strict=True)
+            if state_dict:
+                model["rgb"].load_state_dict(state_dict, strict=True)
                 print("Encoder state dict loaded successfully")
         except Exception as e:
             print(f"Error loading state dict: {e}")
@@ -76,6 +102,8 @@ class LinearClassifierModule(L.LightningModule):
         Output features from the encoder, defining the linear classifier's input size.
     num_classes : int
         Number of classes for the classification task.
+    hidden_dims : list[int]
+        Size of each hidden layer of the model
     task : str
         Classification task type. One of 'binary', 'multiclass', or 'multilabel'.
     freeze_encoder : bool, default = True
@@ -128,11 +156,12 @@ class LinearClassifierModule(L.LightningModule):
         self,
         # encoder: torch.nn.Module,
         encoder: nn.Module,
-        encoder_checkpoint_path: Optional[str],
+        model_checkpoint_path: Optional[str],  # change name
         modality: str,
         num_output_features: int,
         num_classes: int,
-        task: Literal["binary", "multiclass", "multilabel"],
+        hidden_dims: Optional[List[int]] = None,
+        task: Literal["binary", "multiclass", "multilabel"] = "multiclass",
         freeze_encoder: bool = True,
         pre_classifier_batch_norm: bool = False,
         top_k_list: Optional[List[int]] = None,
@@ -143,7 +172,6 @@ class LinearClassifierModule(L.LightningModule):
                 partial[torch.optim.lr_scheduler.LRScheduler],
             ]
         ] = None,
-        vision_extractor: Callable[[Any, str], Optional[str]] = extract_vision_encoder,
     ):
         super().__init__()
         assert task in ["binary", "multiclass", "multilabel"], (
@@ -154,10 +182,11 @@ class LinearClassifierModule(L.LightningModule):
         self.modality = modality
 
         self.encoder: nn.Module = extract_vision_encoder(
-            encoder, encoder_checkpoint_path
+            encoder, model_checkpoint_path, keys_to_rename={"encoders.rgb.": ""}
         )
 
-        linear_layer = nn.Linear(num_output_features, num_classes)
+        linear_layer = MLP(num_output_features, num_classes, hidden_dims)
+
         if pre_classifier_batch_norm:
             linear_layer = nn.Sequential(
                 nn.BatchNorm1d(num_output_features, affine=False),
@@ -330,7 +359,8 @@ class LinearClassifierModule(L.LightningModule):
     def on_validation_epoch_end(self) -> None:
         """Compute validation metrics accumulated over the epoch."""
         val_metrics = self.valid_metrics.compute()
-        print(f"val_metrics: {val_metrics}")
+        for metric, value in val_metrics.items():
+            print(f"  {metric}: {value.item()}")
         self.log_dict(val_metrics)
         self.valid_metrics.reset()
 
