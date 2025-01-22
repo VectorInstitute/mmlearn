@@ -97,7 +97,7 @@ def test_collate_example_list():
     result = DefaultDataCollator()(
         [img_class_example, img_text_pair, audio_text_pair, nested_example],
     )
-    for key in expected_result:
+    for key in expected_result:  # noqa: PLC0206
         assert key in result
         if isinstance(expected_result[key], torch.Tensor):
             assert torch.equal(result[key], expected_result[key])

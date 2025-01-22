@@ -158,9 +158,9 @@ class Quilt(Dataset[Example]):
 
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
-                assert (
-                    Modalities.TEXT.name in tokens
-                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
+                assert Modalities.TEXT.name in tokens, (
+                    f"Missing key `{Modalities.TEXT.name}` in tokens."
+                )
                 example.update(tokens)
             else:
                 example[Modalities.TEXT.name] = tokens

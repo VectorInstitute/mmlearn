@@ -103,7 +103,7 @@ def _merge_examples(examples: list[Example]) -> dict[str, Any]:
             else:
                 merged_examples[key] = [example[key]]
 
-    for key in merged_examples:
+    for key in merged_examples:  # noqa: PLC0206
         if isinstance(merged_examples[key][0], Example):
             merged_examples[key] = _merge_examples(merged_examples[key])
 
