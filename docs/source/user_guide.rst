@@ -1,5 +1,5 @@
-Getting Started
-===============
+User Guide
+==========
 *mmlearn* contains a collection of tools and utilities to help researchers and practitioners easily set up and run training
 or evaluation experiments for multimodal representation learning methods. The toolkit is designed to be modular and extensible.
 We aim to provide a high degree of flexibility in using existing methods, while also allowing users to easily add support
@@ -84,8 +84,20 @@ classes. However, there are two additional requirements for datasets in *mmlearn
 
 The :class:`~mmlearn.datasets.core.example.Example` class represents a single example in the dataset and all the attributes
 associated with it. The class is an extension of the :class:`~collections.OrderedDict` class that provides attribute-style access
-to the dictionary values and handles the creation of the ``'example_ids'`` tuple, combining the ``'example_index'`` and ``'dataset_index'``
-values.
+to the dictionary values and handles the creation of the ``'example_ids'`` tuple, combining the ``'example_index'`` and 
+``'dataset_index'`` values. The ``'example_index'`` key is created by the dataset object for each example returned by the 
+dataset. On the other hand, the ``'dataset_index'`` key is created by the :class:`~mmlearn.datasets.core.combined_dataset.CombinedDataset`
+each :class:`~mmlearn.datasets.core.example.Example` object returned by the dataset.
+
+.. note::
+   All dataset objects in *mmlearn* are wrapped in the :class:`~mmlearn.datasets.core.combined_dataset.CombinedDataset` class,
+   which is a subclass of :class:`torch.utils.data.Dataset`. As such, the user almost never has to add/define the ``'dataset_index'``
+   key explicitly.
+
+   Since batching typically combines data from the same modality into one tensor, both the ``'example_index'`` and ``'dataset_index'`` 
+   keys are essential for uniquely identifying paired examples across different modalities from the same dataset. The 
+   :func:`~mmlearn.datasets.core.example.find_matching_indices` function does exactly this by finding the indices of the
+   examples in a batch that have the same ``'example_ids'`` tuple.
 
 :py:data:`~mmlearn.datasets.core.modalities.Modalities` is an instance of :class:`~mmlearn.datasets.core.modalities.ModalityRegistry`
 singleton class that serves as a global registry for all the modalities supported by *mmlearn*. It allows dot-style access
@@ -101,11 +113,18 @@ the following code snippet shows how to register a new ``'DNA'`` modality:
    Modalities.register_modality("dna")
 
 
-Creating a Model
-----------------
-Models in *mmlearn* are generally defined by extending PyTorch's :class:`nn.Module <torch.nn.Module>` class. The input to the model's
-forward method should be a dictionary, where the keys are the names of the modalities and the values are the corresponding
-(batched) tensors/data. The models must also return a list-like object where the first element is the last layer's output.
+Adding New Modules
+------------------
+Modules are building blocks for models and tasks in *mmlearn*. They can be anything from encoders, layers, losses, optimizers,
+learning rate schedulers, metrics, etc. Modules in *mmlearn* are generally defined by extending PyTorch's :class:`nn.Module <torch.nn.Module>`
+class.
+
+Users have the flexibility to design new modules according to their requirements, with the exception of encoder modules 
+and modules associated with specific pre-defined tasks (e.g., loss functions for the :class:`~mmlearn.tasks.contrastive_pretraining.ContrastivePretraining` task).
+The forward method of encoder modules must accept a dictionary as input, where the keys are the names of the modalities 
+and the values are the corresponding (batched) tensors/data. This format makes it easier to reuse the encoder with different
+modalities and different tasks. In addition, the forward method must return a list-like object where the first element is
+the last layer's output. The following code snippet shows how to define a new text encoder module:
 
 .. code-block:: python
 
@@ -129,8 +148,100 @@ forward method should be a dictionary, where the keys are the names of the modal
          )
          return (out,)
 
-Passing a dictionary of the (batched) inputs to the model's forward method makes it easier to reuse the same model for different
-tasks.
+For modules associated with pre-defined tasks, the new modules must adhere to the same function signature as the existing 
+modules for that task. For instance, the forward method of a new loss function for the :class:`~mmlearn.tasks.contrastive_pretraining.ContrastivePretraining`
+task must have the following signature to be compatible with the existing loss functions for the task:
+
+.. code-block:: python
+
+   import torch
+
+   from mmlearn.tasks.contrastive_pretraining import LossPairSpec
+
+   def my_contrastive_loss(
+      embeddings: dict[str, torch.Tensor],
+      example_ids: dict[str, torch.Tensor],
+      logit_scale: torch.Tensor,
+      modality_loss_pairs: list[LossPairSpec],
+   ) -> torch.Tensor:
+      ...
+
+
+Adding New Tasks
+----------------
+Tasks in *mmlearn* represent the different training and/or evaluation objectives that can be performed on the data using
+the different modules. Tasks that require training should extend the :class:`~mmlearn.tasks.base.TrainingTask` class, while tasks
+involving only evaluation should extend the :class:`~mmlearn.tasks.hooks.EvaluationHooks` class.
+
+Training Tasks
+~~~~~~~~~~~~~~
+The :class:`~mmlearn.tasks.base.TrainingTask` class is an extension of the :class:`~lightning.pytorch.core.LightningModule` 
+class, which itself is an extension of the :class:`~torch.nn.Module` class. The class provides a common interface for training 
+tasks in *mmlearn*. It allows users to define the training loop, validation loop, test loop, and the setup for the model, 
+optimizer, learning rate scheduler and loss function, all in one place (a functionality inherited from PyTorch Lightning).
+The class also provides hooks for customizing the training loop, validation loop, and test loop, as well as a suite of 
+other functionalities like logging, checkpointing and handling distributed training.
+
+.. seealso::
+   For more information on the features and capabilities of the :class:`~mmlearn.tasks.base.TrainingTask` class inherited
+   from PyTorch Lightning, please refer to the PyTorch Lightning `documentation <https://lightning.ai/docs/pytorch/stable/>`_.
+
+To be used with the PyTorch Lightning Trainer, extensions of the :class:`~mmlearn.tasks.base.TrainingTask` class must define
+a `training_step` method. The following code snippet shows the minimum requirements for defining a new task in *mmlearn*:
+
+.. code-block:: python
+
+   from typing import Any, Optional, Union
+   from functools import partial
+
+   import torch
+
+   from mmlearn.tasks.base import TrainingTask
+
+   class MyTask(TrainingTask):
+      def __init__(
+         self,
+         optimizer: Optional[partial[torch.optim.Optimizer]],
+         loss_fn: Optional[torch.nn.Module],
+         lr_scheduler: Optional[
+            Union[
+               dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]],
+               partial[torch.optim.lr_scheduler.LRScheduler],
+            ]
+         ] = None,
+      ) -> None:
+         super().__init__(optimizer=optimizer, loss_fn=loss_fn, lr_scheduler=lr_scheduler)
+
+         # Since this class also inherits from torch.nn.Module, we can define the
+         # model and its components directly in the constructor and also define
+         # a forward method for the model as an instance method of this class. 
+         # Alternatively, we can pass the model as an argument to the constructor 
+         # and assign it to an instance variable.
+         self.model = ...
+
+      def training_step(self, batch: dict[str, Any], batch_idx: int) -> torch.Tensor:
+         outputs = self.model(batch) # or self(batch) if a forward method is defined in this class
+
+         # maybe process outputs here
+
+         loss = self.loss_fn(outputs, ...)
+         return loss
+
+Evaluation Tasks
+~~~~~~~~~~~~~~~~
+The :class:`~mmlearn.tasks.hooks.EvaluationHooks` class is intented to be used for evaluation tasks that don't require training,
+e.g. zero-shot evaluation tasks (as opposed to evaluation tasks like linear probing, which require training). The class provides
+an interface for defining and customizing the evaluation loop. 
+
+Classes that inherit from :class:`~mmlearn.tasks.hooks.EvaluationHooks` cannot be run/used on their own. They must be used 
+in conjunction with a training task, which will call the hooks defined in the evaluation task during the evaluation phase. 
+This way, multiple evaluation tasks can be defined and used with the same training task. The model to be evaluated is 
+provided by the training task to the evaluation task.
+
+Training tasks that wish to use one or more evaluation tasks must accept an instance of the evaluation task(s) as an argument
+to the constructor and must define a ``validation_step`` and/or ``test_step`` method that calls the ``evaluation_step`` method
+of the evaluation task(s).
+
 
 Creating and Configuring a Project
 ----------------------------------
@@ -368,6 +479,66 @@ The config keys with a value of ``???`` are placeholders that must be overridden
 the ``dataset`` key in the ``dataloader`` group is also a placeholder, it should not be provided as it will be automatically
 filled in from the ``datasets`` group.
 
+Configuring an Experiment
+~~~~~~~~~~~~~~~~~~~~~~~~~
+To configure an experiment, create a new `.yaml` file in the ``configs/experiment/`` directory of the project. The configuration
+file should define the experiment-specific configuration options and override the base configuration options as needed.
+Configurable components from the config store can be referenced by name in the configuration file under the 
+`defaults list <https://hydra.cc/docs/advanced/defaults_list/>`_. The following code snippet shows an example configuration
+file for an experiment:
+
+.. code-block:: yaml
+
+   # @package _global_
+
+   defaults:
+   - /datasets@datasets.train.my_iterable: MyIterableStyleDataset
+   - /datasets@datasets.train.my_map: MyMapStyleDataset
+   - /modules/encoders@task.encoders.text: MyTextEncoder
+   - /modules/encoders@task.encoders.rgb: MyRGBEncoder
+   - /modules/losses@task.loss: ContrastiveLoss
+   - /modules/optimizers@task.optimizer: AdamW
+   - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+   - /eval_task@task.evaluation_tasks.retrieval.task: ZeroShotCrossModalRetrieval
+   - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
+   - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
+   - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
+   - /trainer/callbacks@trainer.callbacks.model_summary: ModelSummary
+   - /trainer/logger@trainer.logger.wandb: WandbLogger
+   - override /task: ContrastivePretraining
+   - _self_
+
+   seed: 42
+
+   datasets:
+      train:
+         my_iterable:
+            my_iterable_arg1: ...
+         my_map:
+            my_map_arg1: ...
+
+   dataloader:
+      train:
+         batch_size: 64
+
+   task:
+      encoders:
+         text:
+            text_arg1: ...
+         rgb:
+            rgb_arg1: ...
+      evaluation_tasks:
+         retrieval:
+            task:
+            task_specs:
+               - query_modality: text
+                  target_modality: rgb
+                  top_k: [10, 200]
+               - query_modality: rgb
+                  target_modality: text
+                  top_k: [10, 200]
+            run_on_validation: false
+            run_on_test: true
 
 Running an Experiment
 ---------------------

@@ -12,5 +12,6 @@ Contents
    :maxdepth: 2
 
    installation
-   getting_started
+   user_guide
+   contributing
    api
