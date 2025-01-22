@@ -5,6 +5,7 @@ description = "A modular framework for research on multimodal representation lea
 readme = "README.md"
 authors = ["Vector AI Engineering <ai_engineering@vectorinstitute.ai>"]
 license = "Apache-2.0"
+documentation = "https://vectorinstitute.github.io/mmlearn/"
 repository = "https://github.com/VectorInstitute/mmlearn"
 packages = [
     { include = "mmlearn"},
@@ -46,15 +47,13 @@ peft = "^0.13.2"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-wandb = "^0.18.5"
+wandb = "^0.19.4"
 ipykernel = "^6.29.5"
 ipython = "8.30.0"
 ipywidgets = "^8.1.5"
-h5py = "^3.12.1"
-scikit-learn = "^1.5.2"
-faiss-gpu = "^1.7.2"
+scikit-learn = "^1.6.1"
 pip = "^24.3.1"
-datasets = "^3.1.0"
+datasets = "^3.2.0"
 
 [tool.poetry.extras]
 peft = ["peft"]
@@ -89,6 +88,7 @@ nbsphinx = "^0.9.5"
 ipython = "^8.30.0"
 ipykernel = "^6.29.5"
 furo = "^2024.8.6"
+sphinx-autobuild = "2024.10.3"
 
 [tool.mypy]
 ignore_missing_imports = true

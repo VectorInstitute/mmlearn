@@ -31,8 +31,14 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_design",
     "sphinxcontrib.apidoc",
+    "myst_parser",
 ]
 add_module_names = False
+apidoc_module_dir = "../../mmlearn"
+apidoc_output_dir = "reference/api"
+apidoc_excluded_paths = ["tests"]
+apidoc_separate_modules = True
+apidoc_module_first = True
 autoclass_content = "class"
 autodoc_default_options = {
     "members": True,
@@ -47,13 +53,6 @@ autosectionlabel_prefix_document = True
 autosummary_generate = True
 copybutton_prompt_text = r">>> |\.\.\. "
 copybutton_prompt_is_regexp = True
-napoleon_google_docstring = False
-napoleon_numpy_docstring = True
-napoleon_include_init_with_doc = True
-napoleon_attr_annotations = True
-set_type_checking_flag = True
-
-
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.10/", None),
     "numpy": ("http://docs.scipy.org/doc/numpy/", None),
@@ -67,9 +66,12 @@ intersphinx_mapping = {
     "torchmetrics": ("https://lightning.ai/docs/torchmetrics/stable/", None),
     "Pillow": ("https://pillow.readthedocs.io/en/latest/", None),
     "transformers": ("https://huggingface.co/docs/transformers/en/", None),
-    "peft": ("https://huggingface.co/docs/peft/en/", None),
 }
-
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = True
+napoleon_attr_annotations = True
+set_type_checking_flag = True
 templates_path = ["_templates"]
 
 # -- Options for HTML output -------------------------------------------------
