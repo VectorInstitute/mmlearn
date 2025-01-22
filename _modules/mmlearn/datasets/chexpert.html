@@ -392,12 +392,12 @@
         <span class="n">transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">split</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;split </span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2"> is not available.&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">labeler</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;chexpert&quot;</span><span class="p">,</span> <span class="s2">&quot;chexbert&quot;</span><span class="p">,</span> <span class="s2">&quot;vchexbert&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">labeler</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;labeler </span><span class="si">{</span><span class="n">labeler</span><span class="si">}</span><span class="s2"> is not available.&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">callable</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span> <span class="ow">or</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;transform is not callable or None.&quot;</span>
+        <span class="k">assert</span> <span class="n">labeler</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;chexpert&quot;</span><span class="p">,</span> <span class="s2">&quot;chexbert&quot;</span><span class="p">,</span> <span class="s2">&quot;vchexbert&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">labeler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;labeler </span><span class="si">{</span><span class="n">labeler</span><span class="si">}</span><span class="s2"> is not available.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span> <span class="ow">or</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;transform is not callable or None.&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">split</span> <span class="o">==</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span>
             <span class="n">data_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">_data.json&quot;</span>

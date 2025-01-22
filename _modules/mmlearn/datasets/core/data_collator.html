@@ -436,7 +436,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">merged_examples</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">example</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
 
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">merged_examples</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">merged_examples</span><span class="p">:</span>  <span class="c1"># noqa: PLC0206</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">merged_examples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">Example</span><span class="p">):</span>
             <span class="n">merged_examples</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_merge_examples</span><span class="p">(</span><span class="n">merged_examples</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 

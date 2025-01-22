@@ -615,9 +615,9 @@
             <span class="n">Modalities</span><span class="o">.</span><span class="n">get_modality</span><span class="p">(</span><span class="n">modality_key</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">modality_key</span> <span class="ow">in</span> <span class="n">modality_encoder_mapping</span>
         <span class="p">]</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_available_modalities</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
-        <span class="p">),</span> <span class="s2">&quot;Expected at least two modalities to be available. &quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_available_modalities</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;Expected at least two modalities to be available. &quot;</span>
+        <span class="p">)</span>
 
         <span class="c1">#: A :py:class:`~torch.nn.ModuleDict`, where the keys are the names of the</span>
         <span class="c1">#: modalities and the values are the encoder modules.</span>
