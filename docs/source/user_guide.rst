@@ -84,8 +84,8 @@ classes. However, there are two additional requirements for datasets in *mmlearn
 
 The :class:`~mmlearn.datasets.core.example.Example` class represents a single example in the dataset and all the attributes
 associated with it. The class is an extension of the :class:`~collections.OrderedDict` class that provides attribute-style access
-to the dictionary values and handles the creation of the ``'example_ids'`` tuple, combining the ``'example_index'`` and 
-``'dataset_index'`` values. The ``'example_index'`` key is created by the dataset object for each example returned by the 
+to the dictionary values and handles the creation of the ``'example_ids'`` tuple, combining the ``'example_index'`` and
+``'dataset_index'`` values. The ``'example_index'`` key is created by the dataset object for each example returned by the
 dataset. On the other hand, the ``'dataset_index'`` key is created by the :class:`~mmlearn.datasets.core.combined_dataset.CombinedDataset`
 each :class:`~mmlearn.datasets.core.example.Example` object returned by the dataset.
 
@@ -94,8 +94,8 @@ each :class:`~mmlearn.datasets.core.example.Example` object returned by the data
    which is a subclass of :class:`torch.utils.data.Dataset`. As such, the user almost never has to add/define the ``'dataset_index'``
    key explicitly.
 
-   Since batching typically combines data from the same modality into one tensor, both the ``'example_index'`` and ``'dataset_index'`` 
-   keys are essential for uniquely identifying paired examples across different modalities from the same dataset. The 
+   Since batching typically combines data from the same modality into one tensor, both the ``'example_index'`` and ``'dataset_index'``
+   keys are essential for uniquely identifying paired examples across different modalities from the same dataset. The
    :func:`~mmlearn.datasets.core.example.find_matching_indices` function does exactly this by finding the indices of the
    examples in a batch that have the same ``'example_ids'`` tuple.
 
@@ -119,9 +119,9 @@ Modules are building blocks for models and tasks in *mmlearn*. They can be anyth
 learning rate schedulers, metrics, etc. Modules in *mmlearn* are generally defined by extending PyTorch's :class:`nn.Module <torch.nn.Module>`
 class.
 
-Users have the flexibility to design new modules according to their requirements, with the exception of encoder modules 
+Users have the flexibility to design new modules according to their requirements, with the exception of encoder modules
 and modules associated with specific pre-defined tasks (e.g., loss functions for the :class:`~mmlearn.tasks.contrastive_pretraining.ContrastivePretraining` task).
-The forward method of encoder modules must accept a dictionary as input, where the keys are the names of the modalities 
+The forward method of encoder modules must accept a dictionary as input, where the keys are the names of the modalities
 and the values are the corresponding (batched) tensors/data. This format makes it easier to reuse the encoder with different
 modalities and different tasks. In addition, the forward method must return a list-like object where the first element is
 the last layer's output. The following code snippet shows how to define a new text encoder module:
@@ -148,7 +148,7 @@ the last layer's output. The following code snippet shows how to define a new te
          )
          return (out,)
 
-For modules associated with pre-defined tasks, the new modules must adhere to the same function signature as the existing 
+For modules associated with pre-defined tasks, the new modules must adhere to the same function signature as the existing
 modules for that task. For instance, the forward method of a new loss function for the :class:`~mmlearn.tasks.contrastive_pretraining.ContrastivePretraining`
 task must have the following signature to be compatible with the existing loss functions for the task:
 
@@ -175,11 +175,11 @@ involving only evaluation should extend the :class:`~mmlearn.tasks.hooks.Evaluat
 
 Training Tasks
 ~~~~~~~~~~~~~~
-The :class:`~mmlearn.tasks.base.TrainingTask` class is an extension of the :class:`~lightning.pytorch.core.LightningModule` 
-class, which itself is an extension of the :class:`~torch.nn.Module` class. The class provides a common interface for training 
-tasks in *mmlearn*. It allows users to define the training loop, validation loop, test loop, and the setup for the model, 
+The :class:`~mmlearn.tasks.base.TrainingTask` class is an extension of the :class:`~lightning.pytorch.core.LightningModule`
+class, which itself is an extension of the :class:`~torch.nn.Module` class. The class provides a common interface for training
+tasks in *mmlearn*. It allows users to define the training loop, validation loop, test loop, and the setup for the model,
 optimizer, learning rate scheduler and loss function, all in one place (a functionality inherited from PyTorch Lightning).
-The class also provides hooks for customizing the training loop, validation loop, and test loop, as well as a suite of 
+The class also provides hooks for customizing the training loop, validation loop, and test loop, as well as a suite of
 other functionalities like logging, checkpointing and handling distributed training.
 
 .. seealso::
@@ -214,8 +214,8 @@ a `training_step` method. The following code snippet shows the minimum requireme
 
          # Since this class also inherits from torch.nn.Module, we can define the
          # model and its components directly in the constructor and also define
-         # a forward method for the model as an instance method of this class. 
-         # Alternatively, we can pass the model as an argument to the constructor 
+         # a forward method for the model as an instance method of this class.
+         # Alternatively, we can pass the model as an argument to the constructor
          # and assign it to an instance variable.
          self.model = ...
 
@@ -229,13 +229,13 @@ a `training_step` method. The following code snippet shows the minimum requireme
 
 Evaluation Tasks
 ~~~~~~~~~~~~~~~~
-The :class:`~mmlearn.tasks.hooks.EvaluationHooks` class is intented to be used for evaluation tasks that don't require training,
+The :class:`~mmlearn.tasks.hooks.EvaluationHooks` class is intended to be used for evaluation tasks that don't require training,
 e.g. zero-shot evaluation tasks (as opposed to evaluation tasks like linear probing, which require training). The class provides
-an interface for defining and customizing the evaluation loop. 
+an interface for defining and customizing the evaluation loop.
 
-Classes that inherit from :class:`~mmlearn.tasks.hooks.EvaluationHooks` cannot be run/used on their own. They must be used 
-in conjunction with a training task, which will call the hooks defined in the evaluation task during the evaluation phase. 
-This way, multiple evaluation tasks can be defined and used with the same training task. The model to be evaluated is 
+Classes that inherit from :class:`~mmlearn.tasks.hooks.EvaluationHooks` cannot be run/used on their own. They must be used
+in conjunction with a training task, which will call the hooks defined in the evaluation task during the evaluation phase.
+This way, multiple evaluation tasks can be defined and used with the same training task. The model to be evaluated is
 provided by the training task to the evaluation task.
 
 Training tasks that wish to use one or more evaluation tasks must accept an instance of the evaluation task(s) as an argument
@@ -483,7 +483,7 @@ Configuring an Experiment
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 To configure an experiment, create a new `.yaml` file in the ``configs/experiment/`` directory of the project. The configuration
 file should define the experiment-specific configuration options and override the base configuration options as needed.
-Configurable components from the config store can be referenced by name in the configuration file under the 
+Configurable components from the config store can be referenced by name in the configuration file under the
 `defaults list <https://hydra.cc/docs/advanced/defaults_list/>`_. The following code snippet shows an example configuration
 file for an experiment:
 
