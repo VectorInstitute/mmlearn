@@ -66,12 +66,12 @@ class CheXpert(Dataset[Example]):
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
     ) -> None:
         assert split in ["train", "valid"], f"split {split} is not available."
-        assert (
-            labeler in ["chexpert", "chexbert", "vchexbert"] or labeler is None
-        ), f"labeler {labeler} is not available."
-        assert (
-            callable(transform) or transform is None
-        ), "transform is not callable or None."
+        assert labeler in ["chexpert", "chexbert", "vchexbert"] or labeler is None, (
+            f"labeler {labeler} is not available."
+        )
+        assert callable(transform) or transform is None, (
+            "transform is not callable or None."
+        )
 
         if split == "valid":
             data_file = f"{split}_data.json"

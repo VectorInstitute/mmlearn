@@ -62,9 +62,9 @@ class NIHCXR(Dataset[Example]):
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
     ) -> None:
         assert split in ["train", "test", "bbox"], f"split {split} is not available."
-        assert (
-            callable(transform) or transform is None
-        ), "transform is not callable or None."
+        assert callable(transform) or transform is None, (
+            "transform is not callable or None."
+        )
 
         data_path = os.path.join(root_dir, split + "_data.json")
 

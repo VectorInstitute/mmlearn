@@ -107,9 +107,9 @@ class LibriSpeech(Dataset[Example]):
     def __getitem__(self, idx: int) -> Example:
         """Return an example from the dataset."""
         waveform, sample_rate, transcript, _, _, _ = self.dataset[idx]
-        assert (
-            sample_rate == SAMPLE_RATE
-        ), f"Expected sample rate to be `16000`, got {sample_rate}."
+        assert sample_rate == SAMPLE_RATE, (
+            f"Expected sample rate to be `16000`, got {sample_rate}."
+        )
         waveform = pad_or_trim(waveform.flatten())
 
         return Example(

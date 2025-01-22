@@ -103,9 +103,9 @@ def instantiate_sampler(
             kwargs.update(distributed_sampler_kwargs)
 
         sampler = hydra.utils.instantiate(cfg, **kwargs)
-        assert isinstance(
-            sampler, Sampler
-        ), f"Expected a `torch.utils.data.Sampler` object but got {type(sampler)}."
+        assert isinstance(sampler, Sampler), (
+            f"Expected a `torch.utils.data.Sampler` object but got {type(sampler)}."
+        )
 
     if sampler is None and requires_distributed_sampler:
         sampler = DistributedSampler(dataset, **distributed_sampler_kwargs)
