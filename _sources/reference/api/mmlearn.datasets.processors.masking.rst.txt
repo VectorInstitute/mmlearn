@@ -1,40 +1,7 @@
-mmlearn.datasets.processors.masking
-===================================
+mmlearn.datasets.processors.masking module
+==========================================
 
 .. automodule:: mmlearn.datasets.processors.masking
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Functions
-
-   
-   .. autofunction:: apply_masks
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      BlockwiseImagePatchMaskGenerator
-      IJEPAMaskGenerator
-      RandomMaskGenerator
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

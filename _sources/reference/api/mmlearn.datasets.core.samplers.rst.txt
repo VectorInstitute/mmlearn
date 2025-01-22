@@ -1,34 +1,7 @@
-mmlearn.datasets.core.samplers
-==============================
+mmlearn.datasets.core.samplers module
+=====================================
 
 .. automodule:: mmlearn.datasets.core.samplers
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      CombinedDatasetRatioSampler
-      DistributedEvalSampler
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

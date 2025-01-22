@@ -1,33 +1,7 @@
-mmlearn.datasets.llvip
-======================
+mmlearn.datasets.llvip module
+=============================
 
 .. automodule:: mmlearn.datasets.llvip
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      LLVIPDataset
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

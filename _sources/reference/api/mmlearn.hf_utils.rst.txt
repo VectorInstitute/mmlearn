@@ -1,28 +1,7 @@
-﻿mmlearn.hf\_utils
-=================
+mmlearn.hf\_utils module
+========================
 
 .. automodule:: mmlearn.hf_utils
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Functions
-
-   
-   .. autofunction:: load_huggingface_model
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

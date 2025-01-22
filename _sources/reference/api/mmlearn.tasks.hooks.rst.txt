@@ -1,0 +1,7 @@
+mmlearn.tasks.hooks module
+==========================
+
+.. automodule:: mmlearn.tasks.hooks
+   :members:
+   :undoc-members:
+   :show-inheritance:

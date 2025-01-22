@@ -1,33 +1,7 @@
-mmlearn.datasets.imagenet
-=========================
+mmlearn.datasets.imagenet module
+================================
 
 .. automodule:: mmlearn.datasets.imagenet
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      ImageNet
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

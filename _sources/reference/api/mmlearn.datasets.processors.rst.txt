@@ -1,32 +1,17 @@
-mmlearn.datasets.processors
-===========================
+mmlearn.datasets.processors package
+===================================
 
 .. automodule:: mmlearn.datasets.processors
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-   
-   
-   
+Submodules
+----------
 
-   
-   
-   
+.. toctree::
+   :maxdepth: 4
 
-   
-   
-   
-
-   
-   
-   
-
-
-
-.. autosummary::
-   :toctree:
-   :template: custom-module-template.rst
-   :recursive:
-
-   masking
-   tokenizers
-   transforms
-
+   mmlearn.datasets.processors.masking
+   mmlearn.datasets.processors.tokenizers
+   mmlearn.datasets.processors.transforms

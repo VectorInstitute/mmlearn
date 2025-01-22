@@ -1,38 +1,7 @@
-mmlearn.datasets.core.example
-=============================
+mmlearn.datasets.core.example module
+====================================
 
 .. automodule:: mmlearn.datasets.core.example
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Functions
-
-   
-   .. autofunction:: find_matching_indices
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      Example
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

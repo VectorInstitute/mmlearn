@@ -1,28 +1,7 @@
-mmlearn.modules.lr\_schedulers.linear\_warmup\_cosine\_lr
-=========================================================
+mmlearn.modules.lr\_schedulers.linear\_warmup\_cosine\_lr module
+================================================================
 
 .. automodule:: mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Functions
-
-   
-   .. autofunction:: linear_warmup_cosine_annealing_lr
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

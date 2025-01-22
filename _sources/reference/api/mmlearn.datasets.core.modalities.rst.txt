@@ -1,34 +1,7 @@
-mmlearn.datasets.core.modalities
-================================
+mmlearn.datasets.core.modalities module
+=======================================
 
 .. automodule:: mmlearn.datasets.core.modalities
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      Modality
-      ModalityRegistry
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

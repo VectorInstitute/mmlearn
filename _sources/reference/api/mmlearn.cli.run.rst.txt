@@ -1,0 +1,7 @@
+mmlearn.cli.run module
+======================
+
+.. automodule:: mmlearn.cli.run
+   :members:
+   :undoc-members:
+   :show-inheritance:

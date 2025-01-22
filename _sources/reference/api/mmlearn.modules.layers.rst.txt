@@ -1,36 +1,21 @@
-mmlearn.modules.layers
-======================
+mmlearn.modules.layers package
+==============================
 
 .. automodule:: mmlearn.modules.layers
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-   
-   
-   
+Submodules
+----------
 
-   
-   
-   
+.. toctree::
+   :maxdepth: 4
 
-   
-   
-   
-
-   
-   
-   
-
-
-
-.. autosummary::
-   :toctree:
-   :template: custom-module-template.rst
-   :recursive:
-
-   attention
-   embedding
-   logit_scaling
-   mlp
-   normalization
-   patch_dropout
-   transformer_block
-
+   mmlearn.modules.layers.attention
+   mmlearn.modules.layers.embedding
+   mmlearn.modules.layers.logit_scaling
+   mmlearn.modules.layers.mlp
+   mmlearn.modules.layers.normalization
+   mmlearn.modules.layers.patch_dropout
+   mmlearn.modules.layers.transformer_block

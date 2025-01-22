@@ -1,0 +1,17 @@
+mmlearn.modules.encoders package
+================================
+
+.. automodule:: mmlearn.modules.encoders
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   mmlearn.modules.encoders.clip
+   mmlearn.modules.encoders.text
+   mmlearn.modules.encoders.vision

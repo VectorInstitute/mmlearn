@@ -1,33 +1,7 @@
-mmlearn.datasets.chexpert
-=========================
+mmlearn.datasets.chexpert module
+================================
 
 .. automodule:: mmlearn.datasets.chexpert
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      CheXpert
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

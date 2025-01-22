@@ -7,15 +7,15 @@
 
     
       <meta name="description" content="mmlearn Python API documentation">
-    <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="mmlearn.datasets.core.combined_dataset" href="mmlearn.datasets.core.combined_dataset.html" /><link rel="prev" title="mmlearn.datasets.chexpert" href="mmlearn.datasets.chexpert.html" />
+    <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="mmlearn.datasets.core.combined_dataset module" href="mmlearn.datasets.core.combined_dataset.html" /><link rel="prev" title="mmlearn.datasets package" href="mmlearn.datasets.html" />
 
     <meta name="generator" content="sphinx-8.1.3, furo 2024.08.06"/>
 
     
     <meta name="msvalidate.01" content="8D2A5032F006424CAF54C0DDCD16F666" />
       
-        <title>mmlearn.datasets.core - mmlearn 0.1.0a1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+        <title>mmlearn.datasets.core package - mmlearn 0.1.0a1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -203,7 +203,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -225,59 +225,66 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to mmlearn</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../api.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="mmlearn.conf.html">mmlearn.conf</a></li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="mmlearn.datasets.html">mmlearn.datasets</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of mmlearn.datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.chexpert.html">mmlearn.datasets.chexpert</a></li>
-<li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">mmlearn.datasets.core</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of mmlearn.datasets.core</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.combined_dataset.html">mmlearn.datasets.core.combined_dataset</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.data_collator.html">mmlearn.datasets.core.data_collator</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.example.html">mmlearn.datasets.core.example</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.modalities.html">mmlearn.datasets.core.modalities</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.samplers.html">mmlearn.datasets.core.samplers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.conf.html">mmlearn.conf package</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="mmlearn.datasets.html">mmlearn.datasets package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of mmlearn.datasets package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">mmlearn.datasets.core package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of mmlearn.datasets.core package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.combined_dataset.html">mmlearn.datasets.core.combined_dataset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.data_collator.html">mmlearn.datasets.core.data_collator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.example.html">mmlearn.datasets.core.example module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.modalities.html">mmlearn.datasets.core.modalities module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.core.samplers.html">mmlearn.datasets.core.samplers module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.imagenet.html">mmlearn.datasets.imagenet</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.librispeech.html">mmlearn.datasets.librispeech</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.llvip.html">mmlearn.datasets.llvip</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.nihcxr.html">mmlearn.datasets.nihcxr</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.nyuv2.html">mmlearn.datasets.nyuv2</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.datasets.processors.html">mmlearn.datasets.processors</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of mmlearn.datasets.processors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.processors.masking.html">mmlearn.datasets.processors.masking</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.processors.tokenizers.html">mmlearn.datasets.processors.tokenizers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.processors.transforms.html">mmlearn.datasets.processors.transforms</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.datasets.processors.html">mmlearn.datasets.processors package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of mmlearn.datasets.processors package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.processors.masking.html">mmlearn.datasets.processors.masking module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.processors.tokenizers.html">mmlearn.datasets.processors.tokenizers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.datasets.processors.transforms.html">mmlearn.datasets.processors.transforms module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.sunrgbd.html">mmlearn.datasets.sunrgbd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.chexpert.html">mmlearn.datasets.chexpert module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.imagenet.html">mmlearn.datasets.imagenet module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.librispeech.html">mmlearn.datasets.librispeech module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.llvip.html">mmlearn.datasets.llvip module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.nihcxr.html">mmlearn.datasets.nihcxr module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.nyuv2.html">mmlearn.datasets.nyuv2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.sunrgbd.html">mmlearn.datasets.sunrgbd module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="mmlearn.hf_utils.html">mmlearn.hf_utils</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="mmlearn.modules.html">mmlearn.modules</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of mmlearn.modules</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.ema.html">mmlearn.modules.ema</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.layers.html">mmlearn.modules.layers</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of mmlearn.modules.layers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.attention.html">mmlearn.modules.layers.attention</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.embedding.html">mmlearn.modules.layers.embedding</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.logit_scaling.html">mmlearn.modules.layers.logit_scaling</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.mlp.html">mmlearn.modules.layers.mlp</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.normalization.html">mmlearn.modules.layers.normalization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.patch_dropout.html">mmlearn.modules.layers.patch_dropout</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.transformer_block.html">mmlearn.modules.layers.transformer_block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.hf_utils.html">mmlearn.hf_utils module</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="mmlearn.modules.html">mmlearn.modules package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of mmlearn.modules package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.encoders.html">mmlearn.modules.encoders package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of mmlearn.modules.encoders package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.encoders.clip.html">mmlearn.modules.encoders.clip module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.encoders.text.html">mmlearn.modules.encoders.text module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.encoders.vision.html">mmlearn.modules.encoders.vision module</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.losses.html">mmlearn.modules.losses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of mmlearn.modules.losses</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.losses.contrastive.html">mmlearn.modules.losses.contrastive</a></li>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.losses.data2vec.html">mmlearn.modules.losses.data2vec</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.layers.html">mmlearn.modules.layers package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of mmlearn.modules.layers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.attention.html">mmlearn.modules.layers.attention module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.embedding.html">mmlearn.modules.layers.embedding module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.logit_scaling.html">mmlearn.modules.layers.logit_scaling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.mlp.html">mmlearn.modules.layers.mlp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.normalization.html">mmlearn.modules.layers.normalization module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.patch_dropout.html">mmlearn.modules.layers.patch_dropout module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.layers.transformer_block.html">mmlearn.modules.layers.transformer_block module</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.lr_schedulers.html">mmlearn.modules.lr_schedulers</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of mmlearn.modules.lr_schedulers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.html">mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.losses.html">mmlearn.modules.losses package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of mmlearn.modules.losses package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.losses.contrastive.html">mmlearn.modules.losses.contrastive module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.losses.data2vec.html">mmlearn.modules.losses.data2vec module</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.metrics.html">mmlearn.modules.metrics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of mmlearn.modules.metrics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.metrics.retrieval_recall.html">mmlearn.modules.metrics.retrieval_recall</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.lr_schedulers.html">mmlearn.modules.lr_schedulers package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of mmlearn.modules.lr_schedulers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr.html">mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr module</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.modules.metrics.html">mmlearn.modules.metrics package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of mmlearn.modules.metrics package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="mmlearn.modules.metrics.retrieval_recall.html">mmlearn.modules.metrics.retrieval_recall module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.ema.html">mmlearn.modules.ema module</a></li>
 </ul>
 </li>
 </ul>
@@ -310,36 +317,102 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <section id="module-mmlearn.datasets.core">
-<span id="mmlearn-datasets-core"></span><h1>mmlearn.datasets.core<a class="headerlink" href="#module-mmlearn.datasets.core" title="Link to this heading">¶</a></h1>
+<span id="mmlearn-datasets-core-package"></span><h1>mmlearn.datasets.core package<a class="headerlink" href="#module-mmlearn.datasets.core" title="Link to this heading">¶</a></h1>
 <p>Modules for core dataloading functionality.</p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="mmlearn.datasets.core.combined_dataset.html#module-mmlearn.datasets.core.combined_dataset" title="mmlearn.datasets.core.combined_dataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combined_dataset</span></code></a></p></td>
-<td><p>Wrapper for combining multiple datasets into one.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="mmlearn.datasets.core.data_collator.html#module-mmlearn.datasets.core.data_collator" title="mmlearn.datasets.core.data_collator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_collator</span></code></a></p></td>
-<td><p>Data collators for batching examples.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="mmlearn.datasets.core.example.html#module-mmlearn.datasets.core.example" title="mmlearn.datasets.core.example"><code class="xref py py-obj docutils literal notranslate"><span class="pre">example</span></code></a></p></td>
-<td><p>Module for example-related classes and functions.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="mmlearn.datasets.core.modalities.html#module-mmlearn.datasets.core.modalities" title="mmlearn.datasets.core.modalities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modalities</span></code></a></p></td>
-<td><p>Module for managing supported modalities in the library.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="mmlearn.datasets.core.samplers.html#module-mmlearn.datasets.core.samplers" title="mmlearn.datasets.core.samplers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">samplers</span></code></a></p></td>
-<td><p>Samplers for data loading.</p></td>
-</tr>
-</tbody>
-</table>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mmlearn.datasets.core.combined_dataset.html">mmlearn.datasets.core.combined_dataset module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.combined_dataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset"><code class="docutils literal notranslate"><span class="pre">CombinedDataset</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.combined_dataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset.__getitem__"><code class="docutils literal notranslate"><span class="pre">CombinedDataset.__getitem__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.combined_dataset.html#mmlearn.datasets.core.combined_dataset.CombinedDataset.__len__"><code class="docutils literal notranslate"><span class="pre">CombinedDataset.__len__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mmlearn.datasets.core.data_collator.html">mmlearn.datasets.core.data_collator module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator"><code class="docutils literal notranslate"><span class="pre">DefaultDataCollator</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator.__call__"><code class="docutils literal notranslate"><span class="pre">DefaultDataCollator.__call__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.DefaultDataCollator.batch_processors"><code class="docutils literal notranslate"><span class="pre">DefaultDataCollator.batch_processors</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.data_collator.html#mmlearn.datasets.core.data_collator.collate_example_list"><code class="docutils literal notranslate"><span class="pre">collate_example_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mmlearn.datasets.core.example.html">mmlearn.datasets.core.example module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.example.html#mmlearn.datasets.core.example.Example"><code class="docutils literal notranslate"><span class="pre">Example</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.example.html#mmlearn.datasets.core.example.Example.create_ids"><code class="docutils literal notranslate"><span class="pre">Example.create_ids()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.example.html#mmlearn.datasets.core.example.find_matching_indices"><code class="docutils literal notranslate"><span class="pre">find_matching_indices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mmlearn.datasets.core.modalities.html">mmlearn.datasets.core.modalities module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality"><code class="docutils literal notranslate"><span class="pre">Modality</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.add_property"><code class="docutils literal notranslate"><span class="pre">Modality.add_property()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.attention_mask"><code class="docutils literal notranslate"><span class="pre">Modality.attention_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.ema_embedding"><code class="docutils literal notranslate"><span class="pre">Modality.ema_embedding</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.embedding"><code class="docutils literal notranslate"><span class="pre">Modality.embedding</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.mask"><code class="docutils literal notranslate"><span class="pre">Modality.mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.masked_embedding"><code class="docutils literal notranslate"><span class="pre">Modality.masked_embedding</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.modality_specific_properties"><code class="docutils literal notranslate"><span class="pre">Modality.modality_specific_properties</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.name"><code class="docutils literal notranslate"><span class="pre">Modality.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.properties"><code class="docutils literal notranslate"><span class="pre">Modality.properties</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.Modality.target"><code class="docutils literal notranslate"><span class="pre">Modality.target</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry"><code class="docutils literal notranslate"><span class="pre">ModalityRegistry</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.add_default_property"><code class="docutils literal notranslate"><span class="pre">ModalityRegistry.add_default_property()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.get_modality"><code class="docutils literal notranslate"><span class="pre">ModalityRegistry.get_modality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.get_modality_properties"><code class="docutils literal notranslate"><span class="pre">ModalityRegistry.get_modality_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.has_modality"><code class="docutils literal notranslate"><span class="pre">ModalityRegistry.has_modality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.list_modalities"><code class="docutils literal notranslate"><span class="pre">ModalityRegistry.list_modalities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.modalities.html#mmlearn.datasets.core.modalities.ModalityRegistry.register_modality"><code class="docutils literal notranslate"><span class="pre">ModalityRegistry.register_modality()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mmlearn.datasets.core.samplers.html">mmlearn.datasets.core.samplers module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.dataset"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.dataset</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.num_samples"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.num_samples</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.probs"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.probs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.replacement"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.replacement</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.shuffle"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.shuffle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.rank"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.rank</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.num_replicas"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.num_replicas</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.drop_last"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.drop_last</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.seed"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.seed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.epoch"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.epoch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.total_size"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.total_size</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.__iter__"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.__iter__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.__len__"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.__len__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#id0"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.num_samples</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.CombinedDatasetRatioSampler.set_epoch"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.set_epoch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#id1"><code class="docutils literal notranslate"><span class="pre">CombinedDatasetRatioSampler.total_size</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler"><code class="docutils literal notranslate"><span class="pre">DistributedEvalSampler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.__iter__"><code class="docutils literal notranslate"><span class="pre">DistributedEvalSampler.__iter__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.__len__"><code class="docutils literal notranslate"><span class="pre">DistributedEvalSampler.__len__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.num_samples"><code class="docutils literal notranslate"><span class="pre">DistributedEvalSampler.num_samples</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.set_epoch"><code class="docutils literal notranslate"><span class="pre">DistributedEvalSampler.set_epoch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.datasets.core.samplers.html#mmlearn.datasets.core.samplers.DistributedEvalSampler.total_size"><code class="docutils literal notranslate"><span class="pre">DistributedEvalSampler.total_size</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </div>
+</section>
 </section>
 
         </article>
@@ -352,18 +425,18 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">mmlearn.datasets.core.combined_dataset</div>
+                <div class="title">mmlearn.datasets.core.combined_dataset module</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="mmlearn.datasets.chexpert.html">
+          <a class="prev-page" href="mmlearn.datasets.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">mmlearn.datasets.chexpert</div>
+                <div class="title">mmlearn.datasets package</div>
                 
               </div>
             </a>
@@ -402,8 +475,27 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">mmlearn.datasets.core package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

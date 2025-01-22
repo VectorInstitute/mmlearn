@@ -1,33 +1,7 @@
-mmlearn.modules.layers.normalization
-====================================
+mmlearn.modules.layers.normalization module
+===========================================
 
 .. automodule:: mmlearn.modules.layers.normalization
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      L2Norm
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

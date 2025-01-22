@@ -1,33 +1,7 @@
-mmlearn.modules.losses.data2vec
-===============================
+mmlearn.modules.losses.data2vec module
+======================================
 
 .. automodule:: mmlearn.modules.losses.data2vec
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      Data2VecLoss
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

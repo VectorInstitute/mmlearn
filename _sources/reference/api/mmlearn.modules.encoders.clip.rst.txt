@@ -1,0 +1,7 @@
+mmlearn.modules.encoders.clip module
+====================================
+
+.. automodule:: mmlearn.modules.encoders.clip
+   :members:
+   :undoc-members:
+   :show-inheritance:

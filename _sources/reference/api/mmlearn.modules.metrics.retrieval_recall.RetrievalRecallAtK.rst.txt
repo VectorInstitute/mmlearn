@@ -38,6 +38,7 @@ mmlearn.modules.metrics.retrieval\_recall.RetrievalRecallAtK
    .. automethod:: ~RetrievalRecallAtK.half
    .. automethod:: ~RetrievalRecallAtK.ipu
    .. automethod:: ~RetrievalRecallAtK.load_state_dict
+   .. automethod:: ~RetrievalRecallAtK.merge_state
    .. automethod:: ~RetrievalRecallAtK.modules
    .. automethod:: ~RetrievalRecallAtK.named_buffers
    .. automethod:: ~RetrievalRecallAtK.named_children

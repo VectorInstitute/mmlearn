@@ -1,38 +1,30 @@
-﻿mmlearn.datasets
-================
+mmlearn.datasets package
+========================
 
 .. automodule:: mmlearn.datasets
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-   
-   
-   
+Subpackages
+-----------
 
-   
-   
-   
+.. toctree::
+   :maxdepth: 4
 
-   
-   
-   
+   mmlearn.datasets.core
+   mmlearn.datasets.processors
 
-   
-   
-   
+Submodules
+----------
 
+.. toctree::
+   :maxdepth: 4
 
-
-.. autosummary::
-   :toctree:
-   :template: custom-module-template.rst
-   :recursive:
-
-   chexpert
-   core
-   imagenet
-   librispeech
-   llvip
-   nihcxr
-   nyuv2
-   processors
-   sunrgbd
-
+   mmlearn.datasets.chexpert
+   mmlearn.datasets.imagenet
+   mmlearn.datasets.librispeech
+   mmlearn.datasets.llvip
+   mmlearn.datasets.nihcxr
+   mmlearn.datasets.nyuv2
+   mmlearn.datasets.sunrgbd

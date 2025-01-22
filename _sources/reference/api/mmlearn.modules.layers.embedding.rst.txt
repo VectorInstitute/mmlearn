@@ -1,42 +1,7 @@
-mmlearn.modules.layers.embedding
-================================
+mmlearn.modules.layers.embedding module
+=======================================
 
 .. automodule:: mmlearn.modules.layers.embedding
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Functions
-
-   
-   .. autofunction:: get_1d_sincos_pos_embed
-   .. autofunction:: get_1d_sincos_pos_embed_from_grid
-   .. autofunction:: get_2d_sincos_pos_embed
-   .. autofunction:: get_2d_sincos_pos_embed_from_grid
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      ConvEmbed
-      PatchEmbed
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

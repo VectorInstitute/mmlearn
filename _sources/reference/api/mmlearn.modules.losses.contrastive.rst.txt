@@ -1,33 +1,7 @@
-mmlearn.modules.losses.contrastive
-==================================
+mmlearn.modules.losses.contrastive module
+=========================================
 
 .. automodule:: mmlearn.modules.losses.contrastive
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      ContrastiveLoss
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

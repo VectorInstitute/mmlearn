@@ -1,33 +1,7 @@
-mmlearn.modules.ema
-===================
+mmlearn.modules.ema module
+==========================
 
 .. automodule:: mmlearn.modules.ema
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      ExponentialMovingAverage
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

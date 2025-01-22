@@ -1,38 +1,7 @@
-mmlearn.datasets.sunrgbd
-========================
+mmlearn.datasets.sunrgbd module
+===============================
 
 .. automodule:: mmlearn.datasets.sunrgbd
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Functions
-
-   
-   .. autofunction:: convert_depth_to_disparity
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      SUNRGBDDataset
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,38 +1,7 @@
-mmlearn.datasets.librispeech
-============================
+mmlearn.datasets.librispeech module
+===================================
 
 .. automodule:: mmlearn.datasets.librispeech
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Functions
-
-   
-   .. autofunction:: pad_or_trim
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      LibriSpeech
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

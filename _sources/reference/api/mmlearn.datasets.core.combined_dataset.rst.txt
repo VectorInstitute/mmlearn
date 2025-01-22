@@ -1,33 +1,7 @@
-mmlearn.datasets.core.combined\_dataset
-=======================================
+mmlearn.datasets.core.combined\_dataset module
+==============================================
 
 .. automodule:: mmlearn.datasets.core.combined_dataset
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      CombinedDataset
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

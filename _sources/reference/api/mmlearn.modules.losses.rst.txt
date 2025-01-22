@@ -1,31 +1,16 @@
-mmlearn.modules.losses
-======================
+mmlearn.modules.losses package
+==============================
 
 .. automodule:: mmlearn.modules.losses
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-   
-   
-   
+Submodules
+----------
 
-   
-   
-   
+.. toctree::
+   :maxdepth: 4
 
-   
-   
-   
-
-   
-   
-   
-
-
-
-.. autosummary::
-   :toctree:
-   :template: custom-module-template.rst
-   :recursive:
-
-   contrastive
-   data2vec
-
+   mmlearn.modules.losses.contrastive
+   mmlearn.modules.losses.data2vec

@@ -1,0 +1,28 @@
+mmlearn package
+===============
+
+.. automodule:: mmlearn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   mmlearn.cli
+   mmlearn.conf
+   mmlearn.datasets
+   mmlearn.modules
+   mmlearn.tasks
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   mmlearn.constants
+   mmlearn.hf_utils

@@ -1,33 +1,7 @@
-mmlearn.modules.layers.attention
-================================
+mmlearn.modules.layers.attention module
+=======================================
 
 .. automodule:: mmlearn.modules.layers.attention
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      Attention
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:

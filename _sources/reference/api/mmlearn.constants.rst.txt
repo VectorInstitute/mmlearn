@@ -1,0 +1,7 @@
+mmlearn.constants module
+========================
+
+.. automodule:: mmlearn.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,35 +1,27 @@
-﻿mmlearn.modules
-===============
+mmlearn.modules package
+=======================
 
 .. automodule:: mmlearn.modules
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-   
-   
-   
+Subpackages
+-----------
 
-   
-   
-   
+.. toctree::
+   :maxdepth: 4
 
-   
-   
-   
+   mmlearn.modules.encoders
+   mmlearn.modules.layers
+   mmlearn.modules.losses
+   mmlearn.modules.lr_schedulers
+   mmlearn.modules.metrics
 
-   
-   
-   
+Submodules
+----------
 
+.. toctree::
+   :maxdepth: 4
 
-
-.. autosummary::
-   :toctree:
-   :template: custom-module-template.rst
-   :recursive:
-
-   ema
-   encoders
-   layers
-   losses
-   lr_schedulers
-   metrics
-
+   mmlearn.modules.ema

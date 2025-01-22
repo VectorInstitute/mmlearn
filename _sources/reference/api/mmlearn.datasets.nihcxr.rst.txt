@@ -1,33 +1,7 @@
-mmlearn.datasets.nihcxr
-=======================
+mmlearn.datasets.nihcxr module
+==============================
 
 .. automodule:: mmlearn.datasets.nihcxr
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-         :hidden:
-      :template: custom-class-template.rst
-      :nosignatures:
-   
-      NIHCXR
-   
-   
-
-   
-   
-   
-
-
-
+   :members:
+   :undoc-members:
+   :show-inheritance:
