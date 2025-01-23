@@ -9,7 +9,7 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    installation
    user_guide
