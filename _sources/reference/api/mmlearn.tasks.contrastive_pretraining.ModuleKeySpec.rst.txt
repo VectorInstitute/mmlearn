@@ -1,0 +1,30 @@
+mmlearn.tasks.contrastive\_pretraining.ModuleKeySpec
+====================================================
+
+.. currentmodule:: mmlearn.tasks.contrastive_pretraining
+
+.. autoclass:: ModuleKeySpec
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~ModuleKeySpec.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~ModuleKeySpec.encoder_key
+   .. autoattribute:: ~ModuleKeySpec.head_key
+   .. autoattribute:: ~ModuleKeySpec.postprocessor_key
+   
+   

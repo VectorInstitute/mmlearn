@@ -1,0 +1,29 @@
+mmlearn.tasks.contrastive\_pretraining.LossPairSpec
+===================================================
+
+.. currentmodule:: mmlearn.tasks.contrastive_pretraining
+
+.. autoclass:: LossPairSpec
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~LossPairSpec.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~LossPairSpec.weight
+   .. autoattribute:: ~LossPairSpec.modalities
+   
+   

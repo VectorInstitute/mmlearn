@@ -203,7 +203,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -287,6 +287,15 @@
 <li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.ema.html">mmlearn.modules.ema module</a></li>
 </ul>
 </li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="mmlearn.tasks.html">mmlearn.tasks package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of mmlearn.tasks package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.base.html">mmlearn.tasks.base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.contrastive_pretraining.html">mmlearn.tasks.contrastive_pretraining module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.hooks.html">mmlearn.tasks.hooks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.ijepa.html">mmlearn.tasks.ijepa module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.zero_shot_classification.html">mmlearn.tasks.zero_shot_classification module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.zero_shot_retrieval.html">mmlearn.tasks.zero_shot_retrieval module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -317,14 +326,310 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="mmlearn-modules-encoders-vision-module">
-<h1>mmlearn.modules.encoders.vision module<a class="headerlink" href="#mmlearn-modules-encoders-vision-module" title="Link to this heading">¶</a></h1>
+          <section id="module-mmlearn.modules.encoders.vision">
+<span id="mmlearn-modules-encoders-vision-module"></span><h1>mmlearn.modules.encoders.vision module<a class="headerlink" href="#module-mmlearn.modules.encoders.vision" title="Link to this heading">¶</a></h1>
+<p>Vision encoder implementations.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.TimmViT">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TimmViT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">768</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretrained</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freeze_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freeze_layer_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peft_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#TimmViT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.TimmViT" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<p>Vision Transformer model from timm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The name of the model to use.</p></li>
+<li><p><strong>projection_dim</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>default=768</em>) – The dimension of the projection head.</p></li>
+<li><p><strong>pretrained</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to use the pretrained weights.</p></li>
+<li><p><strong>freeze_layers</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>]</em><em>, </em><em>default=False</em>) – Whether to freeze the layers.</p></li>
+<li><p><strong>freeze_layer_norm</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to freeze the layer norm.</p></li>
+<li><p><strong>peft_config</strong> (<em>Optional</em><em>[</em><em>PeftConfig</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The configuration from the <a class="reference external" href="https://huggingface.co/docs/peft/index">peft</a>
+library to use to wrap the model for parameter-efficient finetuning.</p></li>
+<li><p><strong>model_kwargs</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>default=None</em>) – Additional keyword arguments for the model.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.TimmViT.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#TimmViT.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.TimmViT.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Run the forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The input data. The <code class="docutils literal notranslate"><span class="pre">image</span></code> will be expected under the
+<code class="docutils literal notranslate"><span class="pre">Modalities.RGB</span></code> key.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output of the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>BaseModelOutput</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.TimmViT.get_intermediate_layers">
+<span class="sig-name descname"><span class="pre">get_intermediate_layers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#TimmViT.get_intermediate_layers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.TimmViT.get_intermediate_layers" title="Link to this definition">¶</a></dt>
+<dd><p>Get the output of the intermediate layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputs</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The input data. The <code class="docutils literal notranslate"><span class="pre">image</span></code> will be expected under the <code class="docutils literal notranslate"><span class="pre">Modalities.RGB</span></code>
+key.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>default=1</em>) – The number of intermediate layers to return.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outputs of the last n intermediate layers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)">list</a>[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.TimmViT.get_patch_info">
+<span class="sig-name descname"><span class="pre">get_patch_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#TimmViT.get_patch_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.TimmViT.get_patch_info" title="Link to this definition">¶</a></dt>
+<dd><p>Get patch size and number of patches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Patch size and number of patches.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>[<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)">int</a>, <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)">int</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.VisionTransformer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VisionTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_size=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patch_size=16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_chans=3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed_dim=768</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth=12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads=12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_ratio=4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qkv_bias=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qk_scale=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_rate=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_drop_rate=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_path_rate=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_layer=&lt;class</span> <span class="pre">'torch.nn.modules.normalization.LayerNorm'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_std=0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#VisionTransformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.VisionTransformer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<p>Vision Transformer.</p>
+<p>This module implements a Vision Transformer that processes images using a
+series of transformer blocks and patch embeddings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img_size</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – list of input image sizes.</p></li>
+<li><p><strong>patch_size</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=16</em>) – Size of each patch.</p></li>
+<li><p><strong>in_chans</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=3</em>) – Number of input channels.</p></li>
+<li><p><strong>embed_dim</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=768</em>) – Embedding dimension.</p></li>
+<li><p><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=12</em>) – Number of transformer blocks.</p></li>
+<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=12</em>) – Number of attention heads.</p></li>
+<li><p><strong>mlp_ratio</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=4.0</em>) – Ratio of hidden dimension in the MLP.</p></li>
+<li><p><strong>qkv_bias</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – If True, add a learnable bias to the query, key, and value projections.</p></li>
+<li><p><strong>qk_scale</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>]</em><em>, </em><em>optional</em>) – Override the default qk scale factor.</p></li>
+<li><p><strong>drop_rate</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout rate for the transformer blocks.</p></li>
+<li><p><strong>attn_drop_rate</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout rate for the attention mechanism.</p></li>
+<li><p><strong>drop_path_rate</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout rate for stochastic depth.</p></li>
+<li><p><strong>norm_layer</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=torch.nn.LayerNorm</em>) – Normalization layer to use.</p></li>
+<li><p><strong>init_std</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.02</em>) – Standard deviation for weight initialization.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.VisionTransformer.fix_init_weight">
+<span class="sig-name descname"><span class="pre">fix_init_weight</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#VisionTransformer.fix_init_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.VisionTransformer.fix_init_weight" title="Link to this definition">¶</a></dt>
+<dd><p>Fix initialization of weights by rescaling them according to layer depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.VisionTransformer.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_hidden_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#VisionTransformer.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.VisionTransformer.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass through the Vision Transformer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>, <a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>, <a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a>]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.VisionTransformer.interpolate_pos_encoding">
+<span class="sig-name descname"><span class="pre">interpolate_pos_encoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_embed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#VisionTransformer.interpolate_pos_encoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.VisionTransformer.interpolate_pos_encoding" title="Link to this definition">¶</a></dt>
+<dd><p>Interpolate positional encoding to match the size of the input tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Input tensor.</p></li>
+<li><p><strong>pos_embed</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Positional embedding tensor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Interpolated positional encoding.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.VisionTransformerPredictor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VisionTransformerPredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_patches=196</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed_dim=768</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_embed_dim=384</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth=6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads=12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_ratio=4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qkv_bias=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qk_scale=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_rate=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_drop_rate=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_path_rate=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_layer=&lt;class</span> <span class="pre">'torch.nn.modules.normalization.LayerNorm'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_std=0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#VisionTransformerPredictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.VisionTransformerPredictor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<p>Vision Transformer Predictor.</p>
+<p>This module implements a Vision Transformer that predicts masked tokens
+using a series of transformer blocks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_patches</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The number of patches in the input image.</p></li>
+<li><p><strong>embed_dim</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=768</em>) – The embedding dimension.</p></li>
+<li><p><strong>predictor_embed_dim</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=384</em>) – The embedding dimension for the predictor.</p></li>
+<li><p><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=6</em>) – The number of transformer blocks.</p></li>
+<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=12</em>) – The number of attention heads.</p></li>
+<li><p><strong>mlp_ratio</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=4.0</em>) – Ratio of the hidden dimension in the MLP.</p></li>
+<li><p><strong>qkv_bias</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – If True, add a learnable bias to the query, key, and value projections.</p></li>
+<li><p><strong>qk_scale</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Override the default qk scale factor.</p></li>
+<li><p><strong>drop_rate</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout rate for the transformer blocks.</p></li>
+<li><p><strong>attn_drop_rate</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout rate for the attention mechanism.</p></li>
+<li><p><strong>drop_path_rate</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout rate for stochastic depth.</p></li>
+<li><p><strong>norm_layer</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=torch.nn.LayerNorm</em>) – Normalization layer to use.</p></li>
+<li><p><strong>init_std</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.02</em>) – Standard deviation for weight initialization.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.VisionTransformerPredictor.fix_init_weight">
+<span class="sig-name descname"><span class="pre">fix_init_weight</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#VisionTransformerPredictor.fix_init_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.VisionTransformerPredictor.fix_init_weight" title="Link to this definition">¶</a></dt>
+<dd><p>Fix initialization of weights by rescaling them according to layer depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.VisionTransformerPredictor.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masks_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#VisionTransformerPredictor.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.VisionTransformerPredictor.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass through the Vision Transformer Predictor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.vit_base">
+<span class="sig-name descname"><span class="pre">vit_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#vit_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.vit_base" title="Link to this definition">¶</a></dt>
+<dd><p>Create a VisionTransformer model with base configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of VisionTransformer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer">VisionTransformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.vit_giant">
+<span class="sig-name descname"><span class="pre">vit_giant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#vit_giant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.vit_giant" title="Link to this definition">¶</a></dt>
+<dd><p>Create a VisionTransformer model with giant configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of VisionTransformer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer">VisionTransformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.vit_huge">
+<span class="sig-name descname"><span class="pre">vit_huge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#vit_huge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.vit_huge" title="Link to this definition">¶</a></dt>
+<dd><p>Create a VisionTransformer model with huge configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of VisionTransformer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer">VisionTransformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.vit_large">
+<span class="sig-name descname"><span class="pre">vit_large</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#vit_large"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.vit_large" title="Link to this definition">¶</a></dt>
+<dd><p>Create a VisionTransformer model with large configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of VisionTransformer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer">VisionTransformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.vit_predictor">
+<span class="sig-name descname"><span class="pre">vit_predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#vit_predictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.vit_predictor" title="Link to this definition">¶</a></dt>
+<dd><p>Create a VisionTransformerPredictor model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of VisionTransformerPredictor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformerPredictor.html#mmlearn.modules.encoders.vision.VisionTransformerPredictor" title="mmlearn.modules.encoders.vision.VisionTransformerPredictor">VisionTransformerPredictor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.vit_small">
+<span class="sig-name descname"><span class="pre">vit_small</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#vit_small"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.vit_small" title="Link to this definition">¶</a></dt>
+<dd><p>Create a VisionTransformer model with small configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of VisionTransformer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer">VisionTransformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mmlearn.modules.encoders.vision.vit_tiny">
+<span class="sig-name descname"><span class="pre">vit_tiny</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/encoders/vision.html#vit_tiny"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.encoders.vision.vit_tiny" title="Link to this definition">¶</a></dt>
+<dd><p>Create a VisionTransformer model with tiny configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of VisionTransformer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer">VisionTransformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -387,8 +692,50 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">mmlearn.modules.encoders.vision module</a><ul>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.TimmViT"><code class="docutils literal notranslate"><span class="pre">TimmViT</span></code></a><ul>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.TimmViT.forward"><code class="docutils literal notranslate"><span class="pre">TimmViT.forward()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.TimmViT.get_intermediate_layers"><code class="docutils literal notranslate"><span class="pre">TimmViT.get_intermediate_layers()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.TimmViT.get_patch_info"><code class="docutils literal notranslate"><span class="pre">TimmViT.get_patch_info()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.VisionTransformer"><code class="docutils literal notranslate"><span class="pre">VisionTransformer</span></code></a><ul>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.VisionTransformer.fix_init_weight"><code class="docutils literal notranslate"><span class="pre">VisionTransformer.fix_init_weight()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.VisionTransformer.forward"><code class="docutils literal notranslate"><span class="pre">VisionTransformer.forward()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.VisionTransformer.interpolate_pos_encoding"><code class="docutils literal notranslate"><span class="pre">VisionTransformer.interpolate_pos_encoding()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.VisionTransformerPredictor"><code class="docutils literal notranslate"><span class="pre">VisionTransformerPredictor</span></code></a><ul>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.VisionTransformerPredictor.fix_init_weight"><code class="docutils literal notranslate"><span class="pre">VisionTransformerPredictor.fix_init_weight()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.VisionTransformerPredictor.forward"><code class="docutils literal notranslate"><span class="pre">VisionTransformerPredictor.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.vit_base"><code class="docutils literal notranslate"><span class="pre">vit_base()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.vit_giant"><code class="docutils literal notranslate"><span class="pre">vit_giant()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.vit_huge"><code class="docutils literal notranslate"><span class="pre">vit_huge()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.vit_large"><code class="docutils literal notranslate"><span class="pre">vit_large()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.vit_predictor"><code class="docutils literal notranslate"><span class="pre">vit_predictor()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.vit_small"><code class="docutils literal notranslate"><span class="pre">vit_small()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.modules.encoders.vision.vit_tiny"><code class="docutils literal notranslate"><span class="pre">vit_tiny()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

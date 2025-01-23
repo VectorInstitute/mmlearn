@@ -1,0 +1,77 @@
+mmlearn.modules.encoders.clip.HFCLIPTextEncoderWithProjection
+=============================================================
+
+.. currentmodule:: mmlearn.modules.encoders.clip
+
+.. autoclass:: HFCLIPTextEncoderWithProjection
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.__init__
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.add_module
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.apply
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.bfloat16
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.buffers
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.children
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.compile
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.cpu
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.cuda
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.double
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.eval
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.extra_repr
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.float
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.forward
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.get_buffer
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.get_extra_state
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.get_parameter
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.get_submodule
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.half
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.ipu
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.load_state_dict
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.modules
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.named_buffers
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.named_children
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.named_modules
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.named_parameters
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.parameters
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_backward_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_buffer
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_forward_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_forward_pre_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_full_backward_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_full_backward_pre_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_load_state_dict_post_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_module
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_parameter
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_state_dict_pre_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.requires_grad_
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.set_extra_state
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.share_memory
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.state_dict
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.to
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.to_empty
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.train
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.type
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.xpu
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~HFCLIPTextEncoderWithProjection.T_destination
+   .. autoattribute:: ~HFCLIPTextEncoderWithProjection.call_super_init
+   .. autoattribute:: ~HFCLIPTextEncoderWithProjection.dump_patches
+   .. autoattribute:: ~HFCLIPTextEncoderWithProjection.training
+   
+   

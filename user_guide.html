@@ -287,6 +287,15 @@
 <li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.modules.ema.html">mmlearn.modules.ema module</a></li>
 </ul>
 </li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="reference/api/mmlearn.tasks.html">mmlearn.tasks package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of mmlearn.tasks package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.tasks.base.html">mmlearn.tasks.base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.tasks.contrastive_pretraining.html">mmlearn.tasks.contrastive_pretraining module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.tasks.hooks.html">mmlearn.tasks.hooks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.tasks.ijepa.html">mmlearn.tasks.ijepa module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.tasks.zero_shot_classification.html">mmlearn.tasks.zero_shot_classification module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/api/mmlearn.tasks.zero_shot_retrieval.html">mmlearn.tasks.zero_shot_retrieval module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -433,7 +442,7 @@ the following code snippet shows how to register a new <code class="docutils lit
 learning rate schedulers, metrics, etc. Modules in <em>mmlearn</em> are generally defined by extending PyTorch’s <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">nn.Module</span></code></a>
 class.</p>
 <p>Users have the flexibility to design new modules according to their requirements, with the exception of encoder modules
-and modules associated with specific pre-defined tasks (e.g., loss functions for the <a class="reference internal" href="reference/api/mmlearn.tasks.contrastive_pretraining.html#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining" title="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContrastivePretraining</span></code></a> task).
+and modules associated with specific pre-defined tasks (e.g., loss functions for the <a class="reference internal" href="reference/api/mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.html#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining" title="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContrastivePretraining</span></code></a> task).
 The forward method of encoder modules must accept a dictionary as input, where the keys are the names of the modalities
 and the values are the corresponding (batched) tensors/data. This format makes it easier to reuse the encoder with different
 modalities and different tasks. In addition, the forward method must return a list-like object where the first element is
@@ -460,7 +469,7 @@ the last layer’s output. The following code snippet shows how to define a new 
 </pre></div>
 </div>
 <p>For modules associated with pre-defined tasks, the new modules must adhere to the same function signature as the existing
-modules for that task. For instance, the forward method of a new loss function for the <a class="reference internal" href="reference/api/mmlearn.tasks.contrastive_pretraining.html#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining" title="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContrastivePretraining</span></code></a>
+modules for that task. For instance, the forward method of a new loss function for the <a class="reference internal" href="reference/api/mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.html#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining" title="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContrastivePretraining</span></code></a>
 task must have the following signature to be compatible with the existing loss functions for the task:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
@@ -479,11 +488,11 @@ task must have the following signature to be compatible with the existing loss f
 <section id="adding-new-tasks">
 <h2>Adding New Tasks<a class="headerlink" href="#adding-new-tasks" title="Link to this heading">¶</a></h2>
 <p>Tasks in <em>mmlearn</em> represent the different training and/or evaluation objectives that can be performed on the data using
-the different modules. Tasks that require training should extend the <a class="reference internal" href="reference/api/mmlearn.tasks.base.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class, while tasks
-involving only evaluation should extend the <a class="reference internal" href="reference/api/mmlearn.tasks.hooks.html#mmlearn.tasks.hooks.EvaluationHooks" title="mmlearn.tasks.hooks.EvaluationHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvaluationHooks</span></code></a> class.</p>
+the different modules. Tasks that require training should extend the <a class="reference internal" href="reference/api/mmlearn.tasks.base.TrainingTask.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class, while tasks
+involving only evaluation should extend the <a class="reference internal" href="reference/api/mmlearn.tasks.hooks.EvaluationHooks.html#mmlearn.tasks.hooks.EvaluationHooks" title="mmlearn.tasks.hooks.EvaluationHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvaluationHooks</span></code></a> class.</p>
 <section id="training-tasks">
 <h3>Training Tasks<a class="headerlink" href="#training-tasks" title="Link to this heading">¶</a></h3>
-<p>The <a class="reference internal" href="reference/api/mmlearn.tasks.base.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class is an extension of the <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningModule.html#lightning.pytorch.core.LightningModule" title="(in PyTorch Lightning v2.5.0.post0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></a>
+<p>The <a class="reference internal" href="reference/api/mmlearn.tasks.base.TrainingTask.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class is an extension of the <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningModule.html#lightning.pytorch.core.LightningModule" title="(in PyTorch Lightning v2.5.0.post0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></a>
 class, which itself is an extension of the <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a> class. The class provides a common interface for training
 tasks in <em>mmlearn</em>. It allows users to define the training loop, validation loop, test loop, and the setup for the model,
 optimizer, learning rate scheduler and loss function, all in one place (a functionality inherited from PyTorch Lightning).
@@ -491,10 +500,10 @@ The class also provides hooks for customizing the training loop, validation loop
 other functionalities like logging, checkpointing and handling distributed training.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>For more information on the features and capabilities of the <a class="reference internal" href="reference/api/mmlearn.tasks.base.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class inherited
+<p>For more information on the features and capabilities of the <a class="reference internal" href="reference/api/mmlearn.tasks.base.TrainingTask.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class inherited
 from PyTorch Lightning, please refer to the PyTorch Lightning <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/">documentation</a>.</p>
 </div>
-<p>To be used with the PyTorch Lightning Trainer, extensions of the <a class="reference internal" href="reference/api/mmlearn.tasks.base.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class must define
+<p>To be used with the PyTorch Lightning Trainer, extensions of the <a class="reference internal" href="reference/api/mmlearn.tasks.base.TrainingTask.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a> class must define
 a <cite>training_step</cite> method. The following code snippet shows the minimum requirements for defining a new task in <em>mmlearn</em>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
@@ -536,10 +545,10 @@ a <cite>training_step</cite> method. The following code snippet shows the minimu
 </section>
 <section id="evaluation-tasks">
 <h3>Evaluation Tasks<a class="headerlink" href="#evaluation-tasks" title="Link to this heading">¶</a></h3>
-<p>The <a class="reference internal" href="reference/api/mmlearn.tasks.hooks.html#mmlearn.tasks.hooks.EvaluationHooks" title="mmlearn.tasks.hooks.EvaluationHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvaluationHooks</span></code></a> class is intended to be used for evaluation tasks that don’t require training,
+<p>The <a class="reference internal" href="reference/api/mmlearn.tasks.hooks.EvaluationHooks.html#mmlearn.tasks.hooks.EvaluationHooks" title="mmlearn.tasks.hooks.EvaluationHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvaluationHooks</span></code></a> class is intended to be used for evaluation tasks that don’t require training,
 e.g. zero-shot evaluation tasks (as opposed to evaluation tasks like linear probing, which require training). The class provides
 an interface for defining and customizing the evaluation loop.</p>
-<p>Classes that inherit from <a class="reference internal" href="reference/api/mmlearn.tasks.hooks.html#mmlearn.tasks.hooks.EvaluationHooks" title="mmlearn.tasks.hooks.EvaluationHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvaluationHooks</span></code></a> cannot be run/used on their own. They must be used
+<p>Classes that inherit from <a class="reference internal" href="reference/api/mmlearn.tasks.hooks.EvaluationHooks.html#mmlearn.tasks.hooks.EvaluationHooks" title="mmlearn.tasks.hooks.EvaluationHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvaluationHooks</span></code></a> cannot be run/used on their own. They must be used
 in conjunction with a training task, which will call the hooks defined in the evaluation task during the evaluation phase.
 This way, multiple evaluation tasks can be defined and used with the same training task. The model to be evaluated is
 provided by the training task to the evaluation task.</p>

@@ -1,0 +1,77 @@
+mmlearn.modules.encoders.clip.HFCLIPTextEncoder
+===============================================
+
+.. currentmodule:: mmlearn.modules.encoders.clip
+
+.. autoclass:: HFCLIPTextEncoder
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~HFCLIPTextEncoder.__init__
+   .. automethod:: ~HFCLIPTextEncoder.add_module
+   .. automethod:: ~HFCLIPTextEncoder.apply
+   .. automethod:: ~HFCLIPTextEncoder.bfloat16
+   .. automethod:: ~HFCLIPTextEncoder.buffers
+   .. automethod:: ~HFCLIPTextEncoder.children
+   .. automethod:: ~HFCLIPTextEncoder.compile
+   .. automethod:: ~HFCLIPTextEncoder.cpu
+   .. automethod:: ~HFCLIPTextEncoder.cuda
+   .. automethod:: ~HFCLIPTextEncoder.double
+   .. automethod:: ~HFCLIPTextEncoder.eval
+   .. automethod:: ~HFCLIPTextEncoder.extra_repr
+   .. automethod:: ~HFCLIPTextEncoder.float
+   .. automethod:: ~HFCLIPTextEncoder.forward
+   .. automethod:: ~HFCLIPTextEncoder.get_buffer
+   .. automethod:: ~HFCLIPTextEncoder.get_extra_state
+   .. automethod:: ~HFCLIPTextEncoder.get_parameter
+   .. automethod:: ~HFCLIPTextEncoder.get_submodule
+   .. automethod:: ~HFCLIPTextEncoder.half
+   .. automethod:: ~HFCLIPTextEncoder.ipu
+   .. automethod:: ~HFCLIPTextEncoder.load_state_dict
+   .. automethod:: ~HFCLIPTextEncoder.modules
+   .. automethod:: ~HFCLIPTextEncoder.named_buffers
+   .. automethod:: ~HFCLIPTextEncoder.named_children
+   .. automethod:: ~HFCLIPTextEncoder.named_modules
+   .. automethod:: ~HFCLIPTextEncoder.named_parameters
+   .. automethod:: ~HFCLIPTextEncoder.parameters
+   .. automethod:: ~HFCLIPTextEncoder.register_backward_hook
+   .. automethod:: ~HFCLIPTextEncoder.register_buffer
+   .. automethod:: ~HFCLIPTextEncoder.register_forward_hook
+   .. automethod:: ~HFCLIPTextEncoder.register_forward_pre_hook
+   .. automethod:: ~HFCLIPTextEncoder.register_full_backward_hook
+   .. automethod:: ~HFCLIPTextEncoder.register_full_backward_pre_hook
+   .. automethod:: ~HFCLIPTextEncoder.register_load_state_dict_post_hook
+   .. automethod:: ~HFCLIPTextEncoder.register_module
+   .. automethod:: ~HFCLIPTextEncoder.register_parameter
+   .. automethod:: ~HFCLIPTextEncoder.register_state_dict_pre_hook
+   .. automethod:: ~HFCLIPTextEncoder.requires_grad_
+   .. automethod:: ~HFCLIPTextEncoder.set_extra_state
+   .. automethod:: ~HFCLIPTextEncoder.share_memory
+   .. automethod:: ~HFCLIPTextEncoder.state_dict
+   .. automethod:: ~HFCLIPTextEncoder.to
+   .. automethod:: ~HFCLIPTextEncoder.to_empty
+   .. automethod:: ~HFCLIPTextEncoder.train
+   .. automethod:: ~HFCLIPTextEncoder.type
+   .. automethod:: ~HFCLIPTextEncoder.xpu
+   .. automethod:: ~HFCLIPTextEncoder.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~HFCLIPTextEncoder.T_destination
+   .. autoattribute:: ~HFCLIPTextEncoder.call_super_init
+   .. autoattribute:: ~HFCLIPTextEncoder.dump_patches
+   .. autoattribute:: ~HFCLIPTextEncoder.training
+   
+   

@@ -7,7 +7,7 @@
 
     
       <meta name="description" content="mmlearn Python API documentation">
-    <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+    <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="mmlearn.tasks.zero_shot_classification module" href="mmlearn.tasks.zero_shot_classification.html" /><link rel="prev" title="mmlearn.tasks.hooks module" href="mmlearn.tasks.hooks.html" />
 
     <meta name="generator" content="sphinx-8.1.3, furo 2024.08.06"/>
 
@@ -203,7 +203,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -223,11 +223,11 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to mmlearn</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../api.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="mmlearn.conf.html">mmlearn.conf package</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="mmlearn.datasets.html">mmlearn.datasets package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of mmlearn.datasets package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="mmlearn.datasets.core.html">mmlearn.datasets.core package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of mmlearn.datasets.core package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -287,6 +287,15 @@
 <li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.ema.html">mmlearn.modules.ema module</a></li>
 </ul>
 </li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="mmlearn.tasks.html">mmlearn.tasks package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of mmlearn.tasks package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.base.html">mmlearn.tasks.base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.contrastive_pretraining.html">mmlearn.tasks.contrastive_pretraining module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.hooks.html">mmlearn.tasks.hooks module</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">mmlearn.tasks.ijepa module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.zero_shot_classification.html">mmlearn.tasks.zero_shot_classification module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.zero_shot_retrieval.html">mmlearn.tasks.zero_shot_retrieval module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -317,14 +326,205 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="mmlearn-tasks-ijepa-module">
-<h1>mmlearn.tasks.ijepa module<a class="headerlink" href="#mmlearn-tasks-ijepa-module" title="Link to this heading">¶</a></h1>
+          <section id="module-mmlearn.tasks.ijepa">
+<span id="mmlearn-tasks-ijepa-module"></span><h1>mmlearn.tasks.ijepa module<a class="headerlink" href="#module-mmlearn.tasks.ijepa" title="Link to this heading">¶</a></h1>
+<p>IJEPA (Image Joint-Embedding Predictive Architecture) pretraining task.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IJEPA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ema_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.996</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ema_decay_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ema_anneal_end_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_validation_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_test_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="mmlearn.tasks.base.TrainingTask.html#mmlearn.tasks.base.TrainingTask" title="mmlearn.tasks.base.TrainingTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainingTask</span></code></a></p>
+<p>Pretraining module for IJEPA.</p>
+<p>This class implements the IJEPA (Image Joint-Embedding Predictive Architecture)
+pretraining task using PyTorch Lightning. It trains an encoder and a predictor to
+reconstruct masked regions of an image based on its unmasked context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoder</strong> (<a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer"><em>VisionTransformer</em></a>) – Vision transformer encoder.</p></li>
+<li><p><strong>predictor</strong> (<a class="reference internal" href="mmlearn.modules.encoders.vision.VisionTransformer.html#mmlearn.modules.encoders.vision.VisionTransformer" title="mmlearn.modules.encoders.vision.VisionTransformer"><em>VisionTransformer</em></a>) – Vision transformer predictor.</p></li>
+<li><p><strong>optimizer</strong> (<em>Optional</em><em>[</em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.5)"><em>torch.optim.Optimizer</em></a><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The optimizer to use for training. This is expected to be a <a class="reference external" href="https://docs.python.org/3.10/library/functools.html#functools.partial" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">partial()</span></code></a>
+function that takes the model parameters as the only required argument.
+If not provided, training will continue without an optimizer.</p></li>
+<li><p><strong>lr_scheduler</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Union</em><em>[</em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.LRScheduler.html#torch.optim.lr_scheduler.LRScheduler" title="(in PyTorch v2.5)"><em>torch.optim.lr_scheduler.LRScheduler</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.LRScheduler.html#torch.optim.lr_scheduler.LRScheduler" title="(in PyTorch v2.5)"><em>torch.optim.lr_scheduler.LRScheduler</em></a><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The learning rate scheduler to use for training. This can be a
+<a class="reference external" href="https://docs.python.org/3.10/library/functools.html#functools.partial" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">partial()</span></code></a> function that takes the optimizer as the only
+required argument or a dictionary with a <code class="docutils literal notranslate"><span class="pre">'scheduler'</span></code> key that specifies
+the scheduler and an optional <code class="docutils literal notranslate"><span class="pre">'extras'</span></code> key that specifies additional
+arguments to pass to the scheduler. If not provided, the learning rate will
+not be adjusted during training.</p></li>
+<li><p><strong>ema_decay</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.996</em>) – Initial momentum for EMA of target encoder.</p></li>
+<li><p><strong>ema_decay_end</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=1.0</em>) – Final momentum for EMA of target encoder.</p></li>
+<li><p><strong>ema_anneal_end_step</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default=1000</em>) – Number of steps to anneal EMA momentum to <code class="docutils literal notranslate"><span class="pre">ema_decay_end</span></code>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>[</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a><em>]</em><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – Loss function to use. If not provided, defaults to
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.functional.smooth_l1_loss.html#torch.nn.functional.smooth_l1_loss" title="(in PyTorch v2.5)"><code class="xref py py-func docutils literal notranslate"><span class="pre">smooth_l1_loss()</span></code></a>.</p></li>
+<li><p><strong>compute_validation_loss</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – Whether to compute validation loss.</p></li>
+<li><p><strong>compute_test_loss</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – Whether to compute test loss.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.configure_model">
+<span class="sig-name descname"><span class="pre">configure_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.configure_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.configure_model" title="Link to this definition">¶</a></dt>
+<dd><p>Configure the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_before_zero_grad">
+<span class="sig-name descname"><span class="pre">on_before_zero_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_before_zero_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_before_zero_grad" title="Link to this definition">¶</a></dt>
+<dd><p>Perform exponential moving average update of target encoder.</p>
+<p>This is done right after the optimizer step, which comes just before <cite>zero_grad</cite>
+to account for gradient accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_load_checkpoint">
+<span class="sig-name descname"><span class="pre">on_load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_load_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_load_checkpoint" title="Link to this definition">¶</a></dt>
+<dd><p>Restore EMA state from the checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The state dictionary to restore the EMA state from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_save_checkpoint">
+<span class="sig-name descname"><span class="pre">on_save_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_save_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_save_checkpoint" title="Link to this definition">¶</a></dt>
+<dd><p>Add relevant EMA state to the checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The state dictionary to save the EMA state to.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_test_epoch_end">
+<span class="sig-name descname"><span class="pre">on_test_epoch_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_test_epoch_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_test_epoch_end" title="Link to this definition">¶</a></dt>
+<dd><p>Actions at the end of the test epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_test_epoch_start">
+<span class="sig-name descname"><span class="pre">on_test_epoch_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_test_epoch_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_test_epoch_start" title="Link to this definition">¶</a></dt>
+<dd><p>Prepare for the test epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_validation_epoch_end">
+<span class="sig-name descname"><span class="pre">on_validation_epoch_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_validation_epoch_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_validation_epoch_end" title="Link to this definition">¶</a></dt>
+<dd><p>Actions at the end of the validation epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_validation_epoch_start">
+<span class="sig-name descname"><span class="pre">on_validation_epoch_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_validation_epoch_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_validation_epoch_start" title="Link to this definition">¶</a></dt>
+<dd><p>Prepare for the validation epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.test_step">
+<span class="sig-name descname"><span class="pre">test_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.test_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.test_step" title="Link to this definition">¶</a></dt>
+<dd><p>Run a single test step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – A batch of data.</p></li>
+<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Index of the batch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Loss value or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no loss is computed</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.training_step">
+<span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.training_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.training_step" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single training step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – A batch of data.</p></li>
+<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Index of the batch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Loss value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.validation_step">
+<span class="sig-name descname"><span class="pre">validation_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.validation_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.validation_step" title="Link to this definition">¶</a></dt>
+<dd><p>Run a single validation step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – A batch of data.</p></li>
+<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Index of the batch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Loss value or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no loss is computed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -332,8 +532,26 @@
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="mmlearn.tasks.zero_shot_classification.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">mmlearn.tasks.zero_shot_classification module</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="mmlearn.tasks.hooks.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">mmlearn.tasks.hooks module</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -369,8 +587,40 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">mmlearn.tasks.ijepa module</a><ul>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA"><code class="docutils literal notranslate"><span class="pre">IJEPA</span></code></a><ul>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.configure_model"><code class="docutils literal notranslate"><span class="pre">IJEPA.configure_model()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.on_before_zero_grad"><code class="docutils literal notranslate"><span class="pre">IJEPA.on_before_zero_grad()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.on_load_checkpoint"><code class="docutils literal notranslate"><span class="pre">IJEPA.on_load_checkpoint()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.on_save_checkpoint"><code class="docutils literal notranslate"><span class="pre">IJEPA.on_save_checkpoint()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.on_test_epoch_end"><code class="docutils literal notranslate"><span class="pre">IJEPA.on_test_epoch_end()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.on_test_epoch_start"><code class="docutils literal notranslate"><span class="pre">IJEPA.on_test_epoch_start()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.on_validation_epoch_end"><code class="docutils literal notranslate"><span class="pre">IJEPA.on_validation_epoch_end()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.on_validation_epoch_start"><code class="docutils literal notranslate"><span class="pre">IJEPA.on_validation_epoch_start()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.test_step"><code class="docutils literal notranslate"><span class="pre">IJEPA.test_step()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.training_step"><code class="docutils literal notranslate"><span class="pre">IJEPA.training_step()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.ijepa.IJEPA.validation_step"><code class="docutils literal notranslate"><span class="pre">IJEPA.validation_step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

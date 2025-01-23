@@ -1,0 +1,77 @@
+mmlearn.modules.encoders.clip.HFCLIPVisionEncoderWithProjection
+===============================================================
+
+.. currentmodule:: mmlearn.modules.encoders.clip
+
+.. autoclass:: HFCLIPVisionEncoderWithProjection
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.__init__
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.add_module
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.apply
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.bfloat16
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.buffers
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.children
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.compile
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.cpu
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.cuda
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.double
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.eval
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.extra_repr
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.float
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.forward
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.get_buffer
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.get_extra_state
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.get_parameter
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.get_submodule
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.half
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.ipu
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.load_state_dict
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.modules
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.named_buffers
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.named_children
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.named_modules
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.named_parameters
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.parameters
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_backward_hook
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_buffer
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_forward_hook
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_forward_pre_hook
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_full_backward_hook
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_full_backward_pre_hook
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_load_state_dict_post_hook
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_module
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_parameter
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.register_state_dict_pre_hook
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.requires_grad_
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.set_extra_state
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.share_memory
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.state_dict
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.to
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.to_empty
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.train
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.type
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.xpu
+   .. automethod:: ~HFCLIPVisionEncoderWithProjection.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~HFCLIPVisionEncoderWithProjection.T_destination
+   .. autoattribute:: ~HFCLIPVisionEncoderWithProjection.call_super_init
+   .. autoattribute:: ~HFCLIPVisionEncoderWithProjection.dump_patches
+   .. autoattribute:: ~HFCLIPVisionEncoderWithProjection.training
+   
+   

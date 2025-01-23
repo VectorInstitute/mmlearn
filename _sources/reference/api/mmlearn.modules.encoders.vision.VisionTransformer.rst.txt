@@ -1,0 +1,79 @@
+mmlearn.modules.encoders.vision.VisionTransformer
+=================================================
+
+.. currentmodule:: mmlearn.modules.encoders.vision
+
+.. autoclass:: VisionTransformer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~VisionTransformer.__init__
+   .. automethod:: ~VisionTransformer.add_module
+   .. automethod:: ~VisionTransformer.apply
+   .. automethod:: ~VisionTransformer.bfloat16
+   .. automethod:: ~VisionTransformer.buffers
+   .. automethod:: ~VisionTransformer.children
+   .. automethod:: ~VisionTransformer.compile
+   .. automethod:: ~VisionTransformer.cpu
+   .. automethod:: ~VisionTransformer.cuda
+   .. automethod:: ~VisionTransformer.double
+   .. automethod:: ~VisionTransformer.eval
+   .. automethod:: ~VisionTransformer.extra_repr
+   .. automethod:: ~VisionTransformer.fix_init_weight
+   .. automethod:: ~VisionTransformer.float
+   .. automethod:: ~VisionTransformer.forward
+   .. automethod:: ~VisionTransformer.get_buffer
+   .. automethod:: ~VisionTransformer.get_extra_state
+   .. automethod:: ~VisionTransformer.get_parameter
+   .. automethod:: ~VisionTransformer.get_submodule
+   .. automethod:: ~VisionTransformer.half
+   .. automethod:: ~VisionTransformer.interpolate_pos_encoding
+   .. automethod:: ~VisionTransformer.ipu
+   .. automethod:: ~VisionTransformer.load_state_dict
+   .. automethod:: ~VisionTransformer.modules
+   .. automethod:: ~VisionTransformer.named_buffers
+   .. automethod:: ~VisionTransformer.named_children
+   .. automethod:: ~VisionTransformer.named_modules
+   .. automethod:: ~VisionTransformer.named_parameters
+   .. automethod:: ~VisionTransformer.parameters
+   .. automethod:: ~VisionTransformer.register_backward_hook
+   .. automethod:: ~VisionTransformer.register_buffer
+   .. automethod:: ~VisionTransformer.register_forward_hook
+   .. automethod:: ~VisionTransformer.register_forward_pre_hook
+   .. automethod:: ~VisionTransformer.register_full_backward_hook
+   .. automethod:: ~VisionTransformer.register_full_backward_pre_hook
+   .. automethod:: ~VisionTransformer.register_load_state_dict_post_hook
+   .. automethod:: ~VisionTransformer.register_module
+   .. automethod:: ~VisionTransformer.register_parameter
+   .. automethod:: ~VisionTransformer.register_state_dict_pre_hook
+   .. automethod:: ~VisionTransformer.requires_grad_
+   .. automethod:: ~VisionTransformer.set_extra_state
+   .. automethod:: ~VisionTransformer.share_memory
+   .. automethod:: ~VisionTransformer.state_dict
+   .. automethod:: ~VisionTransformer.to
+   .. automethod:: ~VisionTransformer.to_empty
+   .. automethod:: ~VisionTransformer.train
+   .. automethod:: ~VisionTransformer.type
+   .. automethod:: ~VisionTransformer.xpu
+   .. automethod:: ~VisionTransformer.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~VisionTransformer.T_destination
+   .. autoattribute:: ~VisionTransformer.call_super_init
+   .. autoattribute:: ~VisionTransformer.dump_patches
+   .. autoattribute:: ~VisionTransformer.training
+   
+   
