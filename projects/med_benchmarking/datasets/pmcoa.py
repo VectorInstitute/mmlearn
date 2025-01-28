@@ -123,9 +123,9 @@ class PMCOA(Dataset[Example]):
         tokens = self.tokenizer(caption) if self.tokenizer is not None else None
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
-                assert (
-                    Modalities.TEXT.name in tokens
-                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
+                assert Modalities.TEXT.name in tokens, (
+                    f"Missing key `{Modalities.TEXT.name}` in tokens."
+                )
                 example.update(tokens)
             else:
                 example[Modalities.TEXT.name] = tokens

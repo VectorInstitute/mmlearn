@@ -512,9 +512,9 @@ class VisionTransformerPredictor(nn.Module):
         masks: Union[torch.Tensor, list[torch.Tensor]],
     ) -> torch.Tensor:
         """Forward pass through the Vision Transformer Predictor."""
-        assert (masks is not None) and (
-            masks_x is not None
-        ), "Cannot run predictor without mask indices"
+        assert (masks is not None) and (masks_x is not None), (
+            "Cannot run predictor without mask indices"
+        )
 
         if not isinstance(masks_x, list):
             masks_x = [masks_x]

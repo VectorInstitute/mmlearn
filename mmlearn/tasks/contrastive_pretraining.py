@@ -277,9 +277,9 @@ class ContrastivePretraining(TrainingTask):
             Modalities.get_modality(modality_key)
             for modality_key in modality_encoder_mapping
         ]
-        assert (
-            len(self._available_modalities) >= 2
-        ), "Expected at least two modalities to be available. "
+        assert len(self._available_modalities) >= 2, (
+            "Expected at least two modalities to be available. "
+        )
 
         #: A :py:class:`~torch.nn.ModuleDict`, where the keys are the names of the
         #: modalities and the values are the encoder modules.
