@@ -1,33 +1,38 @@
 """Exponential Moving Average (EMA) module."""
 
 import copy
-from typing import Any, List, Optional, Set, Union
+from typing import Any, Optional, Set, Union
 
 import torch
 from lightning.fabric.utilities import rank_zero_warn
 
 
 class ExponentialMovingAverage:
-    """Exponential Moving Average (EMA) for the input 'model'.
+    """Exponential Moving Average (EMA) for the input model.
 
     At each step the parameter of the EMA model is updates as the weighted average
-    of the model's parameters. Modified version of class `fairseq.models.ema.EMAModule`.
+    of the model's parameters.
 
     Parameters
     ----------
-    model : nn.Module
+    model : torch.nn.Module
         The model to apply EMA to.
     ema_decay : float
         The initial decay value for EMA.
     ema_end_decay : float
         The final decay value for EMA.
     ema_anneal_end_step : int
-        The number of steps to anneal the decay from `ema_decay` to `ema_end_decay`.
+        The number of steps to anneal the decay from ``ema_decay`` to ``ema_end_decay``.
     device_id : Optional[Union[int, torch.device]], optional, default=None
         The device to move the model to.
-    skip_keys : Optional[Union[List[str], Set[str]]], optional, default=None
+    skip_keys : Optional[Union[list[str], Set[str]]], optional, default=None
         The keys to skip in the EMA update. These parameters will be copied directly
-        from the model to the EMA model.s
+        from the model to the EMA model.
+
+    Raises
+    ------
+    RuntimeError
+        If a deep copy of the model cannot be created.
     """
 
     def __init__(
@@ -37,7 +42,7 @@ class ExponentialMovingAverage:
         ema_end_decay: float,
         ema_anneal_end_step: int,
         device_id: Optional[Union[int, torch.device]] = None,
-        skip_keys: Optional[Union[List[str], Set[str]]] = None,
+        skip_keys: Optional[Union[list[str], Set[str]]] = None,
     ):
         self.model = self.deepcopy_model(model)
         self.model.requires_grad_(False)
@@ -45,7 +50,7 @@ class ExponentialMovingAverage:
         if device_id is not None:
             self.model.to(device_id)
 
-        self.skip_keys: Union[List[str], set[str]] = skip_keys or set()
+        self.skip_keys: Union[list[str], set[str]] = skip_keys or set()
         self.num_updates = 0
         self.decay = ema_decay  # stores the current decay value
         self.ema_decay = ema_decay
@@ -54,7 +59,23 @@ class ExponentialMovingAverage:
 
     @staticmethod
     def deepcopy_model(model: torch.nn.Module) -> torch.nn.Module:
-        """Deep copy the model."""
+        """Deep copy the model.
+
+        Parameters
+        ----------
+        model : torch.nn.Module
+            The model to copy.
+
+        Returns
+        -------
+        torch.nn.Module
+            The copied model.
+
+        Raises
+        ------
+        RuntimeError
+            If the model cannot be copied.
+        """
         try:
             return copy.deepcopy(model)
         except RuntimeError as e:
@@ -82,12 +103,12 @@ class ExponentialMovingAverage:
 
         Parameters
         ----------
-        model : nn.Module
+        model : torch.nn.Module
             Model to load weights from.
 
         Returns
         -------
-        nn.Module
+        torch.nn.Module
             model with new weights
         """
         d = self.model.state_dict()

@@ -1,7 +1,7 @@
 """IJEPA (Image Joint-Embedding Predictive Architecture) pretraining task."""
 
 from functools import partial
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import torch
 import torch.nn.functional as F  # noqa: N812
@@ -35,29 +35,30 @@ class IJEPA(TrainingTask):
         Vision transformer encoder.
     predictor : VisionTransformerPredictor
         Vision transformer predictor.
-    optimizer : partial[torch.optim.Optimizer], optional, default=None
-        The optimizer to use for training. This is expected to be a partial function,
-        created using `functools.partial`, that takes the model parameters as the
-        only required argument. If not provided, training will continue without an
-        optimizer.
-    lr_scheduler : Union[Dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]], partial[torch.optim.lr_scheduler.LRScheduler]], optional, default=None
-        The learning rate scheduler to use for training. This can be a partial function
-        that takes the optimizer as the only required argument or a dictionary with
-        a `scheduler` key that specifies the scheduler and an optional `extras` key
-        that specifies additional arguments to pass to the scheduler. If not provided,
-        the learning rate will not be adjusted during training.
-    ema_decay : float, optional
-        Initial momentum for EMA of target encoder, by default 0.996.
-    ema_decay_end : float, optional
-        Final momentum for EMA of target encoder, by default 1.0.
-    ema_anneal_end_step : int, optional
-        Number of steps to anneal EMA momentum to `ema_decay_end`, by default 1000.
+    optimizer : Optional[partial[torch.optim.Optimizer]], optional, default=None
+        The optimizer to use for training. This is expected to be a :py:func:`~functools.partial`
+        function that takes the model parameters as the only required argument.
+        If not provided, training will continue without an optimizer.
+    lr_scheduler : Optional[Union[dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]], partial[torch.optim.lr_scheduler.LRScheduler]]], optional, default=None
+        The learning rate scheduler to use for training. This can be a
+        :py:func:`~functools.partial` function that takes the optimizer as the only
+        required argument or a dictionary with a ``'scheduler'`` key that specifies
+        the scheduler and an optional ``'extras'`` key that specifies additional
+        arguments to pass to the scheduler. If not provided, the learning rate will
+        not be adjusted during training.
+    ema_decay : float, optional, default=0.996
+        Initial momentum for EMA of target encoder.
+    ema_decay_end : float, optional, default=1.0
+        Final momentum for EMA of target encoder.
+    ema_anneal_end_step : int, optional, default=1000
+        Number of steps to anneal EMA momentum to ``ema_decay_end``.
     loss_fn : Optional[Callable[[torch.Tensor, torch.Tensor], torch.Tensor]], optional
-        Loss function to use, by default None.
-    compute_validation_loss : bool, optional
-        Whether to compute validation loss, by default True.
-    compute_test_loss : bool, optional
-        Whether to compute test loss, by default True.
+        Loss function to use. If not provided, defaults to
+        :py:func:`~torch.nn.functional.smooth_l1_loss`.
+    compute_validation_loss : bool, optional, default=True
+        Whether to compute validation loss.
+    compute_test_loss : bool, optional, default=True
+        Whether to compute test loss.
     """  # noqa: W505
 
     def __init__(
@@ -68,7 +69,7 @@ class IJEPA(TrainingTask):
         optimizer: Optional[partial[torch.optim.Optimizer]] = None,
         lr_scheduler: Optional[
             Union[
-                Dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]],
+                dict[str, Union[partial[torch.optim.lr_scheduler.LRScheduler], Any]],
                 partial[torch.optim.lr_scheduler.LRScheduler],
             ]
         ] = None,
@@ -120,20 +121,59 @@ class IJEPA(TrainingTask):
         if self.ema is not None:
             self.ema.step(self.encoder)
 
-    def training_step(self, batch: Dict[str, Any], batch_idx: int) -> torch.Tensor:
-        """Perform a single training step."""
+    def training_step(self, batch: dict[str, Any], batch_idx: int) -> torch.Tensor:
+        """Perform a single training step.
+
+        Parameters
+        ----------
+        batch : dict[str, Any]
+            A batch of data.
+        batch_idx : int
+            Index of the batch.
+
+        Returns
+        -------
+        torch.Tensor
+            Loss value.
+        """
         return self._shared_step(batch, batch_idx, step_type="train")
 
     def validation_step(
-        self, batch: Dict[str, Any], batch_idx: int
+        self, batch: dict[str, Any], batch_idx: int
     ) -> Optional[torch.Tensor]:
-        """Run a single validation step."""
+        """Run a single validation step.
+
+        Parameters
+        ----------
+        batch : dict[str, Any]
+            A batch of data.
+        batch_idx : int
+            Index of the batch.
+
+        Returns
+        -------
+        Optional[torch.Tensor]
+            Loss value or ``None`` if no loss is computed.
+        """
         return self._shared_step(batch, batch_idx, step_type="val")
 
     def test_step(
-        self, batch: Dict[str, Any], batch_idx: int
+        self, batch: dict[str, Any], batch_idx: int
     ) -> Optional[torch.Tensor]:
-        """Run a single test step."""
+        """Run a single test step.
+
+        Parameters
+        ----------
+        batch : dict[str, Any]
+            A batch of data.
+        batch_idx : int
+            Index of the batch.
+
+        Returns
+        -------
+        Optional[torch.Tensor]
+            Loss value or ``None`` if no loss is computed
+        """
         return self._shared_step(batch, batch_idx, step_type="test")
 
     def on_validation_epoch_start(self) -> None:
@@ -152,12 +192,12 @@ class IJEPA(TrainingTask):
         """Actions at the end of the test epoch."""
         self._on_eval_epoch_end("test")
 
-    def on_save_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+    def on_save_checkpoint(self, checkpoint: dict[str, Any]) -> None:
         """Add relevant EMA state to the checkpoint.
 
         Parameters
         ----------
-        checkpoint : Dict[str, Any]
+        checkpoint : dict[str, Any]
             The state dictionary to save the EMA state to.
         """
         if self.ema is not None:
@@ -166,12 +206,12 @@ class IJEPA(TrainingTask):
                 "num_updates": self.ema.num_updates,
             }
 
-    def on_load_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+    def on_load_checkpoint(self, checkpoint: dict[str, Any]) -> None:
         """Restore EMA state from the checkpoint.
 
         Parameters
         ----------
-        checkpoint : Dict[str, Any]
+        checkpoint : dict[str, Any]
             The state dictionary to restore the EMA state from.
         """
         if "ema_params" in checkpoint and self.ema is not None:
@@ -182,7 +222,7 @@ class IJEPA(TrainingTask):
             self.ema.restore(self.encoder)
 
     def _shared_step(
-        self, batch: Dict[str, Any], batch_idx: int, step_type: str
+        self, batch: dict[str, Any], batch_idx: int, step_type: str
     ) -> Optional[torch.Tensor]:
         images = batch[self.modality.name]
 

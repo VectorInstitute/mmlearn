@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Dict, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import torch
 from omegaconf import MISSING
@@ -60,7 +60,7 @@ class LC25000(Dataset[Example]):
         return "LC25000_colon"
 
     @property
-    def id2label(self) -> Dict[int, str]:
+    def id2label(self) -> dict[int, str]:
         """Return the label mapping."""
         if self.organ == "lung":
             return {

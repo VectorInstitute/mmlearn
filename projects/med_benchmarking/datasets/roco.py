@@ -1,7 +1,7 @@
 """ROCO Dataset."""
 
 import os
-from typing import Callable, Dict, Literal, Optional, Union
+from typing import Callable, Literal, Optional, Union
 
 import pandas as pd
 import torch
@@ -47,7 +47,7 @@ class ROCO(Dataset[Example]):
         group: Literal["radiology", "non-radiology"] = "radiology",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
+            Callable[[str], Union[torch.Tensor, dict[str, torch.Tensor]]]
         ] = None,
         processor: Optional[
             Callable[[Image.Image, str], tuple[torch.Tensor, torch.Tensor]]
@@ -100,9 +100,9 @@ class ROCO(Dataset[Example]):
 
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
-                assert (
-                    Modalities.TEXT.name in tokens
-                ), f"Missing key `{Modalities.TEXT.name}` in tokens."
+                assert Modalities.TEXT.name in tokens, (
+                    f"Missing key `{Modalities.TEXT.name}` in tokens."
+                )
                 example.update(tokens)
             else:
                 example[Modalities.TEXT.name] = tokens

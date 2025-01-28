@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Dict, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import numpy as np
 import torch
@@ -94,7 +94,7 @@ class MedMNISTPlus(Dataset[Example]):
         )
 
     @property
-    def id2label(self) -> Dict[int, str]:  # noqa: PLR0911
+    def id2label(self) -> dict[int, str]:  # noqa: PLR0911
         """Return the label mapping based on the dataset name."""
         if self.name == "pathmnist":
             return {

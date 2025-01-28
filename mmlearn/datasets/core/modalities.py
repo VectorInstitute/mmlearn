@@ -13,7 +13,7 @@ _DEFAULT_SUPPORTED_MODALITIES = ["rgb", "depth", "thermal", "text", "audio", "vi
 
 @dataclass
 class Modality:
-    """Class to represent a modality in the library.
+    """A representation of a modality in the library.
 
     This class is used to represent a modality in the library. It contains the name of
     the modality and the properties that can be associated with it. The properties are
@@ -34,13 +34,31 @@ class Modality:
         invalid.
     """
 
+    #: The name of the modality.
     name: str
+
+    #: Target/label associated with the modality. This will return ``name_target``.
     target: str = field(init=False, repr=False)
+
+    #: Attention mask associated with the modality. This will return
+    # ``name_attention_mask``.
     attention_mask: str = field(init=False, repr=False)
+
+    #: Input mask associated with the modality. This will return ``name_mask``.
     mask: str = field(init=False, repr=False)
+
+    #: Embedding associated with the modality. This will return ``name_embedding``.
     embedding: str = field(init=False, repr=False)
+
+    #: Masked embedding associated with the modality. This will return
+    # ``name_masked_embedding``.
     masked_embedding: str = field(init=False, repr=False)
+
+    #: Embedding from an Exponential Moving Average (EMA) encoder associated with
+    #: the modality.
     ema_embedding: str = field(init=False, repr=False)
+
+    #: Other properties specific to the modality.
     modality_specific_properties: Optional[dict[str, str]] = field(
         default=None, repr=False
     )

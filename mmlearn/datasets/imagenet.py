@@ -1,7 +1,7 @@
 """ImageNet dataset."""
 
 import os
-from typing import Any, Callable, Dict, Literal, Optional
+from typing import Any, Callable, Literal, Optional
 
 from hydra_zen import MISSING, store
 from torchvision.datasets.folder import ImageFolder
@@ -19,8 +19,8 @@ from mmlearn.datasets.core.example import Example
 class ImageNet(ImageFolder):
     """ImageNet dataset.
 
-    This is a wrapper around `torchvision.datasets.ImageFolder` that returns a
-    `dataset.example.Example` object.
+    This is a wrapper around the :py:class:`~torchvision.datasets.ImageFolder` class
+    that returns an :py:class:`~mmlearn.datasets.core.example.Example` object.
 
     Parameters
     ----------
@@ -28,13 +28,13 @@ class ImageNet(ImageFolder):
         Path to the root directory of the dataset.
     split : {"train", "val"}, default="train"
         The split of the dataset to use.
-    transform : Callable, optional, default=None
-        A function/transform that takes in an PIL image and returns a transformed
-        version.
-    target_transform : Callable, optional, default=None
-        A function/transform that takes in the target and transforms it.
-    mask_generator : Optional[Callable[..., Any]], optional, default=None
-        Generator for the mask.
+    transform : Optional[Callable], optional, default=None
+        A callable that takes in a PIL image and returns a transformed version
+        of the image as a PyTorch tensor.
+    target_transform : Optional[Callable], optional, default=None
+        A callable that takes in the target and transforms it.
+    mask_generator : Optional[Callable], optional, default=None
+        A callable that generates a mask for the image.
     """
 
     def __init__(
@@ -45,7 +45,6 @@ class ImageNet(ImageFolder):
         target_transform: Optional[Callable[..., Any]] = None,
         mask_generator: Optional[Callable[..., Any]] = None,
     ) -> None:
-        """Initialize the dataset."""
         split = "train" if split == "train" else "val"
         root_dir = os.path.join(root_dir, split)
         super().__init__(
@@ -155,7 +154,7 @@ class ImageNet(ImageFolder):
         ]
 
     @property
-    def id2label(self) -> Dict[int, str]:
+    def id2label(self) -> dict[int, str]:
         """Return the label mapping."""
         return {
             0: "tench",

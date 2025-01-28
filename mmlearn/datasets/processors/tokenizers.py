@@ -1,6 +1,6 @@
 """Tokenizers - modules that convert raw input to sequences of tokens."""
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 import torch
 from hydra_zen import store
@@ -12,28 +12,29 @@ from mmlearn.datasets.core import Modalities
 
 @store(group="datasets/tokenizers", provider="mmlearn")
 class HFTokenizer:
-    """HuggingFace tokenizer wrapper.
+    """A wrapper for loading HuggingFace tokenizers.
 
     This class wraps any huggingface tokenizer that can be initialized with
-    `AutoTokenizer.from_pretrained`. It preprocesses the input text and returns
-    the tokenized output.
+    :py:meth:`transformers.AutoTokenizer.from_pretrained`. It preprocesses the
+    input text and returns a dictionary with the tokenized text and other
+    relevant information like attention masks.
 
     Parameters
     ----------
     model_name_or_path : str
-        Pretrained model name or path - same as in `AutoTokenizer.from_pretrained`.
-    max_length : int, optional, default=None
+        Pretrained model name or path - same as in :py:meth:`transformers.AutoTokenizer.from_pretrained`.
+    max_length : Optional[int], optional, default=None
         Maximum length of the tokenized sequence. This is passed to the tokenizer
-        `__call__` method.
+        :meth:`__call__` method.
     padding : bool or str, default=False
-        Padding strategy. Same as in `AutoTokenizer.from_pretrained`; passed to
-        the tokenizer `__call__` method.
-    truncation : bool or str, optional, default=None
-        Truncation strategy. Same as in `AutoTokenizer.from_pretrained`; passed to
-        the tokenizer `__call__` method.
+        Padding strategy. Same as in :py:meth:`transformers.AutoTokenizer.from_pretrained`;
+        passed to the tokenizer :meth:`__call__` method.
+    truncation : Optional[Union[bool, str]], optional, default=None
+        Truncation strategy. Same as in :py:meth:`transformers.AutoTokenizer.from_pretrained`;
+        passed to the tokenizer :meth:`__call__` method.
     **kwargs : Any
-        Additional arguments passed to `AutoTokenizer.from_pretrained`.
-    """
+        Additional arguments passed to :py:meth:`transformers.AutoTokenizer.from_pretrained`.
+    """  # noqa: W505
 
     def __init__(
         self,
@@ -49,25 +50,25 @@ class HFTokenizer:
         self.truncation = truncation
 
     def __call__(
-        self, sentence: Union[str, List[str]], **kwargs: Any
-    ) -> Dict[str, torch.Tensor]:
+        self, sentence: Union[str, list[str]], **kwargs: Any
+    ) -> dict[str, torch.Tensor]:
         """Tokenize a text or a list of texts using the HuggingFace tokenizer.
 
         Parameters
         ----------
-        sentence : str or list of str
+        sentence : Union[str, list[str]]
             Sentence(s) to be tokenized.
         **kwargs : Any
-            Additional arguments passed to the tokenizer `__call__` method.
+            Additional arguments passed to the tokenizer :meth:`__call__` method.
 
         Returns
         -------
-        Dict[str, torch.Tensor]
+        dict[str, torch.Tensor]
             Tokenized sentence(s).
 
         Notes
         -----
-        The 'input_ids' key is replaced with 'Modalities.TEXT' for consistency.
+        The ``input_ids`` key is replaced with ``Modalities.TEXT`` for consistency.
         """
         batch_encoding = self.tokenizer(
             sentence,
@@ -100,35 +101,6 @@ store(
 )
 
 
-def patchify(batch: torch.Tensor, patch_size: Tuple[int, int]) -> torch.Tensor:
-    """Patchify a batch of images.
-
-    Parameters
-    ----------
-    batch : torch.Tensor
-        Batch of images.
-    patch_size : tuple of int
-        The size of the patch.
-
-    Returns
-    -------
-    torch.Tensor
-        Patchified batch.
-
-    Notes
-    -----
-    - Input shape: (b, h, w, c)
-    - Output shape: (b, nh, nw, ph, pw, c)
-
-    """
-    b, c, h, w = batch.shape
-    ph, pw = patch_size
-    nh, nw = h // ph, w // pw
-
-    batch_patches = torch.reshape(batch, (b, c, nh, ph, nw, pw))
-    return torch.permute(batch_patches, (0, 1, 2, 4, 3, 5))
-
-
 class Img2Seq(nn.Module):
     """Convert a batch of images to a batch of sequences.
 
@@ -143,21 +115,15 @@ class Img2Seq(nn.Module):
     d_model : int
         The dimension of the output sequence.
 
-    Notes
-    -----
-    - Input shape: (b, h, w, c)
-    - Output shape: (b, s, d)
-
     """
 
     def __init__(
         self,
-        img_size: Tuple[int, int],
-        patch_size: Tuple[int, int],
+        img_size: tuple[int, int],
+        patch_size: tuple[int, int],
         n_channels: int,
         d_model: int,
     ) -> None:
-        """Initialize the Img2Seq module."""
         super().__init__()
         self.patch_size = patch_size
         self.img_size = img_size
@@ -171,8 +137,23 @@ class Img2Seq(nn.Module):
         self.pos_emb = nn.Parameter(torch.randn(n_tokens, d_model))
 
     def __call__(self, batch: torch.Tensor) -> torch.Tensor:
-        """Convert a batch of images to a batch of sequences."""
-        batch = patchify(batch, self.patch_size)
+        """Convert a batch of images to a batch of sequences.
+
+        Parameters
+        ----------
+        batch : torch.Tensor
+            Batch of images of shape ``(b, h, w, c)`` where ``b`` is the batch size,
+            ``h`` is the height, ``w`` is the width, and ``c`` is the number of
+            channels.
+
+        Returns
+        -------
+        torch.Tensor
+            Batch of sequences of shape ``(b, s, d)`` where ``b`` is the batch size,
+            ``s`` is the sequence length, and ``d`` is the dimension of the output
+            sequence.
+        """
+        batch = _patchify(batch, self.patch_size)
 
         b, c, nh, nw, ph, pw = batch.shape
 
@@ -185,3 +166,32 @@ class Img2Seq(nn.Module):
         emb: torch.Tensor = batch + self.pos_emb
 
         return torch.cat([cls, emb], axis=1)
+
+
+def _patchify(batch: torch.Tensor, patch_size: tuple[int, int]) -> torch.Tensor:
+    """Patchify a batch of images.
+
+    This is useful for Vision Transformers.
+
+    Parameters
+    ----------
+    batch : torch.Tensor
+        Batch of images of shape ``(b, h, w, c)`` where ``b`` is the batch size,
+        ``h`` is the height, ``w`` is the width, and ``c`` is the number of channels.
+    patch_size : tuple of int
+        The size of the patch.
+
+    Returns
+    -------
+    torch.Tensor
+        Patchified batch of shape ``(b, nh, nw, ph, pw, c)`` where ``nh`` and ``nw``
+        are the number of patches in the height and width directions, respectively,
+        and ``ph`` and ``pw`` are the height and width of the patches, respectively.
+
+    """
+    b, c, h, w = batch.shape
+    ph, pw = patch_size
+    nh, nw = h // ph, w // pw
+
+    batch_patches = torch.reshape(batch, (b, c, nh, ph, nw, pw))
+    return torch.permute(batch_patches, (0, 1, 2, 4, 3, 5))

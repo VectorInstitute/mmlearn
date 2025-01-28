@@ -14,9 +14,9 @@ from mmlearn.datasets.core.example import Example
 class CombinedDataset(Dataset[Example]):
     """Combine multiple datasets into one.
 
-    This class is similar to `torch.utils.data.ConcatDataset` but allows for
-    combining iterable-style datasets with map-style datasets. The iterable-style
-    datasets must implement the `__len__` method, which is used to determine the
+    This class is similar to :py:class:`~torch.utils.data.ConcatDataset` but allows
+    for combining iterable-style datasets with map-style datasets. The iterable-style
+    datasets must implement the :meth:`__len__` method, which is used to determine the
     total length of the combined dataset. When an index is passed to the combined
     dataset, the dataset that contains the example at that index is determined and
     the example is retrieved from that dataset. Since iterable-style datasets do
@@ -28,15 +28,22 @@ class CombinedDataset(Dataset[Example]):
 
     Parameters
     ----------
-    datasets : Iterable[Union[Dataset, IterableDataset]]
+    datasets : Iterable[Union[torch.utils.data.Dataset, torch.utils.data.IterableDataset]]
         Iterable of datasets to combine.
 
-    """
+    Raises
+    ------
+    TypeError
+        If any of the datasets in the input iterable are not instances of
+        :py:class:`~torch.utils.data.Dataset` or :py:class:`~torch.utils.data.IterableDataset`.
+    ValueError
+        If the input iterable of datasets is empty.
+
+    """  # noqa: W505
 
     def __init__(
         self, datasets: Iterable[Union[Dataset[Example], IterableDataset[Example]]]
     ) -> None:
-        """Initialize the combined dataset."""
         self.datasets, _ = tree_flatten(datasets)
         if not all(
             isinstance(dataset, (Dataset, IterableDataset)) for dataset in self.datasets
@@ -50,7 +57,7 @@ class CombinedDataset(Dataset[Example]):
                 "Expected a non-empty iterable of datasets but found an empty iterable",
             )
 
-        self.cumulative_sizes: list[int] = np.cumsum(
+        self._cumulative_sizes: list[int] = np.cumsum(
             [len(dataset) for dataset in self.datasets]
         ).tolist()
         self._iterators: list[Iterator[Example]] = []
@@ -72,7 +79,7 @@ class CombinedDataset(Dataset[Example]):
                 )
             idx = len(self) + idx
 
-        dataset_idx = bisect.bisect_right(self.cumulative_sizes, idx)
+        dataset_idx = bisect.bisect_right(self._cumulative_sizes, idx)
 
         curr_dataset = self.datasets[dataset_idx]
         if isinstance(curr_dataset, IterableDataset):
@@ -86,7 +93,7 @@ class CombinedDataset(Dataset[Example]):
             if dataset_idx == 0:
                 example_idx = idx
             else:
-                example_idx = idx - self.cumulative_sizes[dataset_idx - 1]
+                example_idx = idx - self._cumulative_sizes[dataset_idx - 1]
             example = curr_dataset[example_idx]
 
         if not isinstance(example, Example):
@@ -104,4 +111,4 @@ class CombinedDataset(Dataset[Example]):
 
     def __len__(self) -> int:
         """Return the total number of examples in the combined dataset."""
-        return self.cumulative_sizes[-1]
+        return self._cumulative_sizes[-1]

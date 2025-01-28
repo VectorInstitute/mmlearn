@@ -30,17 +30,17 @@ def linear_warmup_cosine_annealing_lr(
     Parameters
     ----------
     optimizer : Optimizer
-        Wrapped optimizer.
+        The optimizer for which to schedule the learning rate.
     warmup_steps : int
         Maximum number of iterations for linear warmup.
     max_steps : int
         Maximum number of iterations.
-    start_factor : float, default=1/3
+    start_factor : float, optional, default=1/3
         Multiplicative factor for the learning rate at the start of the warmup phase.
-    eta_min : float, default=0
+    eta_min : float, optional, default=0
         Minimum learning rate.
-    last_epoch : int, default=-1
-        The index of last epoch. If set to -1, it initializes the learning rate
+    last_epoch : int, optional, default=-1
+        The index of last epoch. If set to ``-1``, it initializes the learning rate
         as the base learning rate
 
     Returns

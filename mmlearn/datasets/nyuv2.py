@@ -1,7 +1,7 @@
 """SUN RGB-D dataset."""
 
 import os
-from typing import Callable, List, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import numpy as np
 import torch
@@ -35,21 +35,15 @@ _LABELS = [
 ]
 
 
-def text_labels() -> List[str]:
-    """Return a list of the CheXpert dataset's textual labels."""
-    return _LABELS
-
-
 def depth_normalize(
     depth_file: str, min_depth: float = 0.01, max_depth: int = 50
 ) -> torch.Tensor:
-    """Load depth file and convert to disparity.
+    """Load depth file and convert to disparity image.
 
     Parameters
     ----------
     depth_file : str
         Path to the depth file.
-        Sensor type of the depth file.
     min_depth : float, default=0.01
         Minimum depth value to clip the depth image.
     max_depth : int, default=50
@@ -58,7 +52,7 @@ def depth_normalize(
     Returns
     -------
     torch.Tensor
-        Normalized depth image.
+        The normalized depth image.
     """
     depth_image = np.array(PILImage.open(depth_file))
     depth = np.array(depth_image).astype(np.float32)
@@ -87,12 +81,20 @@ class NYUv2Dataset(Dataset[Example]):
         Split of the dataset to use.
     return_type : {"disparity", "image"}, default="disparity"
         Return type of the depth images.
-        Disparity: Return the depth image as disparity map.
-        Image: Return the depth image as a 3-channel image.
-    rgb_transform: Optional[Callable[[PILImage], torch.Tensor]], default=None
-        Transform to apply to the RGB images.
-    depth_transform: Optional[Callable[[PILImage], torch.Tensor]], default=None
-        Transform to apply to the depth images.
+
+        - `"disparity"`: Return the depth image as disparity map.
+        - `"image"`: Return the depth image as a 3-channel image.
+    rgb_transform: Callable[[PIL.Image], torch.Tensor], default=None
+       A callable that takes in an RGB PIL image and returns a transformed version
+       of the image as a PyTorch tensor.
+    depth_transform: Callable[[PIL.Image], torch.Tensor], default=None
+        A callable that takes in a depth PIL image and returns a transformed version
+        of the image as a PyTorch tensor.
+
+    Raises
+    ------
+    ImportError
+        If `opencv-python` is not installed.
     """
 
     def __init__(

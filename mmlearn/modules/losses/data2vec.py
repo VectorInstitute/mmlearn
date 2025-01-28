@@ -16,12 +16,17 @@ class Data2VecLoss(nn.Module):
     Parameters
     ----------
     beta : float, optional, default=0
-        Specifies the beta parameter for smooth L1 loss. If 0, MSE loss is used.
-    loss_scale : float or None, optional, default=None
-        Scaling factor for the loss. If None, uses 1 / sqrt(embedding_dim).
+        Specifies the beta parameter for smooth L1 loss. If ``0``, MSE loss is used.
+    loss_scale : Optional[float], optional, default=None
+        Scaling factor for the loss. If None, uses ``1 / sqrt(embedding_dim)``.
     reduction : str, optional, default='none'
         Specifies the reduction to apply to the output:
         ``'none'`` | ``'mean'`` | ``'sum'``.
+
+    Raises
+    ------
+    ValueError
+        If the reduction mode is not supported.
     """
 
     def __init__(
@@ -30,7 +35,6 @@ class Data2VecLoss(nn.Module):
         loss_scale: Optional[float] = None,
         reduction: str = "none",
     ) -> None:
-        """Initialize the loss."""
         super().__init__()
         self.beta = beta
         self.loss_scale = loss_scale
@@ -43,10 +47,10 @@ class Data2VecLoss(nn.Module):
 
         Parameters
         ----------
-        x : torch.Tensor of shape (batch_size, num_patches, embedding_dim)
-            Predicted embeddings.
-        y : torch.Tensor of shape (batch_size, num_patches, embedding_dim)
-            Target embeddings.
+        x : torch.Tensor
+            Predicted embeddings of shape ``(batch_size, num_patches, embedding_dim)``.
+        y : torch.Tensor
+            Target embeddings of shape ``(batch_size, num_patches, embedding_dim)``.
 
         Returns
         -------

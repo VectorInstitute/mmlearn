@@ -11,14 +11,15 @@ from lightning.fabric.utilities import rank_zero_warn
 class Example(OrderedDict[Any, Any]):
     """A representation of a single example from a dataset.
 
-    This class is a subclass of `OrderedDict` and provides attribute-style access.
-    This means that `example["text"]` and `example.text` are equivalent.
-    All datasets in this library return examples as `Example` objects.
+    This class is a subclass of :py:class:`~collections.OrderedDict` and provides
+    attribute-style access. This means that `example["text"]` and `example.text`
+    are equivalent. All datasets in this library return examples as
+    :py:class:`~mmlearn.datasets.core.example.Example` objects.
 
 
     Parameters
     ----------
-    init_dict : Mapping[str, Any], optional, default=None
+    init_dict : Optional[MutableMapping[Hashable, Any]], optional, default=None
         Dictionary to init `Example` class with.
 
     Examples
@@ -33,7 +34,6 @@ class Example(OrderedDict[Any, Any]):
         self,
         init_dict: Optional[MutableMapping[Hashable, Any]] = None,
     ) -> None:
-        """Initialize a `Example` object."""
         if init_dict is None:
             init_dict = {}
         super().__init__(init_dict)
@@ -41,19 +41,27 @@ class Example(OrderedDict[Any, Any]):
     def create_ids(self) -> None:
         """Create a unique id for the example from the dataset and example index.
 
-        The example id is a tensor of shape `(2,)` (or a tuple) that contains the
-        dataset index and example index. It can be used to (re-)identify pairs of
-        examples from different modalities.
-        The example must have the `example_index` (usually set/returned by the dataset)
-        and `dataset_index` (usually set by the `dataset.combined_dataset.CombinedDataset`
-        object) attributes set before calling this method.
-        The matching example ids can be found using the `dataset.example.find_matching_indices`
-        method.
+        This method combines the dataset index and example index to create an
+        attribute called `example_ids`, which is a dictionary of tensors. The
+        dictionary keys are all the keys in the example except for `example_ids`,
+        `example_index`, and `dataset_index`. The values are tensors of shape `(2,)`
+        containing the tuple `(dataset_index, example_index)` for each key.
+        The `example_ids` is used to (re-)identify pairs of examples from different
+        modalities after they have been combined into a batch.
 
         Warns
         -----
         UserWarning
             If the `example_index` and `dataset_index` attributes are not set.
+
+        Notes
+        -----
+        - The Example must have the following attributes set before calling this
+          this method: `example_index` (usually set/returned by the dataset) and
+          `dataset_index` (usually set by the :py:class:`~mmlearn.datasets.core.combined_dataset.CombinedDataset` object)
+        - The :py:func:`~mmlearn.datasets.core.example.find_matching_indices`
+          function can be used to find matching examples given two tensors of example ids.
+
         """  # noqa: W505
         if hasattr(self, "example_index") and hasattr(self, "dataset_index"):
             self.example_ids = {
@@ -91,8 +99,7 @@ class Example(OrderedDict[Any, Any]):
 
 
 def find_matching_indices(
-    first_example_ids: torch.Tensor,
-    second_example_ids: torch.Tensor,
+    first_example_ids: torch.Tensor, second_example_ids: torch.Tensor
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Find the indices of matching examples given two tensors of example ids.
 

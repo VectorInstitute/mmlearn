@@ -1,14 +1,13 @@
 """Attention modules for Vision Transformer (ViT) and related models."""
 
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 from torch import nn
 
 
 class Attention(nn.Module):
-    """
-    Multi-head Self-Attention Mechanism.
+    """Multi-head Self-Attention Mechanism.
 
     Parameters
     ----------
@@ -45,8 +44,19 @@ class Attention(nn.Module):
         self.proj = nn.Linear(dim, dim)
         self.proj_drop = nn.Dropout(proj_drop)
 
-    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Forward pass through the multi-head self-attention module."""
+    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Forward pass through the multi-head self-attention module.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            Input tensor of shape ``(batch_sz, seq_len, dim)``.
+
+        Returns
+        -------
+        tuple[torch.Tensor, torch.Tensor]
+            The output tensor and the attention weights.
+        """
         b, n, c = x.shape
         qkv = (
             self.qkv(x)

@@ -2,7 +2,7 @@
 
 import math
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Optional, Union, cast
 
 import timm
 import torch
@@ -15,10 +15,7 @@ from transformers.modeling_outputs import BaseModelOutput
 from mmlearn import hf_utils
 from mmlearn.datasets.core.modalities import Modalities
 from mmlearn.datasets.processors.masking import apply_masks
-from mmlearn.datasets.processors.transforms import (
-    repeat_interleave_batch,
-    trunc_normal_,
-)
+from mmlearn.datasets.processors.transforms import repeat_interleave_batch
 from mmlearn.modules.layers.embedding import PatchEmbed, get_2d_sincos_pos_embed
 from mmlearn.modules.layers.transformer_block import Block
 
@@ -43,13 +40,14 @@ class TimmViT(nn.Module):
         The dimension of the projection head.
     pretrained : bool, default=True
         Whether to use the pretrained weights.
-    freeze_layers : Union[int, float, List[int], bool], default=False
+    freeze_layers : Union[int, float, list[int], bool], default=False
         Whether to freeze the layers.
     freeze_layer_norm : bool, default=True
         Whether to freeze the layer norm.
-    peft_config : Optional[PeftConfig], default=None
-        The PEFT configuration.
-    model_kwargs : Optional[Dict[str, Any]], default=None
+    peft_config : Optional[PeftConfig], optional, default=None
+        The configuration from the `peft <https://huggingface.co/docs/peft/index>`_
+        library to use to wrap the model for parameter-efficient finetuning.
+    model_kwargs : Optional[dict[str, Any]], default=None
         Additional keyword arguments for the model.
     """
 
@@ -59,12 +57,11 @@ class TimmViT(nn.Module):
         modality: str = "RGB",
         projection_dim: int = 768,
         pretrained: bool = True,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
         peft_config: Optional[PeftConfig] = None,
-        model_kwargs: Optional[Dict[str, Any]] = None,
+        model_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
-        """Initialize the Vision Transformer model."""
         super().__init__()
         self.modality = Modalities.get_modality(modality)
         if model_kwargs is None:
@@ -87,13 +84,13 @@ class TimmViT(nn.Module):
             self.model = hf_utils._wrap_peft_model(self.model, peft_config)
 
     def _freeze_layers(
-        self, freeze_layers: Union[int, float, List[int], bool], freeze_layer_norm: bool
+        self, freeze_layers: Union[int, float, list[int], bool], freeze_layer_norm: bool
     ) -> None:
         """Freeze the layers of the model.
 
         Parameters
         ----------
-        freeze_layers : Union[int, float, List[int], bool]
+        freeze_layers : Union[int, float, list[int], bool]
             Whether to freeze the layers.
         freeze_layer_norm : bool
             Whether to freeze the layer norm.
@@ -118,13 +115,14 @@ class TimmViT(nn.Module):
                             (not freeze_layer_norm) if "norm" in name else False
                         )
 
-    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
+    def forward(self, inputs: dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The `image` will be expected under the `Modalities.RGB` key.
+        inputs : dict[str, Any]
+            The input data. The ``image`` will be expected under the
+            ``Modalities.RGB`` key.
 
         Returns
         -------
@@ -142,30 +140,31 @@ class TimmViT(nn.Module):
         )
 
     def get_intermediate_layers(
-        self, inputs: Dict[str, Any], n: int = 1
-    ) -> List[torch.Tensor]:
+        self, inputs: dict[str, Any], n: int = 1
+    ) -> list[torch.Tensor]:
         """Get the output of the intermediate layers.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The `image` will be expected under the `Modalities.RGB` key.
+        inputs : dict[str, Any]
+            The input data. The ``image`` will be expected under the ``Modalities.RGB``
+            key.
         n : int, default=1
             The number of intermediate layers to return.
 
         Returns
         -------
-        List[torch.Tensor]
+        list[torch.Tensor]
             The outputs of the last n intermediate layers.
         """
         return self.model.get_intermediate_layers(inputs[Modalities.RGB], n)  # type: ignore
 
-    def get_patch_info(self) -> Tuple[int, int]:
+    def get_patch_info(self) -> tuple[int, int]:
         """Get patch size and number of patches.
 
         Returns
         -------
-        Tuple[int, int]
+        tuple[int, int]
             Patch size and number of patches.
         """
         patch_size = self.model.patch_embed.patch_size[0]
@@ -192,12 +191,8 @@ class VisionTransformer(nn.Module):
         Number of input channels.
     embed_dim : int, optional, default=768
         Embedding dimension.
-    predictor_embed_dim : int, optional, default=384
-        Embedding dimension for the predictor.
     depth : int, optional, default=12
         Number of transformer blocks.
-    predictor_depth : int, optional, default=12
-        Number of transformer blocks in the predictor.
     num_heads : int, optional, default=12
         Number of attention heads.
     mlp_ratio : float, optional, default=4.0
@@ -212,7 +207,7 @@ class VisionTransformer(nn.Module):
         Dropout rate for the attention mechanism.
     drop_path_rate : float, optional, default=0.0
         Dropout rate for stochastic depth.
-    norm_layer : Callable[..., nn.Module], optional, default=nn.LayerNorm
+    norm_layer : Callable[..., torch.nn.Module], optional, default=torch.nn.LayerNorm
         Normalization layer to use.
     init_std : float, optional, default=0.02
         Standard deviation for weight initialization.
@@ -223,13 +218,11 @@ class VisionTransformer(nn.Module):
     def __init__(
         self,
         modality: str = "RGB",
-        img_size: Optional[List[int]] = None,
+        img_size: Optional[list[int]] = None,
         patch_size: int = 16,
         in_chans: int = 3,
         embed_dim: int = 768,
-        predictor_embed_dim: int = 384,
         depth: int = 12,
-        predictor_depth: int = 12,
         num_heads: int = 12,
         mlp_ratio: float = 4.0,
         qkv_bias: bool = True,
@@ -241,7 +234,6 @@ class VisionTransformer(nn.Module):
         init_std: float = 0.02,
         **kwargs: Any,
     ) -> None:
-        """Initialize the Vision Transformer module."""
         super().__init__()
         self.modality = Modalities.get_modality(modality)
         self.num_features = self.embed_dim = embed_dim
@@ -307,20 +299,20 @@ class VisionTransformer(nn.Module):
     def _init_weights(self, m: nn.Module) -> None:
         """Initialize weights for the layers."""
         if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
             nn.init.constant_(m.weight, 1.0)
         elif isinstance(m, nn.Conv2d):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
     def forward(
-        self, inputs: Dict[str, Any], return_hidden_states: bool = False
-    ) -> Tuple[torch.Tensor, Optional[List[torch.Tensor]]]:
+        self, inputs: dict[str, Any], return_hidden_states: bool = False
+    ) -> tuple[torch.Tensor, Optional[list[torch.Tensor]]]:
         """Forward pass through the Vision Transformer."""
         masks = inputs.get(self.modality.mask)
         if masks is not None and not isinstance(masks, list):
@@ -339,7 +331,7 @@ class VisionTransformer(nn.Module):
             x = apply_masks(x, masks)
 
         # -- Initialize a list to store hidden states
-        hidden_states: Optional[List[torch.Tensor]] = (
+        hidden_states: Optional[list[torch.Tensor]] = (
             [] if return_hidden_states else None
         )
 
@@ -361,8 +353,7 @@ class VisionTransformer(nn.Module):
     def interpolate_pos_encoding(
         self, x: torch.Tensor, pos_embed: torch.Tensor
     ) -> torch.Tensor:
-        """
-        Interpolate positional encoding to match the size of the input tensor.
+        """Interpolate positional encoding to match the size of the input tensor.
 
         Parameters
         ----------
@@ -424,7 +415,7 @@ class VisionTransformerPredictor(nn.Module):
         Dropout rate for the attention mechanism.
     drop_path_rate : float, optional, default=0.0
         Dropout rate for stochastic depth.
-    norm_layer : Callable[..., nn.Module], optional, default=nn.LayerNorm
+    norm_layer : Callable[..., torch.nn.Module], optional, default=torch.nn.LayerNorm
         Normalization layer to use.
     init_std : float, optional, default=0.02
         Standard deviation for weight initialization.
@@ -449,7 +440,6 @@ class VisionTransformerPredictor(nn.Module):
         init_std: float = 0.02,
         **kwargs: Any,
     ) -> None:
-        """Initialize the Vision Transformer Predictor module."""
         super().__init__()
         self.num_patches = num_patches
         self.embed_dim = embed_dim
@@ -497,7 +487,7 @@ class VisionTransformerPredictor(nn.Module):
 
         # Weight Initialization
         self.init_std = init_std
-        trunc_normal_(self.mask_token, std=self.init_std)
+        _trunc_normal(self.mask_token, std=self.init_std)
         self.apply(self._init_weights)
 
     def fix_init_weight(self) -> None:
@@ -513,27 +503,27 @@ class VisionTransformerPredictor(nn.Module):
     def _init_weights(self, m: nn.Module) -> None:
         """Initialize weights for the layers."""
         if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
             nn.init.constant_(m.weight, 1.0)
         elif isinstance(m, nn.Conv2d):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
     def forward(
         self,
         x: torch.Tensor,
-        masks_x: Union[torch.Tensor, List[torch.Tensor]],
-        masks: Union[torch.Tensor, List[torch.Tensor]],
+        masks_x: Union[torch.Tensor, list[torch.Tensor]],
+        masks: Union[torch.Tensor, list[torch.Tensor]],
     ) -> torch.Tensor:
         """Forward pass through the Vision Transformer Predictor."""
-        assert (masks is not None) and (
-            masks_x is not None
-        ), "Cannot run predictor without mask indices"
+        assert (masks is not None) and (masks_x is not None), (
+            "Cannot run predictor without mask indices"
+        )
 
         if not isinstance(masks_x, list):
             masks_x = [masks_x]
@@ -570,6 +560,79 @@ class VisionTransformerPredictor(nn.Module):
         # -- Return predictions for mask tokens
         x = x[:, n_ctxt:]
         return self.predictor_proj(x)
+
+
+def _trunc_normal(
+    tensor: torch.Tensor,
+    mean: float = 0.0,
+    std: float = 1.0,
+    a: float = -2.0,
+    b: float = 2.0,
+) -> torch.Tensor:
+    """Initialize a tensor using a truncated normal distribution.
+
+    Parameters
+    ----------
+    tensor : torch.Tensor
+        The tensor to be initialized.
+    mean : float, default=0.
+        Mean of the normal distribution.
+    std : float, default=1.
+        Standard deviation of the normal distribution.
+    a : float, default=-2.
+        Minimum value of the truncated distribution.
+    b : float, default=2.
+        Maximum value of the truncated distribution.
+
+    Returns
+    -------
+    torch.Tensor
+        The initialized tensor.
+    """
+    return _no_grad_trunc_normal_(tensor, mean, std, a, b)
+
+
+def _no_grad_trunc_normal_(
+    tensor: torch.Tensor, mean: float, std: float, a: float, b: float
+) -> torch.Tensor:
+    """
+    Apply truncated normal initialization to a tensor.
+
+    Parameters
+    ----------
+    tensor : torch.Tensor
+        The tensor to be initialized.
+    mean : float
+        Mean of the normal distribution.
+    std : float
+        Standard deviation of the normal distribution.
+    a : float
+        Minimum value of the truncated distribution.
+    b : float
+        Maximum value of the truncated distribution.
+
+    Returns
+    -------
+    torch.Tensor
+        The initialized tensor.
+    """
+
+    def norm_cdf(x: float) -> float:
+        """Compute standard normal cumulative distribution function."""
+        return (1.0 + math.erf(x / math.sqrt(2.0))) / 2.0
+
+    with torch.no_grad():
+        lower_limit = norm_cdf((a - mean) / std)
+        upper_limit = norm_cdf((b - mean) / std)
+
+        tensor.uniform_(2 * lower_limit - 1, 2 * upper_limit - 1)
+        tensor.erfinv_()
+
+        tensor.mul_(std * math.sqrt(2.0))
+        tensor.add_(mean)
+        tensor.clamp_(min=a, max=b)
+
+        return tensor
 
 
 @cast(
@@ -761,7 +824,7 @@ def vit_giant(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
-VIT_EMBED_DIMS: Dict[str, int] = {
+VIT_EMBED_DIMS: dict[str, int] = {
     "vit_tiny": 192,
     "vit_small": 384,
     "vit_base": 768,

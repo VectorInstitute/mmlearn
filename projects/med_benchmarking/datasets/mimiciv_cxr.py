@@ -42,7 +42,7 @@ class MIMICIVCXR(Dataset):
         Model which was used to generate labels from raw-text reports.
     transform :  Optional[Callable]
         Custom transform applied to images.
-    tokenizer : Callable[[torch.Tensor], Dict[str, torch.Tensor]]
+    tokenizer : Callable[[torch.Tensor], dict[str, torch.Tensor]]
         A function that tokenizes the raw text reports.
     include_report : bool, default=False
         Whether or not to include the raw text reports in the data example.
@@ -160,9 +160,9 @@ class MIMICIVCXR(Dataset):
             )
             if tokens is not None:
                 if isinstance(tokens, dict):  # output of HFTokenizer
-                    assert (
-                        Modalities.TEXT.name in tokens
-                    ), f"Missing key `{Modalities.TEXT.name}` in tokens."
+                    assert Modalities.TEXT.name in tokens, (
+                        f"Missing key `{Modalities.TEXT.name}` in tokens."
+                    )
                     example.update(tokens)
                 else:
                     example[Modalities.TEXT.name] = tokens
@@ -186,8 +186,8 @@ class CreateJSONFiles(object):
             Absolute path to the image.
         `report_path`: str
             Absolute path to the textual report.
-        `label`: List[int | NaN]
-            List of labels assigned to the data sample by the desired labeler.
+        `label`: list[int | NaN]
+            list of labels assigned to the data sample by the desired labeler.
         `qid`: int
             Query ID. This ID enables tracking the sample in the original dataset.
         `subject_id`: int
