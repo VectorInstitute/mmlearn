@@ -378,7 +378,7 @@ and a keyword argument <code class="docutils literal notranslate"><span class="p
 <dd class="field-odd"><p>The computed metric.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -409,7 +409,7 @@ and a keyword argument <code class="docutils literal notranslate"><span class="p
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.indexes">
-<span class="sig-name descname"><span class="pre">indexes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a><span class="pre">[</span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.indexes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">indexes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a><span class="pre">[</span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.indexes" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -419,7 +419,7 @@ and a keyword argument <code class="docutils literal notranslate"><span class="p
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.num_samples">
-<span class="sig-name descname"><span class="pre">num_samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.num_samples" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">num_samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.num_samples" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -434,11 +434,11 @@ and a keyword argument <code class="docutils literal notranslate"><span class="p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Embeddings (unnormalized) of shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">D)</span></code> where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – Embeddings (unnormalized) of shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">D)</span></code> where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number
 of samples and <cite>D</cite> is the number of dimensions.</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Embeddings (unnormalized) of shape <code class="docutils literal notranslate"><span class="pre">(M,</span> <span class="pre">D)</span></code> where <code class="docutils literal notranslate"><span class="pre">M</span></code> is the number
+<li><p><strong>y</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – Embeddings (unnormalized) of shape <code class="docutils literal notranslate"><span class="pre">(M,</span> <span class="pre">D)</span></code> where <code class="docutils literal notranslate"><span class="pre">M</span></code> is the number
 of samples and <code class="docutils literal notranslate"><span class="pre">D</span></code> is the number of dimensions.</p></li>
-<li><p><strong>indexes</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Index tensor of shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code> where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of samples.
+<li><p><strong>indexes</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – Index tensor of shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code> where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of samples.
 This specifies which sample in <code class="docutils literal notranslate"><span class="pre">y</span></code> is the positive match for each
 sample in <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p></li>
 </ul>
@@ -454,12 +454,12 @@ sample in <code class="docutils literal notranslate"><span class="pre">x</span><
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.x">
-<span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a><span class="pre">[</span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.x" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a><span class="pre">[</span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.x" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.y">
-<span class="sig-name descname"><span class="pre">y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a><span class="pre">[</span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.y" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a><span class="pre">[</span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.y" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

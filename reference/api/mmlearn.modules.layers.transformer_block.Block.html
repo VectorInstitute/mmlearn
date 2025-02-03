@@ -337,7 +337,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="mmlearn.modules.layers.transformer_block.Block">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_ratio=4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qkv_bias=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qk_scale=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_drop=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_path=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_layer=&lt;class</span> <span class="pre">'torch.nn.modules.activation.GELU'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_layer=&lt;class</span> <span class="pre">'torch.nn.modules.normalization.LayerNorm'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/layers/transformer_block.html#Block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.layers.transformer_block.Block" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Transformer Block.</p>
 <p>This module represents a Transformer block that includes self-attention,
 normalization layers, and a feedforward multi-layer perceptron (MLP) network.</p>
@@ -352,8 +352,8 @@ normalization layers, and a feedforward multi-layer perceptron (MLP) network.</p
 <li><p><strong>drop</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout probability for the output of attention and MLP layers.</p></li>
 <li><p><strong>attn_drop</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Dropout probability for the attention scores.</p></li>
 <li><p><strong>drop_path</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default=0.0</em>) – Stochastic depth rate, a form of layer dropout.</p></li>
-<li><p><strong>act_layer</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=nn.GELU</em>) – Activation layer in the MLP.</p></li>
-<li><p><strong>norm_layer</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=torch.nn.LayerNorm</em>) – Normalization layer.</p></li>
+<li><p><strong>act_layer</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=nn.GELU</em>) – Activation layer in the MLP.</p></li>
+<li><p><strong>norm_layer</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=torch.nn.LayerNorm</em>) – Normalization layer.</p></li>
 </ul>
 </dd>
 </dl>
@@ -365,7 +365,7 @@ normalization layers, and a feedforward multi-layer perceptron (MLP) network.</p
 <dd><p>Forward pass through the Transformer Block.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>

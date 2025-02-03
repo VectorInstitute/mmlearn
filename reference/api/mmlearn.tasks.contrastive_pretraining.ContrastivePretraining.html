@@ -347,30 +347,30 @@ pretraining task.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>encoders</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em>) – A dictionary of encoders. The keys can be any string, including the names of
+<li><p><strong>encoders</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>]</em>) – A dictionary of encoders. The keys can be any string, including the names of
 any supported modalities. If the keys are not supported modalities, the
 <code class="docutils literal notranslate"><span class="pre">modality_module_mapping</span></code> parameter must be provided to map the encoders to
 specific modalities. The encoders are expected to take a dictionary of input
 values and return a list-like object with the first element being the encoded
 values. This first element is passed on to the heads or postprocessors and
 the remaining elements are ignored.</p></li>
-<li><p><strong>heads</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – A dictionary of modules that process the encoder outputs, usually projection
+<li><p><strong>heads</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>]</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – A dictionary of modules that process the encoder outputs, usually projection
 heads. If the keys do not correspond to the name of a supported modality,
 the <code class="docutils literal notranslate"><span class="pre">modality_module_mapping</span></code> parameter must be provided. If any of the values
-are dictionaries, they will be wrapped in a <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code></a>
+are dictionaries, they will be wrapped in a <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code></a>
 module. All head modules are expected to take a single input tensor and
 return a single output tensor.</p></li>
-<li><p><strong>postprocessors</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – A dictionary of modules that process the head outputs. If the keys do not
+<li><p><strong>postprocessors</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>]</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – A dictionary of modules that process the head outputs. If the keys do not
 correspond to the name of a supported modality, the <cite>modality_module_mapping</cite>
 parameter must be provided. If any of the values are dictionaries, they will
 be wrapped in a <cite>nn.Sequential</cite> module. All postprocessor modules are expected
 to take a single input tensor and return a single output tensor.</p></li>
 <li><p><strong>modality_module_mapping</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference internal" href="mmlearn.tasks.contrastive_pretraining.ModuleKeySpec.html#mmlearn.tasks.contrastive_pretraining.ModuleKeySpec" title="mmlearn.tasks.contrastive_pretraining.ModuleKeySpec"><em>ModuleKeySpec</em></a><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – A dictionary mapping modalities to encoders, heads, and postprocessors.
 Useful for reusing the same instance of a module across multiple modalities.</p></li>
-<li><p><strong>optimizer</strong> (<em>Optional</em><em>[</em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.5)"><em>torch.optim.Optimizer</em></a><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The optimizer to use for training. This is expected to be a <a class="reference external" href="https://docs.python.org/3.10/library/functools.html#functools.partial" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">partial()</span></code></a>
+<li><p><strong>optimizer</strong> (<em>Optional</em><em>[</em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.6)"><em>torch.optim.Optimizer</em></a><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The optimizer to use for training. This is expected to be a <a class="reference external" href="https://docs.python.org/3.10/library/functools.html#functools.partial" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">partial()</span></code></a>
 function that takes the model parameters as the only required argument.
 If not provided, training will continue without an optimizer.</p></li>
-<li><p><strong>lr_scheduler</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Union</em><em>[</em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.LRScheduler.html#torch.optim.lr_scheduler.LRScheduler" title="(in PyTorch v2.5)"><em>torch.optim.lr_scheduler.LRScheduler</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.LRScheduler.html#torch.optim.lr_scheduler.LRScheduler" title="(in PyTorch v2.5)"><em>torch.optim.lr_scheduler.LRScheduler</em></a><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The learning rate scheduler to use for training. This can be a
+<li><p><strong>lr_scheduler</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Union</em><em>[</em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.LRScheduler.html#torch.optim.lr_scheduler.LRScheduler" title="(in PyTorch v2.6)"><em>torch.optim.lr_scheduler.LRScheduler</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>partial</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.LRScheduler.html#torch.optim.lr_scheduler.LRScheduler" title="(in PyTorch v2.6)"><em>torch.optim.lr_scheduler.LRScheduler</em></a><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The learning rate scheduler to use for training. This can be a
 <a class="reference external" href="https://docs.python.org/3.10/library/functools.html#functools.partial" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">partial()</span></code></a> function that takes the optimizer as the only
 required argument or a dictionary with a <code class="docutils literal notranslate"><span class="pre">'scheduler'</span></code> key that specifies
 the scheduler and an optional <code class="docutils literal notranslate"><span class="pre">'extras'</span></code> key that specifies additional
@@ -382,7 +382,7 @@ factor applied to the logits before computing the contrastive loss.</p></li>
 is clamped to the range <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">log(max_logit_scale)]</span></code>.</p></li>
 <li><p><strong>learnable_logit_scale</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – Whether the logit scale parameter is learnable. If set to False, the logit
 scale parameter is treated as a constant.</p></li>
-<li><p><strong>loss</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The loss function to use.</p></li>
+<li><p><strong>loss</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – The loss function to use.</p></li>
 <li><p><strong>modality_loss_pairs</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>[</em><a class="reference internal" href="mmlearn.tasks.contrastive_pretraining.LossPairSpec.html#mmlearn.tasks.contrastive_pretraining.LossPairSpec" title="mmlearn.tasks.contrastive_pretraining.LossPairSpec"><em>LossPairSpec</em></a><em>]</em><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – A list of pairs of modalities to compute the contrastive loss between and
 the weight to apply to each pair.</p></li>
 <li><p><strong>auxiliary_tasks</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference internal" href="mmlearn.tasks.contrastive_pretraining.AuxiliaryTaskSpec.html#mmlearn.tasks.contrastive_pretraining.AuxiliaryTaskSpec" title="mmlearn.tasks.contrastive_pretraining.AuxiliaryTaskSpec"><em>AuxiliaryTaskSpec</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – <p>Auxiliary tasks to run alongside the main contrastive pretraining task.</p>
@@ -449,7 +449,7 @@ postprocessor layers, if present).</p></li>
 <dd class="field-even"><p>The encoded values for the specified modality.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -457,7 +457,7 @@ postprocessor layers, if present).</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.encoders">
 <span class="sig-name descname"><span class="pre">encoders</span></span><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.encoders" title="Link to this definition">¶</a></dt>
-<dd><p>A <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.ModuleDict.html#torch.nn.ModuleDict" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleDict</span></code></a>, where the keys are the names of the
+<dd><p>A <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.ModuleDict.html#torch.nn.ModuleDict" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleDict</span></code></a>, where the keys are the names of the
 modalities and the values are the encoder modules.</p>
 </dd></dl>
 
@@ -480,7 +480,7 @@ or during testing.</p>
 <dd class="field-even"><p>The encodings for each modality.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -488,7 +488,7 @@ or during testing.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.heads">
 <span class="sig-name descname"><span class="pre">heads</span></span><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.heads" title="Link to this definition">¶</a></dt>
-<dd><p>A <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.ModuleDict.html#torch.nn.ModuleDict" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleDict</span></code></a>, where the keys are the names of the
+<dd><p>A <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.ModuleDict.html#torch.nn.ModuleDict" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleDict</span></code></a>, where the keys are the names of the
 modalities and the values are the projection head modules. This can be
 <code class="docutils literal notranslate"><span class="pre">None</span></code> if no heads modules are provided.</p>
 </dd></dl>
@@ -562,7 +562,7 @@ apply to each pair.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.postprocessors">
 <span class="sig-name descname"><span class="pre">postprocessors</span></span><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.postprocessors" title="Link to this definition">¶</a></dt>
-<dd><p>A <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.ModuleDict.html#torch.nn.ModuleDict" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleDict</span></code></a>, where the keys are the names of the
+<dd><p>A <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.ModuleDict.html#torch.nn.ModuleDict" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleDict</span></code></a>, where the keys are the names of the
 modalities and the values are the postprocessor modules. This can be
 <code class="docutils literal notranslate"><span class="pre">None</span></code> if no postprocessor modules are provided.</p>
 </dd></dl>
@@ -579,7 +579,7 @@ modalities and the values are the postprocessor modules. This can be
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a><em>]</em>) – The batch of data to process.</p></li>
+<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a><em>]</em>) – The batch of data to process.</p></li>
 <li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The index of the batch.</p></li>
 </ul>
 </dd>
@@ -587,7 +587,7 @@ modalities and the values are the postprocessor modules. This can be
 <dd class="field-even"><p>The loss for the batch or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the loss function is not provided.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a>]</p>
+<dd class="field-odd"><p>Optional[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -612,7 +612,7 @@ modalities and the values are the postprocessor modules. This can be
 <dd class="field-even"><p>The loss for the batch.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -624,7 +624,7 @@ modalities and the values are the postprocessor modules. This can be
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a><em>]</em>) – The batch of data to process.</p></li>
+<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a><em>]</em>) – The batch of data to process.</p></li>
 <li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The index of the batch.</p></li>
 </ul>
 </dd>
@@ -632,7 +632,7 @@ modalities and the values are the postprocessor modules. This can be
 <dd class="field-even"><p>The loss for the batch or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the loss function is not provided.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a>]</p>
+<dd class="field-odd"><p>Optional[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>]</p>
 </dd>
 </dl>
 </dd></dl>

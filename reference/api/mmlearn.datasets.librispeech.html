@@ -338,9 +338,9 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="mmlearn.datasets.librispeech.LibriSpeech">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LibriSpeech</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'train-clean-100'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/datasets/librispeech.html#LibriSpeech"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.datasets.librispeech.LibriSpeech" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>[<a class="reference internal" href="mmlearn.datasets.core.example.Example.html#mmlearn.datasets.core.example.Example" title="mmlearn.datasets.core.example.Example"><code class="xref py py-class docutils literal notranslate"><span class="pre">Example</span></code></a>]</p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>[<a class="reference internal" href="mmlearn.datasets.core.example.Example.html#mmlearn.datasets.core.example.Example" title="mmlearn.datasets.core.example.Example"><code class="xref py py-class docutils literal notranslate"><span class="pre">Example</span></code></a>]</p>
 <p>LibriSpeech dataset.</p>
-<p>This is a wrapper around <a class="reference external" href="https://pytorch.org/audio/stable/generated/torchaudio.datasets.LIBRISPEECH.html#torchaudio.datasets.LIBRISPEECH" title="(in Torchaudio v2.5.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchaudio.datasets.LIBRISPEECH</span></code></a> that assumes
+<p>This is a wrapper around <a class="reference external" href="https://pytorch.org/audio/stable/generated/torchaudio.datasets.LIBRISPEECH.html#torchaudio.datasets.LIBRISPEECH" title="(in Torchaudio v2.6.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torchaudio.datasets.LIBRISPEECH</span></code></a> that assumes
 that the dataset is already downloaded and the top-level directory of the dataset
 in the root directory is <cite>librispeech</cite>.</p>
 <dl class="field-list simple">
@@ -387,7 +387,7 @@ in the root directory is <cite>librispeech</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>array</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Audio array.</p></li>
+<li><p><strong>array</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – Audio array.</p></li>
 <li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>default=480000</em>) – Length to pad or trim to. Defaults to 30 seconds at 16 kHz.</p></li>
 <li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>default=-1</em>) – Axis along which to pad or trim.</p></li>
 </ul>
@@ -396,7 +396,7 @@ in the root directory is <cite>librispeech</cite>.</p>
 <dd class="field-even"><p><strong>array</strong> – Padded or trimmed audio array.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 <p class="rubric">References</p>

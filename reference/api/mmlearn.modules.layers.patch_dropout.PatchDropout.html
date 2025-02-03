@@ -337,7 +337,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="mmlearn.modules.layers.patch_dropout.PatchDropout">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PatchDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keep_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_shuffling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/modules/layers/patch_dropout.html#PatchDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.modules.layers.patch_dropout.PatchDropout" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Patch dropout layer.</p>
 <p>Drops patch tokens (after embedding and adding CLS token) from the input tensor.
 Usually used in vision transformers to reduce the number of tokens. <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
@@ -369,7 +369,7 @@ of the IEEE/CVF Winter Conference on Applications of Computer Vision
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Input tensor of shape <code class="docutils literal notranslate"><span class="pre">(batch_sz,</span> <span class="pre">seq_len,</span> <span class="pre">dim)</span></code>.</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – Input tensor of shape <code class="docutils literal notranslate"><span class="pre">(batch_sz,</span> <span class="pre">seq_len,</span> <span class="pre">dim)</span></code>.</p></li>
 <li><p><strong>force_drop</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em><em>, </em><em>default=False</em>) – If True, the tokens are always dropped, even when the model is in
 evaluation mode.</p></li>
 </ul>
@@ -378,7 +378,7 @@ evaluation mode.</p></li>
 <dd class="field-even"><p>Tensor of shape <code class="docutils literal notranslate"><span class="pre">(batch_sz,</span> <span class="pre">keep_len,</span> <span class="pre">dim)</span></code> containing the kept tokens.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -389,13 +389,13 @@ evaluation mode.</p></li>
 <dd><p>Generate token ids to keep from uniform random distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – Input tensor of shape <code class="docutils literal notranslate"><span class="pre">(batch_sz,</span> <span class="pre">seq_len,</span> <span class="pre">dim)</span></code>.</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – Input tensor of shape <code class="docutils literal notranslate"><span class="pre">(batch_sz,</span> <span class="pre">seq_len,</span> <span class="pre">dim)</span></code>.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Tensor of shape <code class="docutils literal notranslate"><span class="pre">(batch_sz,</span> <span class="pre">keep_len)</span></code> containing the token ids to keep.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
