@@ -108,7 +108,7 @@ class MLP(torch.nn.Sequential):
         dims = [in_dim] + hidden_dims  # type: ignore[operator]
         layers = []
         for layer_idx, (in_features, hidden_features) in enumerate(
-            zip(dims[:-1], dims[1:])
+            zip(dims[:-1], dims[1:], strict=False)
         ):
             layers.append(
                 torch.nn.Linear(in_features, hidden_features, bias=bias_list[layer_idx])
