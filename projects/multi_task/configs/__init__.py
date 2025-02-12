@@ -7,6 +7,12 @@ from timm.data.transforms import RandomResizedCropAndInterpolation, ResizeKeepRa
 from mmlearn.conf import external_store
 
 
+@external_store(group="modules/layers")
+class CLSPooler(torch.nn.Module):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return x[:, 0]
+
+
 @external_store(group="datasets/transforms")
 def rgb_transform(
     resize_to: int = 256,
