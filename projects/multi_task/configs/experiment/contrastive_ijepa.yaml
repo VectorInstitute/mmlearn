@@ -7,8 +7,6 @@ defaults:
   - /datasets@datasets.train.nyuv2: NYUv2
   - /datasets/transforms@datasets.train.nyuv2.rgb_transform: rgb_transform
   - /datasets/transforms@datasets.train.nyuv2.depth_transform: depth_transform
-  - /datasets@datasets.train.imagenet: ImageNet
-  - /datasets/transforms@datasets.train.imagenet.transform: rgb_transform
   - /datasets@datasets.val.sunrgbd: SUNRGBD
   - /datasets/transforms@datasets.val.sunrgbd.rgb_transform: rgb_transform
   - /datasets/transforms@datasets.val.sunrgbd.depth_transform: depth_transform
@@ -16,12 +14,13 @@ defaults:
   - /datasets/transforms@datasets.val.nyuv2.rgb_transform: rgb_transform
   - /datasets/transforms@datasets.val.nyuv2.depth_transform: depth_transform
   - /modules/encoders@task.encoders.rgb: vit_base
+  - /modules/layers@task.postprocessors.rgb: CLSPooler
   - /modules/layers@task.heads.rgb: MLP
   - /modules/encoders@task.encoders.depth: TimmViT
   - /modules/layers@task.heads.depth: MLP
   - /modules/losses@task.loss: ContrastiveLoss
   - /modules/optimizers@task.optimizer: AdamW
-  - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: linear_warmup_cosine_annealing_lr
   - /eval_task@task.evaluation_tasks.retrieval.task: ZeroShotCrossModalRetrieval
   - /task@task.auxiliary_tasks.ijepa.task: IJEPA
   - /modules/encoders@task.auxiliary_tasks.ijepa.task.predictor: vit_predictor
@@ -56,7 +55,7 @@ datasets:
 
 dataloader:
   train:
-    batch_size: 96
+    batch_size: 32
     num_workers: 6
   val:
     batch_size: 96
@@ -85,12 +84,14 @@ task:
     betas:
     - 0.9
     - 0.98
-    lr: 5.0e-5
-    weight_decay: 0.1
+    lr: 3.0e-5
+    weight_decay: 0.05
     eps: 1.0e-6
   lr_scheduler:
     scheduler:
-      T_max: 67_060 # make sure to change this if max_epochs or accumulate_grad_batches is changed
+      warmup_steps: 15
+      max_steps: 600 # make sure to change this if max_epochs or accumulate_grad_batches is changed
+      eta_min: 1.0e-6
     extras:
       interval: step
   loss:
@@ -102,10 +103,10 @@ task:
         task_specs:
           - query_modality: rgb
             target_modality: depth
-            top_k: [1, 5, 10]
+            top_k: [5, 10, 50]
           - query_modality: depth
             target_modality: rgb
-            top_k: [1, 5, 10]
+            top_k: [5, 10, 50]
       run_on_validation: True
       run_on_test: True
   auxiliary_tasks:
@@ -114,17 +115,18 @@ task:
       loss_weight: 1.0
       task:
         _partial_: True # the RGB encoder of the main task will be used at runtime
-        ema_decay: 0.998
-        ema_anneal_end_step: 5000
+        ema_decay: 0.999
+        ema_anneal_end_step: 200
+        compute_validation_loss: True
   log_auxiliary_tasks_loss: True
 
 trainer:
-  max_epochs: 20
+  max_epochs: 100
   precision: 16-mixed
   deterministic: False
   benchmark: True
   sync_batchnorm: False # set to True if using DDP with batchnorm
-  log_every_n_steps: 10
+  log_every_n_steps: 5
   accumulate_grad_batches: 1
   check_val_every_n_epoch: 1
   callbacks:
@@ -136,7 +138,7 @@ trainer:
       dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on Vector SLURM environment
     early_stopping:
       monitor: val/loss
-      patience: 5
+      patience: 10
       mode: min
     model_summary:
       max_depth: 2
@@ -150,5 +152,4 @@ tags:
   - timm_vit
   - sunrgbd
   - nyuv2
-  - imagenet
   - multi-task
