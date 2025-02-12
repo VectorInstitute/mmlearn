@@ -51,6 +51,7 @@ mmlearn.tasks.ijepa.IJEPA
    .. automethod:: ~IJEPA.lr_schedulers
    .. automethod:: ~IJEPA.manual_backward
    .. automethod:: ~IJEPA.modules
+   .. automethod:: ~IJEPA.mtia
    .. automethod:: ~IJEPA.named_buffers
    .. automethod:: ~IJEPA.named_children
    .. automethod:: ~IJEPA.named_modules
@@ -110,12 +111,15 @@ mmlearn.tasks.ijepa.IJEPA
    .. automethod:: ~IJEPA.register_full_backward_hook
    .. automethod:: ~IJEPA.register_full_backward_pre_hook
    .. automethod:: ~IJEPA.register_load_state_dict_post_hook
+   .. automethod:: ~IJEPA.register_load_state_dict_pre_hook
    .. automethod:: ~IJEPA.register_module
    .. automethod:: ~IJEPA.register_parameter
+   .. automethod:: ~IJEPA.register_state_dict_post_hook
    .. automethod:: ~IJEPA.register_state_dict_pre_hook
    .. automethod:: ~IJEPA.requires_grad_
    .. automethod:: ~IJEPA.save_hyperparameters
    .. automethod:: ~IJEPA.set_extra_state
+   .. automethod:: ~IJEPA.set_submodule
    .. automethod:: ~IJEPA.setup
    .. automethod:: ~IJEPA.share_memory
    .. automethod:: ~IJEPA.state_dict

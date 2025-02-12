@@ -40,6 +40,7 @@ mmlearn.modules.metrics.retrieval\_recall.RetrievalRecallAtK
    .. automethod:: ~RetrievalRecallAtK.load_state_dict
    .. automethod:: ~RetrievalRecallAtK.merge_state
    .. automethod:: ~RetrievalRecallAtK.modules
+   .. automethod:: ~RetrievalRecallAtK.mtia
    .. automethod:: ~RetrievalRecallAtK.named_buffers
    .. automethod:: ~RetrievalRecallAtK.named_children
    .. automethod:: ~RetrievalRecallAtK.named_modules
@@ -54,13 +55,16 @@ mmlearn.modules.metrics.retrieval\_recall.RetrievalRecallAtK
    .. automethod:: ~RetrievalRecallAtK.register_full_backward_hook
    .. automethod:: ~RetrievalRecallAtK.register_full_backward_pre_hook
    .. automethod:: ~RetrievalRecallAtK.register_load_state_dict_post_hook
+   .. automethod:: ~RetrievalRecallAtK.register_load_state_dict_pre_hook
    .. automethod:: ~RetrievalRecallAtK.register_module
    .. automethod:: ~RetrievalRecallAtK.register_parameter
+   .. automethod:: ~RetrievalRecallAtK.register_state_dict_post_hook
    .. automethod:: ~RetrievalRecallAtK.register_state_dict_pre_hook
    .. automethod:: ~RetrievalRecallAtK.requires_grad_
    .. automethod:: ~RetrievalRecallAtK.reset
    .. automethod:: ~RetrievalRecallAtK.set_dtype
    .. automethod:: ~RetrievalRecallAtK.set_extra_state
+   .. automethod:: ~RetrievalRecallAtK.set_submodule
    .. automethod:: ~RetrievalRecallAtK.share_memory
    .. automethod:: ~RetrievalRecallAtK.state_dict
    .. automethod:: ~RetrievalRecallAtK.sync

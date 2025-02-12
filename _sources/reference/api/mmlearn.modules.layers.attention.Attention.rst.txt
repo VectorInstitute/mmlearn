@@ -36,6 +36,7 @@ mmlearn.modules.layers.attention.Attention
    .. automethod:: ~Attention.ipu
    .. automethod:: ~Attention.load_state_dict
    .. automethod:: ~Attention.modules
+   .. automethod:: ~Attention.mtia
    .. automethod:: ~Attention.named_buffers
    .. automethod:: ~Attention.named_children
    .. automethod:: ~Attention.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.layers.attention.Attention
    .. automethod:: ~Attention.register_full_backward_hook
    .. automethod:: ~Attention.register_full_backward_pre_hook
    .. automethod:: ~Attention.register_load_state_dict_post_hook
+   .. automethod:: ~Attention.register_load_state_dict_pre_hook
    .. automethod:: ~Attention.register_module
    .. automethod:: ~Attention.register_parameter
+   .. automethod:: ~Attention.register_state_dict_post_hook
    .. automethod:: ~Attention.register_state_dict_pre_hook
    .. automethod:: ~Attention.requires_grad_
    .. automethod:: ~Attention.set_extra_state
+   .. automethod:: ~Attention.set_submodule
    .. automethod:: ~Attention.share_memory
    .. automethod:: ~Attention.state_dict
    .. automethod:: ~Attention.to

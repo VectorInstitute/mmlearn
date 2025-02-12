@@ -36,6 +36,7 @@ mmlearn.modules.layers.embedding.PatchEmbed
    .. automethod:: ~PatchEmbed.ipu
    .. automethod:: ~PatchEmbed.load_state_dict
    .. automethod:: ~PatchEmbed.modules
+   .. automethod:: ~PatchEmbed.mtia
    .. automethod:: ~PatchEmbed.named_buffers
    .. automethod:: ~PatchEmbed.named_children
    .. automethod:: ~PatchEmbed.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.layers.embedding.PatchEmbed
    .. automethod:: ~PatchEmbed.register_full_backward_hook
    .. automethod:: ~PatchEmbed.register_full_backward_pre_hook
    .. automethod:: ~PatchEmbed.register_load_state_dict_post_hook
+   .. automethod:: ~PatchEmbed.register_load_state_dict_pre_hook
    .. automethod:: ~PatchEmbed.register_module
    .. automethod:: ~PatchEmbed.register_parameter
+   .. automethod:: ~PatchEmbed.register_state_dict_post_hook
    .. automethod:: ~PatchEmbed.register_state_dict_pre_hook
    .. automethod:: ~PatchEmbed.requires_grad_
    .. automethod:: ~PatchEmbed.set_extra_state
+   .. automethod:: ~PatchEmbed.set_submodule
    .. automethod:: ~PatchEmbed.share_memory
    .. automethod:: ~PatchEmbed.state_dict
    .. automethod:: ~PatchEmbed.to

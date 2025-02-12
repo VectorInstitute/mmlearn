@@ -36,6 +36,7 @@ mmlearn.modules.encoders.clip.HFCLIPTextEncoder
    .. automethod:: ~HFCLIPTextEncoder.ipu
    .. automethod:: ~HFCLIPTextEncoder.load_state_dict
    .. automethod:: ~HFCLIPTextEncoder.modules
+   .. automethod:: ~HFCLIPTextEncoder.mtia
    .. automethod:: ~HFCLIPTextEncoder.named_buffers
    .. automethod:: ~HFCLIPTextEncoder.named_children
    .. automethod:: ~HFCLIPTextEncoder.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.encoders.clip.HFCLIPTextEncoder
    .. automethod:: ~HFCLIPTextEncoder.register_full_backward_hook
    .. automethod:: ~HFCLIPTextEncoder.register_full_backward_pre_hook
    .. automethod:: ~HFCLIPTextEncoder.register_load_state_dict_post_hook
+   .. automethod:: ~HFCLIPTextEncoder.register_load_state_dict_pre_hook
    .. automethod:: ~HFCLIPTextEncoder.register_module
    .. automethod:: ~HFCLIPTextEncoder.register_parameter
+   .. automethod:: ~HFCLIPTextEncoder.register_state_dict_post_hook
    .. automethod:: ~HFCLIPTextEncoder.register_state_dict_pre_hook
    .. automethod:: ~HFCLIPTextEncoder.requires_grad_
    .. automethod:: ~HFCLIPTextEncoder.set_extra_state
+   .. automethod:: ~HFCLIPTextEncoder.set_submodule
    .. automethod:: ~HFCLIPTextEncoder.share_memory
    .. automethod:: ~HFCLIPTextEncoder.state_dict
    .. automethod:: ~HFCLIPTextEncoder.to

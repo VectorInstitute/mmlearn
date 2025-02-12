@@ -36,6 +36,7 @@ mmlearn.modules.encoders.clip.HFCLIPTextEncoderWithProjection
    .. automethod:: ~HFCLIPTextEncoderWithProjection.ipu
    .. automethod:: ~HFCLIPTextEncoderWithProjection.load_state_dict
    .. automethod:: ~HFCLIPTextEncoderWithProjection.modules
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.mtia
    .. automethod:: ~HFCLIPTextEncoderWithProjection.named_buffers
    .. automethod:: ~HFCLIPTextEncoderWithProjection.named_children
    .. automethod:: ~HFCLIPTextEncoderWithProjection.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.encoders.clip.HFCLIPTextEncoderWithProjection
    .. automethod:: ~HFCLIPTextEncoderWithProjection.register_full_backward_hook
    .. automethod:: ~HFCLIPTextEncoderWithProjection.register_full_backward_pre_hook
    .. automethod:: ~HFCLIPTextEncoderWithProjection.register_load_state_dict_post_hook
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_load_state_dict_pre_hook
    .. automethod:: ~HFCLIPTextEncoderWithProjection.register_module
    .. automethod:: ~HFCLIPTextEncoderWithProjection.register_parameter
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.register_state_dict_post_hook
    .. automethod:: ~HFCLIPTextEncoderWithProjection.register_state_dict_pre_hook
    .. automethod:: ~HFCLIPTextEncoderWithProjection.requires_grad_
    .. automethod:: ~HFCLIPTextEncoderWithProjection.set_extra_state
+   .. automethod:: ~HFCLIPTextEncoderWithProjection.set_submodule
    .. automethod:: ~HFCLIPTextEncoderWithProjection.share_memory
    .. automethod:: ~HFCLIPTextEncoderWithProjection.state_dict
    .. automethod:: ~HFCLIPTextEncoderWithProjection.to

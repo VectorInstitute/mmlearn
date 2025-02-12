@@ -354,21 +354,18 @@ need to pass for a PR to be eligible for merging into the main branch of the lib
 </section>
 <section id="development-requirements">
 <h2>Development Requirements<a class="headerlink" href="#development-requirements" title="Link to this heading">¶</a></h2>
-<p>For development and testing, we use <a class="reference external" href="https://python-poetry.org/">Poetry</a> for dependency management. The library dependencies
-and those for development and testing are listed in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file. You may use whatever virtual environment
-management tool that you would like. These include conda, poetry itself, and virtualenv.</p>
-<p>The easiest way to create and activate a virtual environment is by using the <a class="reference external" href="https://pypi.org/project/virtualenv/">virtualenv</a>
-package:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv<span class="w"> </span><span class="s2">&quot;ENV_PATH&quot;</span>
-<span class="nb">source</span><span class="w"> </span><span class="s2">&quot;ENV_PATH/bin/activate&quot;</span>
-pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span>poetry
-poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="w"> </span><span class="s2">&quot;dev, test&quot;</span><span class="w"> </span>--all-extras
+<p>For development and testing, we use <a class="reference external" href="https://github.com/astral-sh/uv?tab=readme-ov-file#installation">uv</a> for dependency
+management. The library dependencies and those for development and testing are listed in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.
+You may use whatever virtual environment management tool that you would like.
+These include uv, conda, and virtualenv.</p>
+<p>The easiest way to create and activate a virtual environment for development using uv is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>sync<span class="w"> </span>--dev<span class="w"> </span>--all-extras
 </pre></div>
 </div>
 <p>Note that the with command is installing all libraries required for the full development workflow. See the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>
 file for additional details as to what is installed with each of these options.</p>
 <p>If you need to update the environment libraries, you should change the requirements in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and then update
-the <code class="docutils literal notranslate"><span class="pre">poetry.lock</span></code> using the command <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">update</span></code>.</p>
+the <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code> using the command <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">lock</span></code>.</p>
 </section>
 <section id="coding-guidelines-formatters-and-checks">
 <h2>Coding Guidelines, Formatters, and Checks<a class="headerlink" href="#coding-guidelines-formatters-and-checks" title="Link to this heading">¶</a></h2>

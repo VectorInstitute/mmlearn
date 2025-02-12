@@ -36,6 +36,7 @@ mmlearn.modules.losses.data2vec.Data2VecLoss
    .. automethod:: ~Data2VecLoss.ipu
    .. automethod:: ~Data2VecLoss.load_state_dict
    .. automethod:: ~Data2VecLoss.modules
+   .. automethod:: ~Data2VecLoss.mtia
    .. automethod:: ~Data2VecLoss.named_buffers
    .. automethod:: ~Data2VecLoss.named_children
    .. automethod:: ~Data2VecLoss.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.losses.data2vec.Data2VecLoss
    .. automethod:: ~Data2VecLoss.register_full_backward_hook
    .. automethod:: ~Data2VecLoss.register_full_backward_pre_hook
    .. automethod:: ~Data2VecLoss.register_load_state_dict_post_hook
+   .. automethod:: ~Data2VecLoss.register_load_state_dict_pre_hook
    .. automethod:: ~Data2VecLoss.register_module
    .. automethod:: ~Data2VecLoss.register_parameter
+   .. automethod:: ~Data2VecLoss.register_state_dict_post_hook
    .. automethod:: ~Data2VecLoss.register_state_dict_pre_hook
    .. automethod:: ~Data2VecLoss.requires_grad_
    .. automethod:: ~Data2VecLoss.set_extra_state
+   .. automethod:: ~Data2VecLoss.set_submodule
    .. automethod:: ~Data2VecLoss.share_memory
    .. automethod:: ~Data2VecLoss.state_dict
    .. automethod:: ~Data2VecLoss.to

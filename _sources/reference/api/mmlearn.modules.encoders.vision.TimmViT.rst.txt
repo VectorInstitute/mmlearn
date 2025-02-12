@@ -38,6 +38,7 @@ mmlearn.modules.encoders.vision.TimmViT
    .. automethod:: ~TimmViT.ipu
    .. automethod:: ~TimmViT.load_state_dict
    .. automethod:: ~TimmViT.modules
+   .. automethod:: ~TimmViT.mtia
    .. automethod:: ~TimmViT.named_buffers
    .. automethod:: ~TimmViT.named_children
    .. automethod:: ~TimmViT.named_modules
@@ -50,11 +51,14 @@ mmlearn.modules.encoders.vision.TimmViT
    .. automethod:: ~TimmViT.register_full_backward_hook
    .. automethod:: ~TimmViT.register_full_backward_pre_hook
    .. automethod:: ~TimmViT.register_load_state_dict_post_hook
+   .. automethod:: ~TimmViT.register_load_state_dict_pre_hook
    .. automethod:: ~TimmViT.register_module
    .. automethod:: ~TimmViT.register_parameter
+   .. automethod:: ~TimmViT.register_state_dict_post_hook
    .. automethod:: ~TimmViT.register_state_dict_pre_hook
    .. automethod:: ~TimmViT.requires_grad_
    .. automethod:: ~TimmViT.set_extra_state
+   .. automethod:: ~TimmViT.set_submodule
    .. automethod:: ~TimmViT.share_memory
    .. automethod:: ~TimmViT.state_dict
    .. automethod:: ~TimmViT.to

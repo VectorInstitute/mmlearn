@@ -36,6 +36,7 @@ mmlearn.modules.layers.normalization.L2Norm
    .. automethod:: ~L2Norm.ipu
    .. automethod:: ~L2Norm.load_state_dict
    .. automethod:: ~L2Norm.modules
+   .. automethod:: ~L2Norm.mtia
    .. automethod:: ~L2Norm.named_buffers
    .. automethod:: ~L2Norm.named_children
    .. automethod:: ~L2Norm.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.layers.normalization.L2Norm
    .. automethod:: ~L2Norm.register_full_backward_hook
    .. automethod:: ~L2Norm.register_full_backward_pre_hook
    .. automethod:: ~L2Norm.register_load_state_dict_post_hook
+   .. automethod:: ~L2Norm.register_load_state_dict_pre_hook
    .. automethod:: ~L2Norm.register_module
    .. automethod:: ~L2Norm.register_parameter
+   .. automethod:: ~L2Norm.register_state_dict_post_hook
    .. automethod:: ~L2Norm.register_state_dict_pre_hook
    .. automethod:: ~L2Norm.requires_grad_
    .. automethod:: ~L2Norm.set_extra_state
+   .. automethod:: ~L2Norm.set_submodule
    .. automethod:: ~L2Norm.share_memory
    .. automethod:: ~L2Norm.state_dict
    .. automethod:: ~L2Norm.to

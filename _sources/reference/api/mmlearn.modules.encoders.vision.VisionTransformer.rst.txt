@@ -38,6 +38,7 @@ mmlearn.modules.encoders.vision.VisionTransformer
    .. automethod:: ~VisionTransformer.ipu
    .. automethod:: ~VisionTransformer.load_state_dict
    .. automethod:: ~VisionTransformer.modules
+   .. automethod:: ~VisionTransformer.mtia
    .. automethod:: ~VisionTransformer.named_buffers
    .. automethod:: ~VisionTransformer.named_children
    .. automethod:: ~VisionTransformer.named_modules
@@ -50,11 +51,14 @@ mmlearn.modules.encoders.vision.VisionTransformer
    .. automethod:: ~VisionTransformer.register_full_backward_hook
    .. automethod:: ~VisionTransformer.register_full_backward_pre_hook
    .. automethod:: ~VisionTransformer.register_load_state_dict_post_hook
+   .. automethod:: ~VisionTransformer.register_load_state_dict_pre_hook
    .. automethod:: ~VisionTransformer.register_module
    .. automethod:: ~VisionTransformer.register_parameter
+   .. automethod:: ~VisionTransformer.register_state_dict_post_hook
    .. automethod:: ~VisionTransformer.register_state_dict_pre_hook
    .. automethod:: ~VisionTransformer.requires_grad_
    .. automethod:: ~VisionTransformer.set_extra_state
+   .. automethod:: ~VisionTransformer.set_submodule
    .. automethod:: ~VisionTransformer.share_memory
    .. automethod:: ~VisionTransformer.state_dict
    .. automethod:: ~VisionTransformer.to

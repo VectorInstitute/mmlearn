@@ -36,6 +36,7 @@ mmlearn.modules.layers.transformer\_block.DropPath
    .. automethod:: ~DropPath.ipu
    .. automethod:: ~DropPath.load_state_dict
    .. automethod:: ~DropPath.modules
+   .. automethod:: ~DropPath.mtia
    .. automethod:: ~DropPath.named_buffers
    .. automethod:: ~DropPath.named_children
    .. automethod:: ~DropPath.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.layers.transformer\_block.DropPath
    .. automethod:: ~DropPath.register_full_backward_hook
    .. automethod:: ~DropPath.register_full_backward_pre_hook
    .. automethod:: ~DropPath.register_load_state_dict_post_hook
+   .. automethod:: ~DropPath.register_load_state_dict_pre_hook
    .. automethod:: ~DropPath.register_module
    .. automethod:: ~DropPath.register_parameter
+   .. automethod:: ~DropPath.register_state_dict_post_hook
    .. automethod:: ~DropPath.register_state_dict_pre_hook
    .. automethod:: ~DropPath.requires_grad_
    .. automethod:: ~DropPath.set_extra_state
+   .. automethod:: ~DropPath.set_submodule
    .. automethod:: ~DropPath.share_memory
    .. automethod:: ~DropPath.state_dict
    .. automethod:: ~DropPath.to

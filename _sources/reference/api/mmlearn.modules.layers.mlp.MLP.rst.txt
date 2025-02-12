@@ -39,6 +39,7 @@ mmlearn.modules.layers.mlp.MLP
    .. automethod:: ~MLP.ipu
    .. automethod:: ~MLP.load_state_dict
    .. automethod:: ~MLP.modules
+   .. automethod:: ~MLP.mtia
    .. automethod:: ~MLP.named_buffers
    .. automethod:: ~MLP.named_children
    .. automethod:: ~MLP.named_modules
@@ -52,11 +53,14 @@ mmlearn.modules.layers.mlp.MLP
    .. automethod:: ~MLP.register_full_backward_hook
    .. automethod:: ~MLP.register_full_backward_pre_hook
    .. automethod:: ~MLP.register_load_state_dict_post_hook
+   .. automethod:: ~MLP.register_load_state_dict_pre_hook
    .. automethod:: ~MLP.register_module
    .. automethod:: ~MLP.register_parameter
+   .. automethod:: ~MLP.register_state_dict_post_hook
    .. automethod:: ~MLP.register_state_dict_pre_hook
    .. automethod:: ~MLP.requires_grad_
    .. automethod:: ~MLP.set_extra_state
+   .. automethod:: ~MLP.set_submodule
    .. automethod:: ~MLP.share_memory
    .. automethod:: ~MLP.state_dict
    .. automethod:: ~MLP.to

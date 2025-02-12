@@ -52,6 +52,7 @@ mmlearn.tasks.contrastive\_pretraining.ContrastivePretraining
    .. automethod:: ~ContrastivePretraining.lr_schedulers
    .. automethod:: ~ContrastivePretraining.manual_backward
    .. automethod:: ~ContrastivePretraining.modules
+   .. automethod:: ~ContrastivePretraining.mtia
    .. automethod:: ~ContrastivePretraining.named_buffers
    .. automethod:: ~ContrastivePretraining.named_children
    .. automethod:: ~ContrastivePretraining.named_modules
@@ -111,12 +112,15 @@ mmlearn.tasks.contrastive\_pretraining.ContrastivePretraining
    .. automethod:: ~ContrastivePretraining.register_full_backward_hook
    .. automethod:: ~ContrastivePretraining.register_full_backward_pre_hook
    .. automethod:: ~ContrastivePretraining.register_load_state_dict_post_hook
+   .. automethod:: ~ContrastivePretraining.register_load_state_dict_pre_hook
    .. automethod:: ~ContrastivePretraining.register_module
    .. automethod:: ~ContrastivePretraining.register_parameter
+   .. automethod:: ~ContrastivePretraining.register_state_dict_post_hook
    .. automethod:: ~ContrastivePretraining.register_state_dict_pre_hook
    .. automethod:: ~ContrastivePretraining.requires_grad_
    .. automethod:: ~ContrastivePretraining.save_hyperparameters
    .. automethod:: ~ContrastivePretraining.set_extra_state
+   .. automethod:: ~ContrastivePretraining.set_submodule
    .. automethod:: ~ContrastivePretraining.setup
    .. automethod:: ~ContrastivePretraining.share_memory
    .. automethod:: ~ContrastivePretraining.state_dict

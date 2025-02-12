@@ -36,6 +36,7 @@ mmlearn.modules.layers.patch\_dropout.PatchDropout
    .. automethod:: ~PatchDropout.ipu
    .. automethod:: ~PatchDropout.load_state_dict
    .. automethod:: ~PatchDropout.modules
+   .. automethod:: ~PatchDropout.mtia
    .. automethod:: ~PatchDropout.named_buffers
    .. automethod:: ~PatchDropout.named_children
    .. automethod:: ~PatchDropout.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.layers.patch\_dropout.PatchDropout
    .. automethod:: ~PatchDropout.register_full_backward_hook
    .. automethod:: ~PatchDropout.register_full_backward_pre_hook
    .. automethod:: ~PatchDropout.register_load_state_dict_post_hook
+   .. automethod:: ~PatchDropout.register_load_state_dict_pre_hook
    .. automethod:: ~PatchDropout.register_module
    .. automethod:: ~PatchDropout.register_parameter
+   .. automethod:: ~PatchDropout.register_state_dict_post_hook
    .. automethod:: ~PatchDropout.register_state_dict_pre_hook
    .. automethod:: ~PatchDropout.requires_grad_
    .. automethod:: ~PatchDropout.set_extra_state
+   .. automethod:: ~PatchDropout.set_submodule
    .. automethod:: ~PatchDropout.share_memory
    .. automethod:: ~PatchDropout.state_dict
    .. automethod:: ~PatchDropout.to

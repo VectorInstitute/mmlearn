@@ -51,6 +51,7 @@ mmlearn.tasks.base.TrainingTask
    .. automethod:: ~TrainingTask.lr_schedulers
    .. automethod:: ~TrainingTask.manual_backward
    .. automethod:: ~TrainingTask.modules
+   .. automethod:: ~TrainingTask.mtia
    .. automethod:: ~TrainingTask.named_buffers
    .. automethod:: ~TrainingTask.named_children
    .. automethod:: ~TrainingTask.named_modules
@@ -110,12 +111,15 @@ mmlearn.tasks.base.TrainingTask
    .. automethod:: ~TrainingTask.register_full_backward_hook
    .. automethod:: ~TrainingTask.register_full_backward_pre_hook
    .. automethod:: ~TrainingTask.register_load_state_dict_post_hook
+   .. automethod:: ~TrainingTask.register_load_state_dict_pre_hook
    .. automethod:: ~TrainingTask.register_module
    .. automethod:: ~TrainingTask.register_parameter
+   .. automethod:: ~TrainingTask.register_state_dict_post_hook
    .. automethod:: ~TrainingTask.register_state_dict_pre_hook
    .. automethod:: ~TrainingTask.requires_grad_
    .. automethod:: ~TrainingTask.save_hyperparameters
    .. automethod:: ~TrainingTask.set_extra_state
+   .. automethod:: ~TrainingTask.set_submodule
    .. automethod:: ~TrainingTask.setup
    .. automethod:: ~TrainingTask.share_memory
    .. automethod:: ~TrainingTask.state_dict

@@ -36,6 +36,7 @@ mmlearn.modules.layers.embedding.ConvEmbed
    .. automethod:: ~ConvEmbed.ipu
    .. automethod:: ~ConvEmbed.load_state_dict
    .. automethod:: ~ConvEmbed.modules
+   .. automethod:: ~ConvEmbed.mtia
    .. automethod:: ~ConvEmbed.named_buffers
    .. automethod:: ~ConvEmbed.named_children
    .. automethod:: ~ConvEmbed.named_modules
@@ -48,11 +49,14 @@ mmlearn.modules.layers.embedding.ConvEmbed
    .. automethod:: ~ConvEmbed.register_full_backward_hook
    .. automethod:: ~ConvEmbed.register_full_backward_pre_hook
    .. automethod:: ~ConvEmbed.register_load_state_dict_post_hook
+   .. automethod:: ~ConvEmbed.register_load_state_dict_pre_hook
    .. automethod:: ~ConvEmbed.register_module
    .. automethod:: ~ConvEmbed.register_parameter
+   .. automethod:: ~ConvEmbed.register_state_dict_post_hook
    .. automethod:: ~ConvEmbed.register_state_dict_pre_hook
    .. automethod:: ~ConvEmbed.requires_grad_
    .. automethod:: ~ConvEmbed.set_extra_state
+   .. automethod:: ~ConvEmbed.set_submodule
    .. automethod:: ~ConvEmbed.share_memory
    .. automethod:: ~ConvEmbed.state_dict
    .. automethod:: ~ConvEmbed.to
