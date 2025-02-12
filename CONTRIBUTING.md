@@ -21,24 +21,21 @@ need to pass for a PR to be eligible for merging into the main branch of the lib
 
 ## Development Requirements
 
-For development and testing, we use [Poetry](https://python-poetry.org/) for dependency management. The library dependencies
-and those for development and testing are listed in the `pyproject.toml` file. You may use whatever virtual environment
-management tool that you would like. These include conda, poetry itself, and virtualenv.
+For development and testing, we use [uv](https://github.com/astral-sh/uv?tab=readme-ov-file#installation) for dependency
+management. The library dependencies and those for development and testing are listed in the `pyproject.toml` file.
+You may use whatever virtual environment management tool that you would like.
+These include uv, conda, and virtualenv.
 
-The easiest way to create and activate a virtual environment is by using the [virtualenv](https://pypi.org/project/virtualenv/)
-package:
+The easiest way to create and activate a virtual environment for development using uv is:
 ```bash
-virtualenv "ENV_PATH"
-source "ENV_PATH/bin/activate"
-pip install --upgrade pip poetry
-poetry install --with "dev, test" --all-extras
+uv sync --dev --all-extras
 ```
 
 Note that the with command is installing all libraries required for the full development workflow. See the `pyproject.toml`
 file for additional details as to what is installed with each of these options.
 
 If you need to update the environment libraries, you should change the requirements in the `pyproject.toml` and then update
-the `poetry.lock` using the command `poetry update`.
+the `uv.lock` using the command `uv lock`.
 
 ## Coding Guidelines, Formatters, and Checks
 

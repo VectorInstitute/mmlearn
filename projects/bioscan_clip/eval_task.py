@@ -215,7 +215,7 @@ def _convert_label_dict_to_list_of_dict(
 
     return [
         {"order": o, "family": f, "genus": g, "species": s}
-        for o, f, g, s in zip(order, family, genus, species)
+        for o, f, g, s in zip(order, family, genus, species, strict=False)
     ]
 
 
@@ -282,7 +282,7 @@ def _top_k_micro_accuracy(
             k_micro_acc[k] = {}
         for level in LEVELS:
             correct_in_curr_level = 0
-            for pred_dict, gt_dict in zip(pred_list, gt_list):
+            for pred_dict, gt_dict in zip(pred_list, gt_list, strict=False):
                 pred_labels = pred_dict[level][:k]
                 gt_label = gt_dict[level]
                 if gt_label in pred_labels:
@@ -313,7 +313,7 @@ def _top_k_macro_accuracy(
         for level in LEVELS:
             pred_counts[k][level] = {}
             gt_counts[k][level] = {}
-            for pred, gt in zip(pred_list, gt_list):
+            for pred, gt in zip(pred_list, gt_list, strict=False):
                 pred_labels = pred[level][:k]
                 gt_label = gt[level]
                 if gt_label not in pred_counts[k][level]:

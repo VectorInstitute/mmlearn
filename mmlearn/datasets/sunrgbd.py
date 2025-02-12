@@ -197,7 +197,14 @@ class SUNRGBDDataset(Dataset[Example]):
             sensor_types = [sensor_types[i] for i in valid_indices]
 
         self.samples = list(
-            zip(rgb_files, depth_files, labels, intrinsic_files, sensor_types)
+            zip(
+                rgb_files,
+                depth_files,
+                labels,
+                intrinsic_files,
+                sensor_types,
+                strict=False,
+            )
         )
 
         self.rgb_transform = rgb_transform

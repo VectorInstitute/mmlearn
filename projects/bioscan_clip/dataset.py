@@ -184,7 +184,9 @@ def get_array_of_label_dicts(hdf5_inputs_path: str, split: str) -> np.array:
     return np.array(
         [
             {"order": o, "family": f, "genus": g, "species": s}
-            for o, f, g, s in zip(np_order, np_family, np_genus, np_species)
+            for o, f, g, s in zip(
+                np_order, np_family, np_genus, np_species, strict=False
+            )
         ],
         dtype=object,
     )
