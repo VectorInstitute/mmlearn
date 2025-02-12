@@ -144,7 +144,7 @@ class NYUv2Dataset(Dataset[Example]):
             depth_files = [depth_files[i] for i in valid_indices]
             labels = [labels[i] for i in valid_indices]
 
-        self.samples = list(zip(rgb_files, depth_files, labels))
+        self.samples = list(zip(rgb_files, depth_files, labels, strict=False))
 
         self.rgb_transform = rgb_transform
         self.depth_transform = depth_transform
