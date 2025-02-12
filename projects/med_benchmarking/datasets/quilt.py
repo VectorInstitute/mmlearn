@@ -73,7 +73,9 @@ class Quilt(Dataset[Example]):
                 )
 
         for func_name, func in zip(
-            ["transform", "tokenizer", "processor"], [transform, tokenizer, processor]
+            ["transform", "tokenizer", "processor"],
+            [transform, tokenizer, processor],
+            strict=False,
         ):
             if func is not None and not callable(func):
                 raise ValueError(f"`{func_name}` is not callable.")
