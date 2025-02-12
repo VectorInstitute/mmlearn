@@ -2,13 +2,14 @@
 
 import math
 from functools import partial
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Literal, Optional, Union, cast
 
 import timm
 import torch
 from hydra_zen import store
 from peft import PeftConfig
 from timm.models.vision_transformer import VisionTransformer as TimmVisionTransformer
+from timm.models.vision_transformer import global_pool_nlc
 from torch import nn
 from transformers.modeling_outputs import BaseModelOutput
 
@@ -227,14 +228,16 @@ class VisionTransformer(nn.Module):
         mlp_ratio: float = 4.0,
         qkv_bias: bool = True,
         qk_scale: Optional[float] = None,
+        global_pool: Literal["", "avg", "avgmax", "max", "token"] = "",
         drop_rate: float = 0.0,
         attn_drop_rate: float = 0.0,
         drop_path_rate: float = 0.0,
         norm_layer: Callable[..., nn.Module] = nn.LayerNorm,
         init_std: float = 0.02,
-        **kwargs: Any,
     ) -> None:
         super().__init__()
+        assert global_pool in ("", "avg", "avgmax", "max", "token")
+
         self.modality = Modalities.get_modality(modality)
         self.num_features = self.embed_dim = embed_dim
         self.num_heads = num_heads
@@ -281,6 +284,8 @@ class VisionTransformer(nn.Module):
             ]
         )
         self.norm = norm_layer(embed_dim)
+
+        self.global_pool = global_pool
 
         # Weight Initialization
         self.init_std = init_std
@@ -344,6 +349,9 @@ class VisionTransformer(nn.Module):
         # -- Apply normalization if present
         if self.norm is not None:
             x = self.norm(x)
+
+        # -- Apply global pooling
+        x = global_pool_nlc(x, pool_type=self.global_pool)
 
         # -- Return both final output and hidden states if requested
         if return_hidden_states:
@@ -595,8 +603,7 @@ def _trunc_normal(
 def _no_grad_trunc_normal_(
     tensor: torch.Tensor, mean: float, std: float, a: float, b: float
 ) -> torch.Tensor:
-    """
-    Apply truncated normal initialization to a tensor.
+    """Apply truncated normal initialization to a tensor.
 
     Parameters
     ----------
@@ -642,15 +649,23 @@ def _no_grad_trunc_normal_(
         provider="mmlearn",
     ),
 )
-def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
-    """
-    Create a VisionTransformerPredictor model.
+def vit_predictor(
+    kwargs: Optional[dict[str, Any]] = None,
+) -> VisionTransformerPredictor:
+    """Create a VisionTransformerPredictor model.
+
+    Parameters
+    ----------
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the predictor.
 
     Returns
     -------
     VisionTransformerPredictor
         An instance of VisionTransformerPredictor.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformerPredictor(
         mlp_ratio=4, qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), **kwargs
     )
@@ -663,15 +678,25 @@ def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
         provider="mmlearn",
     ),
 )
-def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with tiny configuration.
+def vit_tiny(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with tiny configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=192,
@@ -691,15 +716,25 @@ def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with small configuration.
+def vit_small(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with small configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=384,
@@ -719,15 +754,25 @@ def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with base configuration.
+def vit_base(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with base configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=768,
@@ -747,15 +792,25 @@ def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with large configuration.
+def vit_large(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with large configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=1024,
@@ -775,15 +830,25 @@ def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with huge configuration.
+def vit_huge(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with huge configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=1280,
@@ -803,15 +868,25 @@ def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_giant(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with giant configuration.
+def vit_giant(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with giant configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=1408,
