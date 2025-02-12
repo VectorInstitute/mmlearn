@@ -419,14 +419,14 @@ class ContrastivePretraining(TrainingTask):
         """
         output = self.encoders[modality.name](inputs)[0]
 
+        if self.postprocessors and modality.name in self.postprocessors:
+            output = self.postprocessors[modality.name](output)
+
         if self.heads and modality.name in self.heads:
             output = self.heads[modality.name](output)
 
         if normalize:
             output = torch.nn.functional.normalize(output, p=2, dim=-1)
-
-        if self.postprocessors and modality.name in self.postprocessors:
-            output = self.postprocessors[modality.name](output)
 
         return output
 
@@ -627,7 +627,9 @@ class ContrastivePretraining(TrainingTask):
                         f"containing a 'loss' key, but got {type(auxiliary_task_output)}."
                     )
 
-                auxiliary_task_loss *= task_spec.loss_weight
+                auxiliary_task_loss *= (
+                    task_spec.loss_weight * self.log_logit_scale.exp()
+                )
                 auxiliary_losses.append(auxiliary_task_loss)
                 if self.log_auxiliary_tasks_loss:
                     self.log(
