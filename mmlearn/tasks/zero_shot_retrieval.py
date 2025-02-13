@@ -73,7 +73,8 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
     def on_evaluation_epoch_start(self, pl_module: pl.LightningModule) -> None:
         """Move the metrics to the device of the Lightning module."""
-        self.metrics.to(pl_module.device)  # type: ignore[attr-defined]
+        for metric in self.metrics.values():
+            metric.to(pl_module.device)
 
     def evaluation_step(
         self,
