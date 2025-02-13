@@ -1,0 +1,75 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.train: ImageNet
+  - /datasets/transforms@datasets.train.transform: ijepa_transforms
+  - /datasets@datasets.val: ImageNet
+  - /datasets/transforms@datasets.val.transform: ijepa_transforms
+  - /modules/encoders@task.encoder: vit_base
+  - /modules/encoders@task.predictor: vit_predictor
+  - /modules/optimizers@task.optimizer: AdamW
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+  - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
+  - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
+  - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
+  - /trainer/callbacks@trainer.callbacks.model_summary: ModelSummary
+  - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - override /task: IJEPA
+  - _self_
+
+seed: 0
+
+datasets:
+  val:
+    split: val
+    transform:
+      job_type: eval
+
+dataloader:
+  train:
+    batch_size: 256
+    num_workers: 10
+  val:
+    batch_size: 256
+    num_workers: 10
+
+task:
+  optimizer:
+    betas:
+    - 0.9
+    - 0.999
+    lr: 1.0e-3
+    weight_decay: 0.05
+    eps: 1.0e-8
+  lr_scheduler:
+    scheduler:
+      T_max: ${trainer.max_epochs}
+    extras:
+      interval: epoch
+
+trainer:
+  max_epochs: 300
+  precision: 16-mixed
+  deterministic: False
+  benchmark: True
+  sync_batchnorm: False  # Set to True if using DDP with batchnorm
+  log_every_n_steps: 100
+  accumulate_grad_batches: 4
+  check_val_every_n_epoch: 1
+  callbacks:
+    model_checkpoint:
+      monitor: val/loss
+      save_top_k: 1
+      save_last: True
+      every_n_epochs: 1
+      dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on Vector SLURM environment
+    early_stopping:
+      monitor: val/loss
+      patience: 5
+      mode: min
+    model_summary:
+      max_depth: 2
+
+tags:
+  - ${experiment_name}
+  - ijepa pretraining

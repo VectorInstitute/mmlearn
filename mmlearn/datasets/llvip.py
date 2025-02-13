@@ -3,7 +3,7 @@
 import glob
 import os
 import xml.etree.ElementTree as ET  # noqa: N817
-from typing import Callable, Dict, Optional
+from typing import Callable, Optional
 
 import numpy as np
 import torch
@@ -24,7 +24,9 @@ from mmlearn.datasets.core.example import Example
     root_dir=os.getenv("LLVIP_ROOT_DIR", MISSING),
 )
 class LLVIPDataset(Dataset[Example]):
-    """A dataset class for the LLVIP dataset which handles RGB and IR images.
+    """Low-Light Visible-Infrared Pair (LLVIP) dataset.
+
+    Loads pairs of `RGB` and `THERMAL` images from the LLVIP dataset.
 
     Parameters
     ----------
@@ -32,9 +34,11 @@ class LLVIPDataset(Dataset[Example]):
         Path to the root directory of the dataset. The directory should contain
         'visible' and 'infrared' subdirectories.
     train : bool, default=True
-        Flag to indicate training or testing phase.
-    transform : Optional[Callable], optional, default=None
-        Transformations to be applied to the images.
+        Flag to indicate whether to load the training or test set.
+    transform : Optional[Callable[[PIL.Image], torch.Tensor]], optional, default=None
+        A callable that takes in a PIL image and returns a transformed version
+        of the image as a PyTorch tensor. This is applied to both RGB and thermal
+        images.
     """
 
     def __init__(
@@ -43,7 +47,6 @@ class LLVIPDataset(Dataset[Example]):
         train: bool = True,
         transform: Optional[Callable[[PILImage], torch.Tensor]] = None,
     ):
-        """Initialize the dataset."""
         self.path_images_rgb = os.path.join(
             root_dir,
             "visible",
@@ -70,10 +73,10 @@ class LLVIPDataset(Dataset[Example]):
         rgb_image = PILImage.open(rgb_image_path).convert("RGB")
         ir_image = PILImage.open(ir_image_path).convert("L")
 
-        sample = Example(
+        example = Example(
             {
-                Modalities.RGB: self.transform(rgb_image),
-                Modalities.THERMAL: self.transform(ir_image),
+                Modalities.RGB.name: self.transform(rgb_image),
+                Modalities.THERMAL.name: self.transform(ir_image),
                 EXAMPLE_INDEX_KEY: idx,
             },
         )
@@ -85,13 +88,13 @@ class LLVIPDataset(Dataset[Example]):
                 .replace("train", "")
             )
             annot = self._get_bbox(annot_path)
-            sample["annotation"] = {
+            example["annotation"] = {
                 "bboxes": torch.from_numpy(annot["bboxes"]),
                 "labels": torch.from_numpy(annot["labels"]),
             }
-        return sample
+        return example
 
-    def _get_bbox(self, filename: str) -> Dict[str, np.ndarray]:
+    def _get_bbox(self, filename: str) -> dict[str, np.ndarray]:
         """Parse the XML file to get bounding boxes and labels.
 
         Parameters

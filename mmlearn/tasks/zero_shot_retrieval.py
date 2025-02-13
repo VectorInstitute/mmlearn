@@ -1,17 +1,16 @@
 """Zero-shot cross-modal retrieval evaluation task."""
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Union
+from typing import Any, Optional
 
 import lightning.pytorch as pl
 import torch
 import torch.distributed
 import torch.distributed.nn
 from hydra_zen import store
-from torchmetrics import Metric, MetricCollection
+from torchmetrics import MetricCollection
 
 from mmlearn.datasets.core import Modalities
-from mmlearn.datasets.core.modalities import Modality
 from mmlearn.modules.metrics import RetrievalRecallAtK
 from mmlearn.tasks.hooks import EvaluationHooks
 
@@ -20,9 +19,14 @@ from mmlearn.tasks.hooks import EvaluationHooks
 class RetrievalTaskSpec:
     """Specification for a retrieval task."""
 
+    #: The query modality.
     query_modality: str
+
+    #: The target modality.
     target_modality: str
-    top_k: List[int]
+
+    #: The top-k values for which to compute the retrieval recall metrics.
+    top_k: list[int]
 
 
 @store(group="eval_task", provider="mmlearn")
@@ -36,28 +40,27 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
     Parameters
     ----------
-    task_specs : List[RetrievalTaskSpec]
+    task_specs : list[RetrievalTaskSpec]
         A list of retrieval task specifications. Each specification defines the query
         and target modalities, as well as the top-k values for which to compute the
         retrieval recall metrics.
 
     """
 
-    def __init__(self, task_specs: List[RetrievalTaskSpec]):
-        """Initialize the module."""
+    def __init__(self, task_specs: list[RetrievalTaskSpec]) -> None:
         super().__init__()
 
         self.task_specs = task_specs
-        self.metrics: Union[Dict[str, Metric], MetricCollection] = {}
+        self.metrics: dict[tuple[str, str], MetricCollection] = {}
+        self._available_modalities = set()
 
         for spec in self.task_specs:
-            assert Modalities.has_modality(spec.query_modality)
-            assert Modalities.has_modality(spec.target_modality)
+            query_modality = spec.query_modality
+            target_modality = spec.target_modality
+            assert Modalities.has_modality(query_modality)
+            assert Modalities.has_modality(target_modality)
 
-            query_modality = Modalities.get_modality(spec.query_modality)
-            target_modality = Modalities.get_modality(spec.target_modality)
-
-            self.metrics.update(
+            self.metrics[(query_modality, target_modality)] = MetricCollection(
                 {
                     f"{query_modality}_to_{target_modality}_R@{k}": RetrievalRecallAtK(
                         top_k=k, aggregation="mean", reduction="none"
@@ -65,65 +68,75 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
                     for k in spec.top_k
                 }
             )
-        self.metrics = MetricCollection(self.metrics)
-
-        self.modality_pairs = [
-            (key.split("_to_")[0], key.split("_to_")[1].split("_R@")[0])
-            for key in self.metrics
-        ]
-        self.modality_pairs = [
-            (Modalities.get_modality(query), Modalities.get_modality(target))
-            for (query, target) in self.modality_pairs
-        ]
+            self._available_modalities.add(query_modality)
+            self._available_modalities.add(target_modality)
 
     def on_evaluation_epoch_start(self, pl_module: pl.LightningModule) -> None:
         """Move the metrics to the device of the Lightning module."""
-        self.metrics.to(pl_module.device)  # type: ignore [union-attr]
+        self.metrics.to(pl_module.device)  # type: ignore[attr-defined]
 
     def evaluation_step(
         self,
-        trainer: pl.Trainer,
         pl_module: pl.LightningModule,
-        batch: Dict[str, torch.Tensor],
+        batch: dict[str, torch.Tensor],
         batch_idx: int,
     ) -> None:
         """Run the forward pass and update retrieval recall metrics.
 
         Parameters
         ----------
-        trainer : pl.Trainer
-            A reference to the Lightning Trainer.
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
-        batch : Dict[str, torch.Tensor]
+        batch : dict[str, torch.Tensor]
             A dictionary of batched input tensors.
         batch_idx : int
             The index of the batch.
 
         """
-        if trainer.sanity_checking:
+        if pl_module.trainer.sanity_checking:
             return
 
-        outputs: Dict[Union[str, Modality], Any] = pl_module(batch)
-        for (query_modality, target_modality), metric in zip(
-            self.modality_pairs, self.metrics.values()
-        ):
-            query_embeddings: torch.Tensor = outputs[query_modality.embedding]
-            target_embeddings: torch.Tensor = outputs[target_modality.embedding]
+        outputs: dict[str, Any] = {}
+        for modality_name in self._available_modalities:
+            if modality_name in batch:
+                outputs[modality_name] = pl_module.encode(
+                    batch, Modalities.get_modality(modality_name), normalize=False
+                )
+        for (query_modality, target_modality), metric in self.metrics.items():
+            if query_modality not in outputs or target_modality not in outputs:
+                continue
+            query_embeddings: torch.Tensor = outputs[query_modality]
+            target_embeddings: torch.Tensor = outputs[target_modality]
             indexes = torch.arange(query_embeddings.size(0), device=pl_module.device)
 
             metric.update(query_embeddings, target_embeddings, indexes)
 
-    def on_evaluation_epoch_end(self, pl_module: pl.LightningModule) -> Dict[str, Any]:
+    def on_evaluation_epoch_end(
+        self, pl_module: pl.LightningModule
+    ) -> Optional[dict[str, Any]]:
         """Compute the retrieval recall metrics.
 
         Parameters
         ----------
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
+
+        Returns
+        -------
+        Optional[dict[str, Any]]
+            A dictionary of evaluation results or `None` if no results are available.
         """
-        results: Dict[str, Any] = {}
-        results.update(self.metrics.compute())  # type: ignore [union-attr]
-        self.metrics.reset()  # type: ignore [union-attr]
+        if pl_module.trainer.sanity_checking:
+            return None
+
+        results = {}
+        for metric in self.metrics.values():
+            results.update(metric.compute())
+            metric.reset()
+
+        eval_type = "val" if pl_module.trainer.validating else "test"
+
+        for key, value in results.items():
+            pl_module.log(f"{eval_type}/{key}", value)
 
         return results

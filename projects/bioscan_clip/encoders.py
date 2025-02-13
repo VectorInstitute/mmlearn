@@ -1,14 +1,14 @@
-from typing import Any, Dict, List, Optional, Union
 import warnings
+from typing import Any, Optional, Union
 
-from peft import PeftConfig
 import torch
+from peft import PeftConfig
 from torch import nn
-from transformers.modeling_outputs import BaseModelOutput
 from transformers import BertConfig, BertForMaskedLM
+from transformers.modeling_outputs import BaseModelOutput
 
 from mmlearn import hf_utils
-from mmlearn.datasets.core.modalities import Modalities, Modality
+from mmlearn.datasets.core.modalities import Modalities
 
 
 class BarcodeBERT(nn.Module):
@@ -17,10 +17,10 @@ class BarcodeBERT(nn.Module):
         vocab_size: int,
         projection_dim: int,
         pretrained_checkpoint_path: Optional[str] = None,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
         peft_config: Optional[PeftConfig] = None,
-        model_config_kwargs: Optional[Dict[str, Any]] = None,
+        model_config_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
         super().__init__()
 
@@ -76,10 +76,10 @@ class BarcodeBERT(nn.Module):
         if peft_config is not None:
             self.model = hf_utils._wrap_peft_model(self.model, peft_config)
 
-    def forward(self, inputs: Dict[Union[str, Modality], Any]) -> BaseModelOutput:
+    def forward(self, inputs: dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass."""
         outputs = self.model(
-            input_ids=inputs[Modalities.DNA],
+            input_ids=inputs[Modalities.DNA.name],
             attention_mask=inputs.get(
                 "attention_mask", inputs.get(Modalities.DNA.attention_mask, None)
             ),

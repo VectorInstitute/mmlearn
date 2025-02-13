@@ -18,14 +18,9 @@ SAMPLE_RATE = 16000
 
 
 def pad_or_trim(
-    array: torch.Tensor,
-    length: int = 30 * SAMPLE_RATE,
-    *,
-    axis: int = -1,
+    array: torch.Tensor, length: int = 30 * SAMPLE_RATE, *, axis: int = -1
 ) -> torch.Tensor:
     """Pad or trim the audio array to `length` along the given axis.
-
-    Adapted from: https://github.com/openai/whisper/blob/main/whisper/audio.py#L65C1-L88C17
 
     Parameters
     ----------
@@ -40,6 +35,11 @@ def pad_or_trim(
     -------
     array : torch.Tensor
         Padded or trimmed audio array.
+
+    References
+    ----------
+    .. [1] https://github.com/openai/whisper/blob/main/whisper/audio.py#L65C1-L88C17
+
     """
     if array.shape[axis] > length:
         array = array.index_select(
@@ -63,27 +63,33 @@ def pad_or_trim(
 class LibriSpeech(Dataset[Example]):
     """LibriSpeech dataset.
 
-    This is a wrapper around `torchaudio.datasets.LIBRISPEECH` that assumes that
-    the dataset is already downloaded and the top-level directory of the dataset
+    This is a wrapper around :py:class:`torchaudio.datasets.LIBRISPEECH` that assumes
+    that the dataset is already downloaded and the top-level directory of the dataset
     in the root directory is `librispeech`.
-    This class only returns the audio and transcript from the dataset.
 
     Parameters
     ----------
     root_dir : str
         Root directory of dataset.
-    split : {"train-clean-100", "train-clean-360", "train-other-500", "dev-clean",
-        "dev-other", "test-clean", "test-other"}, default="train-clean-100"
+    split : {"train-clean-100", "train-clean-360", "train-other-500", "dev-clean", "dev-other", "test-clean", "test-other"}, default="train-clean-100"
         Split of the dataset to use.
 
-    """
+    Raises
+    ------
+    ImportError
+        If ``torchaudio`` is not installed.
+
+    Notes
+    -----
+    This dataset only returns the audio and transcript from the dataset.
+
+    """  # noqa: W505
 
     def __init__(self, root_dir: str, split: str = "train-clean-100") -> None:
-        """Initialize LibriSpeech dataset."""
         super().__init__()
         if not _TORCHAUDIO_AVAILABLE:
             raise ImportError(
-                "LibriSpeech dataset requires `torchaudio` which is not installed."
+                "LibriSpeech dataset requires `torchaudio`, which is not installed."
             )
         from torchaudio.datasets import LIBRISPEECH
 
@@ -101,15 +107,15 @@ class LibriSpeech(Dataset[Example]):
     def __getitem__(self, idx: int) -> Example:
         """Return an example from the dataset."""
         waveform, sample_rate, transcript, _, _, _ = self.dataset[idx]
-        assert (
-            sample_rate == SAMPLE_RATE
-        ), f"Expected sample rate to be `16000`, got {sample_rate}."
+        assert sample_rate == SAMPLE_RATE, (
+            f"Expected sample rate to be `16000`, got {sample_rate}."
+        )
         waveform = pad_or_trim(waveform.flatten())
 
         return Example(
             {
-                Modalities.AUDIO: waveform,
-                Modalities.TEXT: transcript,
+                Modalities.AUDIO.name: waveform,
+                Modalities.TEXT.name: transcript,
                 EXAMPLE_INDEX_KEY: idx,
             },
         )

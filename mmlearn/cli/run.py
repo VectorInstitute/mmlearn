@@ -20,7 +20,7 @@ from mmlearn.cli._instantiators import (
     instantiate_loggers,
     instantiate_sampler,
 )
-from mmlearn.conf import JobType, MMLearnConf, hydra_main
+from mmlearn.conf import JobType, MMLearnConf, _hydra_main
 from mmlearn.datasets.core import *  # noqa: F403
 from mmlearn.datasets.processors import *  # noqa: F403
 from mmlearn.modules.encoders import *  # noqa: F403
@@ -34,7 +34,7 @@ from mmlearn.tasks import *  # noqa: F403
 logger = logging.getLogger(__package__)
 
 
-@hydra_main(
+@_hydra_main(
     config_path="pkg://mmlearn.conf", config_name="base_config", version_base=None
 )
 def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
@@ -45,7 +45,7 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
 
     if is_torch_tf32_available():
         torch.backends.cuda.matmul.allow_tf32 = True
-        if "16-mixed" in cfg.trainer.precision:
+        if "16-mixed" in str(cfg.trainer.precision):
             cfg.trainer.precision = "bf16-mixed"
 
     # setup trainer first so that we can get some variables for distributed training
@@ -56,9 +56,9 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
     trainer: Trainer = hydra.utils.instantiate(
         cfg.trainer, callbacks=callbacks, logger=loggers, _convert_="all"
     )
-    assert isinstance(
-        trainer, Trainer
-    ), "Trainer must be an instance of `lightning.pytorch.trainer.Trainer`"
+    assert isinstance(trainer, Trainer), (
+        "Trainer must be an instance of `lightning.pytorch.trainer.Trainer`"
+    )
 
     if rank_zero_only.rank == 0 and loggers is not None:  # update wandb config
         for trainer_logger in loggers:
@@ -79,9 +79,9 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
     # prepare dataloaders
     if cfg.job_type == JobType.train:
         train_dataset = instantiate_datasets(cfg.datasets.train)
-        assert (
-            train_dataset is not None
-        ), "Train dataset (`cfg.datasets.train`) is required for training."
+        assert train_dataset is not None, (
+            "Train dataset (`cfg.datasets.train`) is required for training."
+        )
 
         train_sampler = instantiate_sampler(
             cfg.dataloader.train.get("sampler"),
@@ -109,9 +109,9 @@ def main(cfg: MMLearnConf) -> None:  # noqa: PLR0912
             )
     else:
         test_dataset = instantiate_datasets(cfg.datasets.test)
-        assert (
-            test_dataset is not None
-        ), "Test dataset (`cfg.datasets.test`) is required for evaluation."
+        assert test_dataset is not None, (
+            "Test dataset (`cfg.datasets.test`) is required for evaluation."
+        )
 
         test_sampler = instantiate_sampler(
             cfg.dataloader.test.get("sampler"),

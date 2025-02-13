@@ -1,10 +1,10 @@
 """ROCO Dataset."""
 
 import os
-from typing import Callable, Dict, Literal, Optional, Union
+from typing import Callable, Literal, Optional, Union
 
-import torch
 import pandas as pd
+import torch
 from omegaconf import MISSING
 from PIL import Image
 from torch.utils.data import Dataset
@@ -47,7 +47,7 @@ class ROCO(Dataset[Example]):
         group: Literal["radiology", "non-radiology"] = "radiology",
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         tokenizer: Optional[
-            Callable[[str], Union[torch.Tensor, Dict[str, torch.Tensor]]]
+            Callable[[str], Union[torch.Tensor, dict[str, torch.Tensor]]]
         ] = None,
         processor: Optional[
             Callable[[Image.Image, str], tuple[torch.Tensor, torch.Tensor]]
@@ -92,20 +92,20 @@ class ROCO(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: caption,
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: caption,
                 EXAMPLE_INDEX_KEY: idx,
             }
         )
 
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
-                assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
+                assert Modalities.TEXT.name in tokens, (
+                    f"Missing key `{Modalities.TEXT.name}` in tokens."
+                )
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         return example
 

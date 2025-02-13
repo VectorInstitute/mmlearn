@@ -1,7 +1,7 @@
 """Retrieval Recall@K metric."""
 
 from functools import partial
-from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Literal, Optional, Union
 
 import torch
 import torch.distributed
@@ -35,9 +35,19 @@ class RetrievalRecallAtK(Metric):
     aggregation : {"mean", "median", "min", "max"} or callable, default="mean"
         Specifies the aggregation function to apply to the Recall@K values computed
         in batches. If a callable is provided, it should accept a tensor of values
-        and a keyword argument 'dim' and return a single scalar value.
+        and a keyword argument ``'dim'`` and return a single scalar value.
     kwargs : Any
-        Additional arguments to be passed to the torchmetrics.Metric class.
+        Additional arguments to be passed to the :py:class:`torchmetrics.Metric` class.
+
+    Raises
+    ------
+    ValueError
+
+        - If the `top_k` is not a positive integer or None.
+        - If the `reduction` is not one of {"mean", "sum", "none", None}.
+        - If the `aggregation` is not one of {"mean", "median", "min", "max"} or a
+          custom callable function.
+
 
     """
 
@@ -45,22 +55,21 @@ class RetrievalRecallAtK(Metric):
     higher_is_better: bool = True
     full_state_update: bool = False
 
-    indexes: List[torch.Tensor]
-    x: List[torch.Tensor]
-    y: List[torch.Tensor]
+    indexes: list[torch.Tensor]
+    x: list[torch.Tensor]
+    y: list[torch.Tensor]
     num_samples: torch.Tensor
 
     def __init__(
         self,
         top_k: int,
-        reduction: Literal["mean", "sum", "none", None] = "sum",
+        reduction: Literal["mean", "sum", "none", None] = None,
         aggregation: Union[
             Literal["mean", "median", "min", "max"],
             Callable[[torch.Tensor, int], torch.Tensor],
         ] = "mean",
         **kwargs: Any,
     ) -> None:
-        """Initialize the metric."""
         super().__init__(**kwargs)
 
         if top_k is not None and not (isinstance(top_k, int) and top_k > 0):
@@ -100,7 +109,7 @@ class RetrievalRecallAtK(Metric):
         if self.distributed_available_fn is not None:
             distributed_available = self.distributed_available_fn
 
-        return distributed_available() if callable(distributed_available) else False  # type: ignore[no-any-return]
+        return distributed_available() if callable(distributed_available) else False
 
     def update(self, x: torch.Tensor, y: torch.Tensor, indexes: torch.Tensor) -> None:
         """Check shape, convert dtypes and add to accumulators.
@@ -108,15 +117,20 @@ class RetrievalRecallAtK(Metric):
         Parameters
         ----------
         x : torch.Tensor
-            Embeddings (unnormalized) of shape `(N, D)` where `N` is the number
+            Embeddings (unnormalized) of shape ``(N, D)`` where ``N`` is the number
             of samples and `D` is the number of dimensions.
         y : torch.Tensor
-            Embeddings (unnormalized) of shape `(M, D)` where `M` is the number
-            of samples and `D` is the number of dimensions.
+            Embeddings (unnormalized) of shape ``(M, D)`` where ``M`` is the number
+            of samples and ``D`` is the number of dimensions.
         indexes : torch.Tensor
-            Index tensor of shape `(N,)` where `N` is the number of samples.
-            This specifies which sample in 'y' is the positive match for each
-            sample in 'x'.
+            Index tensor of shape ``(N,)`` where ``N`` is the number of samples.
+            This specifies which sample in ``y`` is the positive match for each
+            sample in ``x``.
+
+        Raises
+        ------
+        ValueError
+            If `indexes` is None.
 
         """
         if indexes is None:
@@ -200,7 +214,7 @@ class RetrievalRecallAtK(Metric):
             positive_pairs = torch.zeros_like(scores, dtype=torch.bool)
             positive_pairs[torch.arange(len(scores)), indexes_batch] = True
             # compute recall_at_k
-            result = recall_at_k(scores, positive_pairs, self.top_k)
+            result = _recall_at_k(scores, positive_pairs, self.top_k)
             results.append(result)
 
         return _retrieval_aggregate(
@@ -208,7 +222,13 @@ class RetrievalRecallAtK(Metric):
         )
 
     def forward(self, *args: Any, **kwargs: Any) -> Any:
-        """Forward method is not supported."""
+        """Forward method is not supported.
+
+        Raises
+        ------
+        NotImplementedError
+            The forward method is not supported for this metric.
+        """
         raise NotImplementedError(
             "RetrievalRecallAtK metric does not support forward method"
         )
@@ -216,7 +236,7 @@ class RetrievalRecallAtK(Metric):
 
 # modified from:
 # https://github.com/LAION-AI/CLIP_benchmark/blob/main/clip_benchmark/metrics/zeroshot_retrieval.py
-def recall_at_k(
+def _recall_at_k(
     scores: torch.Tensor, positive_pairs: torch.Tensor, k: int
 ) -> torch.Tensor:
     """Compute the recall at k for each sample.
@@ -224,9 +244,9 @@ def recall_at_k(
     Parameters
     ----------
     scores : torch.Tensor
-        Compatibility score between embeddings (num_x, num_y).
+        Compatibility score between embeddings ``(num_x, num_y)``.
     positive_pairs : torch.Tensor
-        Boolean matrix of positive pairs (num_x, num_y).
+        Boolean matrix of positive pairs ``(num_x, num_y)``.
     k : int
         Consider only the top k elements for each query.
 
@@ -255,7 +275,7 @@ def _update_batch_inputs(
     x: torch.Tensor,
     y: torch.Tensor,
     indexes: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Update and returns variables required to compute Retrieval Recall.
 
     Checks for same shape of input tensors.
@@ -271,7 +291,7 @@ def _update_batch_inputs(
 
     Returns
     -------
-    Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+    tuple[torch.Tensor, torch.Tensor, torch.Tensor]
         Returns updated tensors required to compute Retrieval Recall.
 
     """

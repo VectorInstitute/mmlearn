@@ -2,7 +2,7 @@
 
 import ast
 import os
-from typing import Callable, List, Literal, Optional, Union
+from typing import Callable, Literal, Optional, Union
 
 import pandas as pd
 import torch
@@ -27,7 +27,7 @@ class Quilt(Dataset[Example]):
         Path to the root directory of the dataset.
     split : {"train", "val"}
         Dataset split.
-    subset : List[str], optional, default=["openpath", "pubmed", "quilt", "laion"]
+    subset : list[str], optional, default=["openpath", "pubmed", "quilt", "laion"]
         Subsets of Quilt-1M to load.
     transform : Optional[Callable]
         Transform applied to images.
@@ -45,7 +45,7 @@ class Quilt(Dataset[Example]):
         self,
         root_dir: str,
         split: Literal["train", "val"] = "train",
-        subset: Optional[List[str]] = None,
+        subset: Optional[list[str]] = None,
         transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         tokenizer: Optional[Callable[[str], Union[torch.Tensor, dict]]] = None,
         processor: Optional[
@@ -73,7 +73,9 @@ class Quilt(Dataset[Example]):
                 )
 
         for func_name, func in zip(
-            ["transform", "tokenizer", "processor"], [transform, tokenizer, processor]
+            ["transform", "tokenizer", "processor"],
+            [transform, tokenizer, processor],
+            strict=False,
         ):
             if func is not None and not callable(func):
                 raise ValueError(f"`{func_name}` is not callable.")
@@ -96,7 +98,7 @@ class Quilt(Dataset[Example]):
             self.data_df.apply(
                 lambda row: row["split"] == split and row["subset"] in subset, axis=1
             )
-        ]
+        ].reset_index(drop=True)
 
         # the 'pathology' column is a list of strings
         self.data_df["pathology"] = self.data_df["pathology"].apply(_safe_eval)
@@ -146,8 +148,8 @@ class Quilt(Dataset[Example]):
 
         example = Example(
             {
-                Modalities.RGB: image,
-                Modalities.TEXT: caption,
+                Modalities.RGB.name: image,
+                Modalities.TEXT.name: caption,
                 EXAMPLE_INDEX_KEY: idx,
                 "qid": self.data_df.index[idx],
                 "magnification": self.data_df.loc[idx, "magnification"],
@@ -158,12 +160,12 @@ class Quilt(Dataset[Example]):
 
         if tokens is not None:
             if isinstance(tokens, dict):  # output of HFTokenizer
-                assert (
-                    Modalities.TEXT in tokens
-                ), f"Missing key `{Modalities.TEXT}` in tokens."
+                assert Modalities.TEXT.name in tokens, (
+                    f"Missing key `{Modalities.TEXT.name}` in tokens."
+                )
                 example.update(tokens)
             else:
-                example[Modalities.TEXT] = tokens
+                example[Modalities.TEXT.name] = tokens
 
         return example
 

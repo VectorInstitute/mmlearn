@@ -42,7 +42,7 @@ class MIMICIVCXR(Dataset):
         Model which was used to generate labels from raw-text reports.
     transform :  Optional[Callable]
         Custom transform applied to images.
-    tokenizer : Callable[[torch.Tensor], Dict[str, torch.Tensor]]
+    tokenizer : Callable[[torch.Tensor], dict[str, torch.Tensor]]
         A function that tokenizes the raw text reports.
     include_report : bool, default=False
         Whether or not to include the raw text reports in the data example.
@@ -104,15 +104,17 @@ class MIMICIVCXR(Dataset):
 
         if self._labeler in ["double_image", "single_image"]:
             self.data_df = pd.read_csv(data_path)
-            self.data_df = self.data_df.dropna(
-                subset=["caption"]
-            )  # some captions are missing
+            self.data_df = self.data_df.dropna(subset=["caption"]).reset_index(
+                drop=True
+            )  # remove entries with no caption
         else:
             self.data_df = pd.read_json(data_path)
 
             # remove entries with no label if reports are not requested either
             old_num = len(self.data_df)
-            entries_df = self.data_df[self.data_df["label"].apply(len) > 0]
+            self.data_df = self.data_df[
+                self.data_df["label"].apply(len) > 0
+            ].reset_index(drop=True)
             logger.info(
                 f"{old_num - len(self.data_df)} datapoints removed due to lack of a label."
             )
@@ -136,7 +138,7 @@ class MIMICIVCXR(Dataset):
         ) as img:
             image = self.transform(img.convert("RGB"))
 
-        example = Example({Modalities.RGB: image, EXAMPLE_INDEX_KEY: idx})
+        example = Example({Modalities.RGB.name: image, EXAMPLE_INDEX_KEY: idx})
 
         if self._labeler in ["negbio", "chexpert"]:
             example["subject_id"] = entry["subject_id"]
@@ -152,18 +154,18 @@ class MIMICIVCXR(Dataset):
                 if tokenized_report is not None:
                     example[Modalities.TEXT] = tokenized_report
         else:
-            example[Modalities.TEXT] = entry["caption"]
+            example[Modalities.TEXT.name] = entry["caption"]
             tokens = (
                 self.tokenizer(entry["caption"]) if self.tokenizer is not None else None
             )
             if tokens is not None:
                 if isinstance(tokens, dict):  # output of HFTokenizer
-                    assert (
-                        Modalities.TEXT in tokens
-                    ), f"Missing key `{Modalities.TEXT}` in tokens."
+                    assert Modalities.TEXT.name in tokens, (
+                        f"Missing key `{Modalities.TEXT.name}` in tokens."
+                    )
                     example.update(tokens)
                 else:
-                    example[Modalities.TEXT] = tokens
+                    example[Modalities.TEXT.name] = tokens
 
         return example
 
@@ -184,8 +186,8 @@ class CreateJSONFiles(object):
             Absolute path to the image.
         `report_path`: str
             Absolute path to the textual report.
-        `label`: List[int | NaN]
-            List of labels assigned to the data sample by the desired labeler.
+        `label`: list[int | NaN]
+            list of labels assigned to the data sample by the desired labeler.
         `qid`: int
             Query ID. This ID enables tracking the sample in the original dataset.
         `subject_id`: int
