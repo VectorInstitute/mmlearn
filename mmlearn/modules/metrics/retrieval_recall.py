@@ -37,9 +37,18 @@ class RetrievalRecallAtK(Metric):
     aggregation : {"mean", "median", "min", "max"} or callable, default="mean"
         Specifies the aggregation function to apply to the Recall@K values computed
         in batches. If a callable is provided, it should accept a tensor of values
-        and a keyword argument 'dim' and return a single scalar value.
+        and a keyword argument ``'dim'`` and return a single scalar value.
     kwargs : Any
-        Additional arguments to be passed to the torchmetrics.Metric class.
+        Additional arguments to be passed to the :py:class:`torchmetrics.Metric` class.
+
+    Raises
+    ------
+    ValueError
+
+        - If the `top_k` is not a positive integer or None.
+        - If the `reduction` is not one of {"mean", "sum", "none", None}.
+        - If the `aggregation` is not one of {"mean", "median", "min", "max"} or a
+          custom callable function.
 
     """
 
@@ -104,15 +113,20 @@ class RetrievalRecallAtK(Metric):
         Parameters
         ----------
         x : torch.Tensor
-            Embeddings (unnormalized) of shape `(N, D)` where `N` is the number
+            Embeddings (unnormalized) of shape ``(N, D)`` where ``N`` is the number
             of samples and `D` is the number of dimensions.
         y : torch.Tensor
-            Embeddings (unnormalized) of shape `(M, D)` where `M` is the number
-            of samples and `D` is the number of dimensions.
+            Embeddings (unnormalized) of shape ``(M, D)`` where ``M`` is the number
+            of samples and ``D`` is the number of dimensions.
         indexes : torch.Tensor
-            Index tensor of shape `(N,)` where `N` is the number of samples.
-            This specifies which sample in 'y' is the positive match for each
-            sample in 'x'.
+            Index tensor of shape ``(N,)`` where ``N`` is the number of samples.
+            This specifies which sample in ``y`` is the positive match for each
+            sample in ``x``.
+
+        Raises
+        ------
+        ValueError
+            If `indexes` is None.
 
         """
         if indexes is None:
@@ -209,7 +223,13 @@ class RetrievalRecallAtK(Metric):
         )
 
     def forward(self, *args: Any, **kwargs: Any) -> Any:
-        """Forward method is not supported."""
+        """Forward method is not supported.
+
+        Raises
+        ------
+        NotImplementedError
+            The forward method is not supported for this metric.
+        """
         raise NotImplementedError(
             "RetrievalRecallAtK metric does not support forward method"
         )
