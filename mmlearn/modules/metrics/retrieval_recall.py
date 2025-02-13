@@ -3,7 +3,7 @@
 import concurrent.futures
 import os
 from functools import partial
-from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Literal, Optional, Union
 
 import torch
 import torch.distributed
@@ -56,9 +56,9 @@ class RetrievalRecallAtK(Metric):
     higher_is_better: bool = True
     full_state_update: bool = False
 
-    indexes: List[torch.Tensor]
-    x: List[torch.Tensor]
-    y: List[torch.Tensor]
+    indexes: list[torch.Tensor]
+    x: list[torch.Tensor]
+    y: list[torch.Tensor]
     num_samples: torch.Tensor
 
     def __init__(
@@ -272,9 +272,9 @@ def _recall_at_k(
     Parameters
     ----------
     scores : torch.Tensor
-        Compatibility score between embeddings (num_x, num_y).
+        Compatibility score between embeddings ``(num_x, num_y)``.
     positive_pairs : torch.Tensor
-        Boolean matrix of positive pairs (num_x, num_y).
+        Boolean matrix of positive pairs ``(num_x, num_y)``.
     k : int
         Consider only the top k elements for each query.
 
@@ -293,7 +293,7 @@ def _update_batch_inputs(
     x: torch.Tensor,
     y: torch.Tensor,
     indexes: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Update and returns variables required to compute Retrieval Recall.
 
     Checks for same shape of input tensors.
@@ -309,7 +309,7 @@ def _update_batch_inputs(
 
     Returns
     -------
-    Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+    tuple[torch.Tensor, torch.Tensor, torch.Tensor]
         Returns updated tensors required to compute Retrieval Recall.
 
     """
