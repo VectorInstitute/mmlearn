@@ -1,7 +1,9 @@
 """Retrieval Recall@K metric."""
 
+import concurrent.futures
+import os
 from functools import partial
-from typing import Any, Callable, Dict, Literal, Optional, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
 
 import torch
 import torch.distributed
@@ -29,25 +31,15 @@ class RetrievalRecallAtK(Metric):
     ----------
     top_k : int
         The number of top elements to consider for computing the Recall@K.
-    reduction : {"mean", "sum", "none", None}, default="sum"
+    reduction : {"mean", "sum", "none", None}, optional, default="sum"
         Specifies the reduction to apply after computing the pairwise cosine similarity
         scores.
     aggregation : {"mean", "median", "min", "max"} or callable, default="mean"
         Specifies the aggregation function to apply to the Recall@K values computed
         in batches. If a callable is provided, it should accept a tensor of values
-        and a keyword argument ``'dim'`` and return a single scalar value.
+        and a keyword argument 'dim' and return a single scalar value.
     kwargs : Any
-        Additional arguments to be passed to the :py:class:`torchmetrics.Metric` class.
-
-    Raises
-    ------
-    ValueError
-
-        - If the `top_k` is not a positive integer or None.
-        - If the `reduction` is not one of {"mean", "sum", "none", None}.
-        - If the `aggregation` is not one of {"mean", "median", "min", "max"} or a
-          custom callable function.
-
+        Additional arguments to be passed to the torchmetrics.Metric class.
 
     """
 
@@ -55,21 +47,22 @@ class RetrievalRecallAtK(Metric):
     higher_is_better: bool = True
     full_state_update: bool = False
 
-    indexes: list[torch.Tensor]
-    x: list[torch.Tensor]
-    y: list[torch.Tensor]
+    indexes: List[torch.Tensor]
+    x: List[torch.Tensor]
+    y: List[torch.Tensor]
     num_samples: torch.Tensor
 
     def __init__(
         self,
         top_k: int,
-        reduction: Literal["mean", "sum", "none", None] = None,
+        reduction: Optional[Literal["mean", "sum", "none"]] = "sum",
         aggregation: Union[
             Literal["mean", "median", "min", "max"],
             Callable[[torch.Tensor, int], torch.Tensor],
         ] = "mean",
         **kwargs: Any,
     ) -> None:
+        """Initialize the metric."""
         super().__init__(**kwargs)
 
         if top_k is not None and not (isinstance(top_k, int) and top_k > 0):
@@ -105,32 +98,21 @@ class RetrievalRecallAtK(Metric):
         self._to_sync = self.sync_on_compute
         self._should_unsync = False
 
-    def _is_distributed(self) -> bool:
-        if self.distributed_available_fn is not None:
-            distributed_available = self.distributed_available_fn
-
-        return distributed_available() if callable(distributed_available) else False
-
     def update(self, x: torch.Tensor, y: torch.Tensor, indexes: torch.Tensor) -> None:
         """Check shape, convert dtypes and add to accumulators.
 
         Parameters
         ----------
         x : torch.Tensor
-            Embeddings (unnormalized) of shape ``(N, D)`` where ``N`` is the number
+            Embeddings (unnormalized) of shape `(N, D)` where `N` is the number
             of samples and `D` is the number of dimensions.
         y : torch.Tensor
-            Embeddings (unnormalized) of shape ``(M, D)`` where ``M`` is the number
-            of samples and ``D`` is the number of dimensions.
+            Embeddings (unnormalized) of shape `(M, D)` where `M` is the number
+            of samples and `D` is the number of dimensions.
         indexes : torch.Tensor
-            Index tensor of shape ``(N,)`` where ``N`` is the number of samples.
-            This specifies which sample in ``y`` is the positive match for each
-            sample in ``x``.
-
-        Raises
-        ------
-        ValueError
-            If `indexes` is None.
+            Index tensor of shape `(N,)` where `N` is the number of samples.
+            This specifies which sample in 'y' is the positive match for each
+            sample in 'x'.
 
         """
         if indexes is None:
@@ -174,7 +156,7 @@ class RetrievalRecallAtK(Metric):
             self._batch_size = x.size(0)  # global batch size
 
     def compute(self) -> torch.Tensor:
-        """Compute the metric in a RAM-efficient manner.
+        """Compute the metric.
 
         Returns
         -------
@@ -185,8 +167,8 @@ class RetrievalRecallAtK(Metric):
         y = dim_zero_cat(self.y)
 
         # normalize embeddings
-        x_norm = x / x.norm(dim=-1, p=2, keepdim=True)
-        y_norm = y / y.norm(dim=-1, p=2, keepdim=True)
+        x /= x.norm(dim=-1, p=2, keepdim=True)
+        y /= y.norm(dim=-1, p=2, keepdim=True)
 
         # instantiate reduction function
         reduction_mapping: Dict[
@@ -201,41 +183,67 @@ class RetrievalRecallAtK(Metric):
         # concatenate indexes of true pairs
         indexes = dim_zero_cat(self.indexes)
 
-        results = []
-        for start in tqdm(
-            range(0, len(x), self._batch_size), desc=f"Recall@{self.top_k}"
-        ):
-            end = start + self._batch_size
-            # compute the cosine similarity
-            x_norm_batch = x_norm[start:end]
-            similarity = _safe_matmul(x_norm_batch, y_norm)
-            scores: torch.Tensor = reduction_mapping[self.reduction](similarity)
-            indexes_batch = indexes[start:end]
-            positive_pairs = torch.zeros_like(scores, dtype=torch.bool)
-            positive_pairs[torch.arange(len(scores)), indexes_batch] = True
-            # compute recall_at_k
-            result = _recall_at_k(scores, positive_pairs, self.top_k)
-            results.append(result)
+        results: list[torch.Tensor] = []
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=os.cpu_count() or 1  # use all available CPUs
+        ) as executor:
+            futures = [
+                executor.submit(
+                    self._process_batch,
+                    start,
+                    x,
+                    y,
+                    indexes,
+                    reduction_mapping,
+                    self.top_k,
+                )
+                for start in tqdm(
+                    range(0, len(x), self._batch_size), desc=f"Recall@{self.top_k}"
+                )
+            ]
+            for future in concurrent.futures.as_completed(futures):
+                results.append(future.result())
 
         return _retrieval_aggregate(
-            (torch.cat([x.to(scores) for x in results]) > 0).float(), self.aggregation
+            (torch.cat([x.float() for x in results]) > 0).float(), self.aggregation
         )
 
     def forward(self, *args: Any, **kwargs: Any) -> Any:
-        """Forward method is not supported.
-
-        Raises
-        ------
-        NotImplementedError
-            The forward method is not supported for this metric.
-        """
+        """Forward method is not supported."""
         raise NotImplementedError(
             "RetrievalRecallAtK metric does not support forward method"
         )
 
+    def _is_distributed(self) -> bool:
+        if self.distributed_available_fn is not None:
+            distributed_available = self.distributed_available_fn
 
-# modified from:
-# https://github.com/LAION-AI/CLIP_benchmark/blob/main/clip_benchmark/metrics/zeroshot_retrieval.py
+        return distributed_available() if callable(distributed_available) else False
+
+    def _process_batch(
+        self,
+        start: int,
+        x_norm: torch.Tensor,
+        y_norm: torch.Tensor,
+        indexes: torch.Tensor,
+        reduction_mapping: Dict[Optional[str], Callable[[torch.Tensor], torch.Tensor]],
+        top_k: int,
+    ) -> torch.Tensor:
+        """Compute the Recall@K for a batch of samples."""
+        end = start + self._batch_size
+        x_norm_batch = x_norm[start:end]
+        indexes_batch = indexes[start:end]
+
+        similarity = _safe_matmul(x_norm_batch, y_norm)
+        scores: torch.Tensor = reduction_mapping[self.reduction](similarity)
+
+        with torch.inference_mode():
+            positive_pairs = torch.zeros_like(scores, dtype=torch.bool)
+            positive_pairs[torch.arange(len(scores)), indexes_batch] = True
+
+        return _recall_at_k(scores, positive_pairs, top_k)
+
+
 def _recall_at_k(
     scores: torch.Tensor, positive_pairs: torch.Tensor, k: int
 ) -> torch.Tensor:
@@ -244,9 +252,9 @@ def _recall_at_k(
     Parameters
     ----------
     scores : torch.Tensor
-        Compatibility score between embeddings ``(num_x, num_y)``.
+        Compatibility score between embeddings (num_x, num_y).
     positive_pairs : torch.Tensor
-        Boolean matrix of positive pairs ``(num_x, num_y)``.
+        Boolean matrix of positive pairs (num_x, num_y).
     k : int
         Consider only the top k elements for each query.
 
@@ -254,20 +262,10 @@ def _recall_at_k(
     -------
     recall at k averaged over all texts
     """
-    nb_texts, nb_images = scores.shape
-    # for each text, sort according to image scores in decreasing order
     topk_indices = torch.topk(scores, k, dim=1)[1]
-    # compute number of positives for each text
     nb_positive = positive_pairs.sum(dim=1)
-    # nb_texts, k, nb_images
-    topk_indices_onehot = torch.nn.functional.one_hot(
-        topk_indices, num_classes=nb_images
-    )
-    # compute number of true positives
-    positive_pairs_reshaped = positive_pairs.view(nb_texts, 1, nb_images)
-    # a true positive means a positive among the topk
-    nb_true_positive = (topk_indices_onehot * positive_pairs_reshaped).sum(dim=(1, 2))
-    # compute recall at k
+    positive_topk = positive_pairs.gather(1, topk_indices)
+    nb_true_positive = positive_topk.sum(dim=1)
     return nb_true_positive / nb_positive
 
 
@@ -275,7 +273,7 @@ def _update_batch_inputs(
     x: torch.Tensor,
     y: torch.Tensor,
     indexes: torch.Tensor,
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Update and returns variables required to compute Retrieval Recall.
 
     Checks for same shape of input tensors.
@@ -291,7 +289,7 @@ def _update_batch_inputs(
 
     Returns
     -------
-    tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+    Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
         Returns updated tensors required to compute Retrieval Recall.
 
     """
