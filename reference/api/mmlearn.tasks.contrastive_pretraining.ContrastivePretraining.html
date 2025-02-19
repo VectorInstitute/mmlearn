@@ -427,9 +427,18 @@ function must be provided to compute the test loss.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.auxiliary_tasks">
-<span class="sig-name descname"><span class="pre">auxiliary_tasks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict[str,</span> <span class="pre">L.LightningModule]</span></em><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.auxiliary_tasks" title="Link to this definition">¶</a></dt>
-<dd><p>A dictionary of auxiliary tasks to run alongside the main contrastive
-pretraining task.</p>
+<span class="sig-name descname"><span class="pre">auxiliary_tasks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">nn.ModuleDict[str,</span> <span class="pre">L.LightningModule]</span></em><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.auxiliary_tasks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.configure_model">
+<span class="sig-name descname"><span class="pre">configure_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/contrastive_pretraining.html#ContrastivePretraining.configure_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.configure_model" title="Link to this definition">¶</a></dt>
+<dd><p>Configure the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -499,6 +508,49 @@ modalities and the values are the projection head modules. This can be
 <dd><p>A list <a class="reference internal" href="mmlearn.tasks.contrastive_pretraining.LossPairSpec.html#mmlearn.tasks.contrastive_pretraining.LossPairSpec" title="mmlearn.tasks.contrastive_pretraining.LossPairSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossPairSpec</span></code></a> instances specifying the pairs of
 modalities to compute the contrastive loss between and the weight to
 apply to each pair.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_before_zero_grad">
+<span class="sig-name descname"><span class="pre">on_before_zero_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/contrastive_pretraining.html#ContrastivePretraining.on_before_zero_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_before_zero_grad" title="Link to this definition">¶</a></dt>
+<dd><p>Zero out the gradients of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_load_checkpoint">
+<span class="sig-name descname"><span class="pre">on_load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/contrastive_pretraining.html#ContrastivePretraining.on_load_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_load_checkpoint" title="Link to this definition">¶</a></dt>
+<dd><p>Modify the model checkpoint after loading.</p>
+<p>The <cite>on_load_checkpoint</cite> method of auxiliary tasks is called here to allow
+them to modify the checkpoint after loading.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> (<em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The loaded checkpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_save_checkpoint">
+<span class="sig-name descname"><span class="pre">on_save_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/contrastive_pretraining.html#ContrastivePretraining.on_save_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_save_checkpoint" title="Link to this definition">¶</a></dt>
+<dd><p>Modify the checkpoint before saving.</p>
+<p>The <cite>on_save_checkpoint</cite> method of auxiliary tasks is called here to allow
+them to modify the checkpoint before saving.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> (<em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The checkpoint to save.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -699,12 +751,16 @@ modalities and the values are the postprocessor modules. This can be
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining</span></code></a><ul>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.allow_zero_length_dataloader_with_multiple_devices"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.allow_zero_length_dataloader_with_multiple_devices</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.auxiliary_tasks"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.auxiliary_tasks</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.configure_model"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.configure_model()</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.encode"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.encode()</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.encoders"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.encoders</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.evaluation_tasks"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.evaluation_tasks</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.forward"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.forward()</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.heads"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.heads</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.modality_loss_pairs"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.modality_loss_pairs</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_before_zero_grad"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.on_before_zero_grad()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_load_checkpoint"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.on_load_checkpoint()</span></code></a></li>
+<li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_save_checkpoint"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.on_save_checkpoint()</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_test_epoch_end"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.on_test_epoch_end()</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_test_epoch_start"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.on_test_epoch_start()</span></code></a></li>
 <li><a class="reference internal" href="#mmlearn.tasks.contrastive_pretraining.ContrastivePretraining.on_train_epoch_start"><code class="docutils literal notranslate"><span class="pre">ContrastivePretraining.on_train_epoch_start()</span></code></a></li>

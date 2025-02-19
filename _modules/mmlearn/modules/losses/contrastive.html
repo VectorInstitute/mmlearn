@@ -485,6 +485,15 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_compute_modality_alignment_loss</span><span class="p">(</span><span class="n">all_embeddings</span><span class="p">,</span> <span class="n">logit_scale</span><span class="p">)</span>
             <span class="p">)</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">losses</span><span class="p">:</span>  <span class="c1"># no loss to compute (e.g. no paired data in batch)</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                    <span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">logit_scale</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">embeddings</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
 
 

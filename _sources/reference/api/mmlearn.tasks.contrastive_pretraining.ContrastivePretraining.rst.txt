@@ -178,7 +178,6 @@ mmlearn.tasks.contrastive\_pretraining.ContrastivePretraining
    .. autoattribute:: ~ContrastivePretraining.heads
    .. autoattribute:: ~ContrastivePretraining.postprocessors
    .. autoattribute:: ~ContrastivePretraining.modality_loss_pairs
-   .. autoattribute:: ~ContrastivePretraining.auxiliary_tasks
    .. autoattribute:: ~ContrastivePretraining.evaluation_tasks
    .. autoattribute:: ~ContrastivePretraining.training
    

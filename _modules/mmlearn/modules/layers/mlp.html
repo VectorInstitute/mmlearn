@@ -376,9 +376,9 @@
 <span class="sd">    activation_layer : Optional[Callable[..., torch.nn.Module]], optional, default=torch.nn.ReLU</span>
 <span class="sd">        The activation layer to use. If not specified, ReLU is used. Partial functions</span>
 <span class="sd">        can be used to specify the activation layer with specific parameters.</span>
-<span class="sd">    bias : bool, optional, default=True</span>
+<span class="sd">    bias : Union[bool, list[bool]], optional, default=True</span>
 <span class="sd">        Whether to use bias in the linear layers.</span>
-<span class="sd">    dropout : float, optional, default=0.0</span>
+<span class="sd">    dropout : Union[float, list[float]], optional, default=0.0</span>
 <span class="sd">        The dropout probability to use.</span>
 
 <span class="sd">    Raises</span>
@@ -430,31 +430,34 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dropout</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-            <span class="n">dropout_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">dropout</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden_dims</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+            <span class="n">dropout_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">dropout</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hidden_dims</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dropout_list</span> <span class="o">=</span> <span class="n">dropout</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dropout_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden_dims</span><span class="p">):</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dropout_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden_dims</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># type: ignore[arg-type]</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Expected `dropout` to be a float or a list of floats with length &quot;</span>
-                <span class="s2">&quot;equal to the number of dropout layers in the MLP.&quot;</span>
+                <span class="s2">&quot;equal to the number of linear layers in the MLP.&quot;</span>
             <span class="p">)</span>
 
+        <span class="c1"># construct list of dimensions for the layers</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">in_dim</span><span class="p">]</span> <span class="o">+</span> <span class="n">hidden_dims</span>  <span class="c1"># type: ignore[operator]</span>
         <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">layer_idx</span><span class="p">,</span> <span class="n">hidden_dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hidden_dims</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># type: ignore[index]</span>
+        <span class="k">for</span> <span class="n">layer_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">hidden_features</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">dims</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">):</span>
             <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias_list</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">])</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">hidden_features</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias_list</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">])</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">norm_layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">norm_layer</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">))</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">norm_layer</span><span class="p">(</span><span class="n">hidden_features</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">activation_layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_layer</span><span class="p">())</span>
             <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_list</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">]))</span>
-            <span class="n">in_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
 
-        <span class="k">if</span> <span class="n">out_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">out_dim</span> <span class="o">=</span> <span class="n">in_dim</span>
+        <span class="n">out_dim</span> <span class="o">=</span> <span class="n">out_dim</span> <span class="ow">or</span> <span class="n">in_dim</span>
 
-        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span></div>
 
