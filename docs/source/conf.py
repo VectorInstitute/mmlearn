@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.abspath("./_ext"))
 project = "mmlearn"
 copyright = "2024, Vector AI Engineering"  # noqa: A001
 author = "Vector AI Engineering"
-release = "0.1.0a1"
+release = "0.1.0b0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
