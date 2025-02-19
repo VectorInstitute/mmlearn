@@ -333,19 +333,21 @@
           <h1>Source code for mmlearn.modules.metrics.retrieval_recall</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Retrieval Recall@K metric.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">concurrent.futures</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.distributed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">hydra_zen</span><span class="w"> </span><span class="kn">import</span> <span class="n">store</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>  <span class="c1"># noqa: N812</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchmetrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchmetrics.retrieval.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_retrieval_aggregate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchmetrics.utilities.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_same_shape</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchmetrics.utilities.compute</span><span class="w"> </span><span class="kn">import</span> <span class="n">_safe_matmul</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchmetrics.utilities.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">dim_zero_cat</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchmetrics.utilities.distributed</span><span class="w"> </span><span class="kn">import</span> <span class="n">gather_all_tensors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
 
 <div class="viewcode-block" id="RetrievalRecallAtK">
@@ -364,7 +366,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    top_k : int</span>
 <span class="sd">        The number of top elements to consider for computing the Recall@K.</span>
-<span class="sd">    reduction : {&quot;mean&quot;, &quot;sum&quot;, &quot;none&quot;, None}, default=&quot;sum&quot;</span>
+<span class="sd">    reduction : {&quot;mean&quot;, &quot;sum&quot;, &quot;none&quot;, None}, optional, default=&quot;sum&quot;</span>
 <span class="sd">        Specifies the reduction to apply after computing the pairwise cosine similarity</span>
 <span class="sd">        scores.</span>
 <span class="sd">    aggregation : {&quot;mean&quot;, &quot;median&quot;, &quot;min&quot;, &quot;max&quot;} or callable, default=&quot;mean&quot;</span>
@@ -383,7 +385,6 @@
 <span class="sd">        - If the `aggregation` is not one of {&quot;mean&quot;, &quot;median&quot;, &quot;min&quot;, &quot;max&quot;} or a</span>
 <span class="sd">          custom callable function.</span>
 
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">is_differentiable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -395,16 +396,19 @@
     <span class="n">y</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span>
     <span class="n">num_samples</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
 
+<div class="viewcode-block" id="RetrievalRecallAtK.__init__">
+<a class="viewcode-back" href="../../../../reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">reduction</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reduction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
         <span class="n">aggregation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
             <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">],</span>
             <span class="n">Callable</span><span class="p">[[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the metric.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">top_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">top_k</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">top_k</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
@@ -438,13 +442,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sync_on_compute</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dist_sync_on_step</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_to_sync</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_on_compute</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_should_unsync</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_should_unsync</span> <span class="o">=</span> <span class="kc">False</span></div>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_is_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_available_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">distributed_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_available_fn</span>
-
-        <span class="k">return</span> <span class="n">distributed_available</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">distributed_available</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="RetrievalRecallAtK.update">
 <a class="viewcode-back" href="../../../../reference/api/mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.html#mmlearn.modules.metrics.retrieval_recall.RetrievalRecallAtK.update">[docs]</a>
@@ -521,11 +520,15 @@
 <span class="sd">        torch.Tensor</span>
 <span class="sd">            The computed metric.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># compute the cosine similarity</span>
-        <span class="n">x_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">dim_zero_cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">y_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">dim_zero_cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">similarity</span> <span class="o">=</span> <span class="n">_safe_matmul</span><span class="p">(</span><span class="n">x_norm</span><span class="p">,</span> <span class="n">y_norm</span><span class="p">)</span>
-        <span class="n">reduction_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">dim_zero_cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">dim_zero_cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="c1"># normalize embeddings</span>
+        <span class="n">x</span> <span class="o">/=</span> <span class="n">x</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">/=</span> <span class="n">y</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># instantiate reduction function</span>
+        <span class="n">reduction_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span>
             <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span>
         <span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
@@ -533,22 +536,33 @@
             <span class="s2">&quot;none&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
             <span class="kc">None</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">scores</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">reduction_mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="p">](</span><span class="n">similarity</span><span class="p">)</span>
 
+        <span class="c1"># concatenate indexes of true pairs</span>
         <span class="n">indexes</span> <span class="o">=</span> <span class="n">dim_zero_cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indexes</span><span class="p">)</span>
-        <span class="n">positive_pairs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-        <span class="n">positive_pairs</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)),</span> <span class="n">indexes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
-            <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">positive_pairs</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">_recall_at_k</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="p">)</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span>
+            <span class="n">max_workers</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">1</span>  <span class="c1"># use all available CPUs</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">,</span>
+                    <span class="n">start</span><span class="p">,</span>
+                    <span class="n">x</span><span class="p">,</span>
+                    <span class="n">y</span><span class="p">,</span>
+                    <span class="n">indexes</span><span class="p">,</span>
+                    <span class="n">reduction_mapping</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Recall@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
 
         <span class="k">return</span> <span class="n">_retrieval_aggregate</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation</span>
+            <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation</span>
         <span class="p">)</span></div>
 
 
@@ -565,12 +579,39 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
             <span class="s2">&quot;RetrievalRecallAtK metric does not support forward method&quot;</span>
         <span class="p">)</span></div>
-</div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_available_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">distributed_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_available_fn</span>
+
+        <span class="k">return</span> <span class="n">distributed_available</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">distributed_available</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">x_norm</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">y_norm</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">indexes</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">reduction_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]],</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the Recall@K for a batch of samples.&quot;&quot;&quot;</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>
+        <span class="n">x_norm_batch</span> <span class="o">=</span> <span class="n">x_norm</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+        <span class="n">indexes_batch</span> <span class="o">=</span> <span class="n">indexes</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+        <span class="n">similarity</span> <span class="o">=</span> <span class="n">_safe_matmul</span><span class="p">(</span><span class="n">x_norm_batch</span><span class="p">,</span> <span class="n">y_norm</span><span class="p">)</span>
+        <span class="n">scores</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">reduction_mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="p">](</span><span class="n">similarity</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">inference_mode</span><span class="p">():</span>
+            <span class="n">positive_pairs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="n">positive_pairs</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)),</span> <span class="n">indexes_batch</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">_recall_at_k</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">positive_pairs</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span></div>
 
 
 
-<span class="c1"># modified from:</span>
-<span class="c1"># https://github.com/LAION-AI/CLIP_benchmark/blob/main/clip_benchmark/metrics/zeroshot_retrieval.py</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_recall_at_k</span><span class="p">(</span>
     <span class="n">scores</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">positive_pairs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -589,20 +630,10 @@
 <span class="sd">    -------</span>
 <span class="sd">    recall at k averaged over all texts</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nb_texts</span><span class="p">,</span> <span class="n">nb_images</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">shape</span>
-    <span class="c1"># for each text, sort according to image scores in decreasing order</span>
     <span class="n">topk_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="c1"># compute number of positives for each text</span>
     <span class="n">nb_positive</span> <span class="o">=</span> <span class="n">positive_pairs</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="c1"># nb_texts, k, nb_images</span>
-    <span class="n">topk_indices_onehot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span>
-        <span class="n">topk_indices</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">nb_images</span>
-    <span class="p">)</span>
-    <span class="c1"># compute number of true positives</span>
-    <span class="n">positive_pairs_reshaped</span> <span class="o">=</span> <span class="n">positive_pairs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">nb_texts</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nb_images</span><span class="p">)</span>
-    <span class="c1"># a true positive means a positive among the topk</span>
-    <span class="n">nb_true_positive</span> <span class="o">=</span> <span class="p">(</span><span class="n">topk_indices_onehot</span> <span class="o">*</span> <span class="n">positive_pairs_reshaped</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-    <span class="c1"># compute recall at k</span>
+    <span class="n">positive_topk</span> <span class="o">=</span> <span class="n">positive_pairs</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">topk_indices</span><span class="p">)</span>
+    <span class="n">nb_true_positive</span> <span class="o">=</span> <span class="n">positive_topk</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">nb_true_positive</span> <span class="o">/</span> <span class="n">nb_positive</span>
 
 
