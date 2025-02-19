@@ -627,9 +627,7 @@ class ContrastivePretraining(TrainingTask):
                         f"containing a 'loss' key, but got {type(auxiliary_task_output)}."
                     )
 
-                auxiliary_task_loss *= (
-                    task_spec.loss_weight * self.log_logit_scale.exp()
-                )
+                auxiliary_task_loss *= task_spec.loss_weight
                 auxiliary_losses.append(auxiliary_task_loss)
                 if self.log_auxiliary_tasks_loss:
                     self.log(
