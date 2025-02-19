@@ -41,9 +41,9 @@ class MLP(torch.nn.Sequential):
     activation_layer : Optional[Callable[..., torch.nn.Module]], optional, default=torch.nn.ReLU
         The activation layer to use. If not specified, ReLU is used. Partial functions
         can be used to specify the activation layer with specific parameters.
-    bias : bool, optional, default=True
+    bias : Union[bool, list[bool]], optional, default=True
         Whether to use bias in the linear layers.
-    dropout : float, optional, default=0.0
+    dropout : Union[float, list[float]], optional, default=0.0
         The dropout probability to use.
 
     Raises
@@ -95,30 +95,33 @@ class MLP(torch.nn.Sequential):
             )
 
         if isinstance(dropout, float):
-            dropout_list: list[float] = [dropout] * len(hidden_dims)  # type: ignore[arg-type]
+            dropout_list: list[float] = [dropout] * (len(hidden_dims) + 1)  # type: ignore[arg-type]
         else:
             dropout_list = dropout
-        if len(dropout_list) != len(hidden_dims):  # type: ignore[arg-type]
+        if len(dropout_list) != len(hidden_dims) + 1:  # type: ignore[arg-type]
             raise ValueError(
                 "Expected `dropout` to be a float or a list of floats with length "
-                "equal to the number of dropout layers in the MLP."
+                "equal to the number of linear layers in the MLP."
             )
 
+        # construct list of dimensions for the layers
+        dims = [in_dim] + hidden_dims  # type: ignore[operator]
         layers = []
-        for layer_idx, hidden_dim in enumerate(hidden_dims[:-1]):  # type: ignore[index]
+        for layer_idx, (in_features, hidden_features) in enumerate(
+            zip(dims[:-1], dims[1:], strict=False)
+        ):
             layers.append(
-                torch.nn.Linear(in_dim, hidden_dim, bias=bias_list[layer_idx])
+                torch.nn.Linear(in_features, hidden_features, bias=bias_list[layer_idx])
             )
             if norm_layer is not None:
-                layers.append(norm_layer(hidden_dim))
+                layers.append(norm_layer(hidden_features))
             if activation_layer is not None:
                 layers.append(activation_layer())
             layers.append(torch.nn.Dropout(dropout_list[layer_idx]))
-            in_dim = hidden_dim
 
-        if out_dim is None:
-            out_dim = in_dim
+        out_dim = out_dim or in_dim
 
-        layers.append(torch.nn.Linear(in_dim, out_dim, bias=bias_list[-1]))
+        layers.append(torch.nn.Linear(dims[-1], out_dim, bias=bias_list[-1]))
+        layers.append(torch.nn.Dropout(dropout_list[-1]))
 
         super().__init__(*layers)

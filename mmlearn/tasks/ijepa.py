@@ -11,11 +11,17 @@ from mmlearn.datasets.core import Modalities
 from mmlearn.datasets.processors.masking import IJEPAMaskGenerator, apply_masks
 from mmlearn.datasets.processors.transforms import repeat_interleave_batch
 from mmlearn.modules.ema import ExponentialMovingAverage
-from mmlearn.modules.encoders.vision import VisionTransformer
+from mmlearn.modules.encoders.vision import (
+    VisionTransformer,
+    VisionTransformerPredictor,
+)
 from mmlearn.tasks.base import TrainingTask
 
 
-@store(group="task", provider="mmlearn")
+# NOTE: setting zen_partial is necessary for adding the `_partial_` attribute to the
+# configuration, so that this task can be partially instantiated, if needed. This is
+# necessary when combining the task with other tasks in a multitask setting.
+@store(group="task", provider="mmlearn", zen_partial=False)
 class IJEPA(TrainingTask):
     """Pretraining module for IJEPA.
 
@@ -27,7 +33,7 @@ class IJEPA(TrainingTask):
     ----------
     encoder : VisionTransformer
         Vision transformer encoder.
-    predictor : VisionTransformer
+    predictor : VisionTransformerPredictor
         Vision transformer predictor.
     optimizer : Optional[partial[torch.optim.Optimizer]], optional, default=None
         The optimizer to use for training. This is expected to be a :py:func:`~functools.partial`
@@ -58,7 +64,8 @@ class IJEPA(TrainingTask):
     def __init__(
         self,
         encoder: VisionTransformer,
-        predictor: VisionTransformer,
+        predictor: VisionTransformerPredictor,
+        modality: str = "RGB",
         optimizer: Optional[partial[torch.optim.Optimizer]] = None,
         lr_scheduler: Optional[
             Union[
@@ -80,7 +87,7 @@ class IJEPA(TrainingTask):
             compute_validation_loss=compute_validation_loss,
             compute_test_loss=compute_test_loss,
         )
-
+        self.modality = Modalities.get_modality(modality)
         self.mask_generator = IJEPAMaskGenerator()
 
         self.current_step = 0
@@ -217,7 +224,7 @@ class IJEPA(TrainingTask):
     def _shared_step(
         self, batch: dict[str, Any], batch_idx: int, step_type: str
     ) -> Optional[torch.Tensor]:
-        images = batch[Modalities.RGB.name]
+        images = batch[self.modality.name]
 
         # Generate masks
         batch_size = images.size(0)
@@ -230,7 +237,7 @@ class IJEPA(TrainingTask):
 
         # Forward pass through target encoder to get h
         with torch.no_grad():
-            h = self.ema.model(images)
+            h = self.ema.model(batch)[0]
             h = F.layer_norm(h, h.size()[-1:])
             h_masked = apply_masks(h, predictor_masks)
             h_masked = repeat_interleave_batch(
@@ -238,7 +245,8 @@ class IJEPA(TrainingTask):
             )
 
         # Forward pass through encoder with encoder_masks
-        z = self.encoder(images, masks=encoder_masks)
+        batch[self.modality.mask] = encoder_masks
+        z = self.encoder(batch)[0]
 
         # Pass z through predictor with encoder_masks and predictor_masks
         z_pred = self.predictor(z, encoder_masks, predictor_masks)
@@ -255,12 +263,7 @@ class IJEPA(TrainingTask):
             loss = self.loss_fn(z_pred, h_masked)
 
             # Log loss
-            self.log(
-                f"{step_type}/loss",
-                loss,
-                prog_bar=True,
-                sync_dist=True,
-            )
+            self.log(f"{step_type}/loss", loss, prog_bar=True, sync_dist=True)
 
             return loss
 

@@ -113,11 +113,12 @@ class Block(nn.Module):
         )
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.norm2 = norm_layer(dim)
-        mlp_hidden_dim = int(dim * mlp_ratio)
+
         self.mlp = MLP(
             in_dim=dim,
-            hidden_dims=[mlp_hidden_dim],
+            hidden_dims_multiplier=[mlp_ratio],
             activation_layer=act_layer,
+            bias=True,
             dropout=drop,
         )
 
