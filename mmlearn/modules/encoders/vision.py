@@ -63,7 +63,7 @@ class TimmViT(nn.Module):
         pretrained: bool = True,
         freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
-        peft_config: Optional[PeftConfig] = None,
+        peft_config: Optional["PeftConfig"] = None,
         model_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
         super().__init__()
