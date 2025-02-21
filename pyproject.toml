@@ -1,6 +1,6 @@
 [project]
 name = "mmlearn"
-version = "0.1.0b0"
+version = "0.1.0b1"
 description = "A modular framework for research on multimodal representation learning."
 readme = "README.md"
 authors = [{name = "Vector AI Engineering", email = "ai_engineering@vectorinstitute.ai"}]
