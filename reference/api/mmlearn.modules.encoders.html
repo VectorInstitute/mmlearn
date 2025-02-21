@@ -14,7 +14,7 @@
     
     <meta name="msvalidate.01" content="8D2A5032F006424CAF54C0DDCD16F666" />
       
-        <title>mmlearn.modules.encoders package - mmlearn 0.1.0b1 documentation</title>
+        <title>mmlearn.modules.encoders package - mmlearn 0.1.0b2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -50,7 +50,7 @@
       }
     }
   }
-</style><script src="../../_static/documentation_options.js?v=e4e59774"></script>
+</style><script src="../../_static/documentation_options.js?v=d31d1d1e"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -192,7 +192,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">mmlearn 0.1.0b1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">mmlearn 0.1.0b2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -215,7 +215,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">mmlearn 0.1.0b1 documentation</span>
+  <span class="sidebar-brand-text">mmlearn 0.1.0b2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -287,6 +287,15 @@
 <li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.ema.html">mmlearn.modules.ema module</a></li>
 </ul>
 </li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="mmlearn.tasks.html">mmlearn.tasks package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of mmlearn.tasks package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.base.html">mmlearn.tasks.base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.contrastive_pretraining.html">mmlearn.tasks.contrastive_pretraining module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.hooks.html">mmlearn.tasks.hooks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.ijepa.html">mmlearn.tasks.ijepa module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.zero_shot_classification.html">mmlearn.tasks.zero_shot_classification module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.tasks.zero_shot_retrieval.html">mmlearn.tasks.zero_shot_retrieval module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -323,8 +332,9 @@
           </label>
         </div>
         <article role="main">
-          <section id="mmlearn-modules-encoders-package">
-<h1>mmlearn.modules.encoders package<a class="headerlink" href="#mmlearn-modules-encoders-package" title="Link to this heading">¶</a></h1>
+          <section id="module-mmlearn.modules.encoders">
+<span id="mmlearn-modules-encoders-package"></span><h1>mmlearn.modules.encoders package<a class="headerlink" href="#module-mmlearn.modules.encoders" title="Link to this heading">¶</a></h1>
+<p>Encoders.</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -355,7 +365,33 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="mmlearn.modules.encoders.vision.html">mmlearn.modules.encoders.vision module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mmlearn.modules.encoders.vision.html">mmlearn.modules.encoders.vision module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.TimmViT"><code class="docutils literal notranslate"><span class="pre">TimmViT</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.TimmViT.forward"><code class="docutils literal notranslate"><span class="pre">TimmViT.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.TimmViT.get_intermediate_layers"><code class="docutils literal notranslate"><span class="pre">TimmViT.get_intermediate_layers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.TimmViT.get_patch_info"><code class="docutils literal notranslate"><span class="pre">TimmViT.get_patch_info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.VisionTransformer"><code class="docutils literal notranslate"><span class="pre">VisionTransformer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.VisionTransformer.fix_init_weight"><code class="docutils literal notranslate"><span class="pre">VisionTransformer.fix_init_weight()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.VisionTransformer.forward"><code class="docutils literal notranslate"><span class="pre">VisionTransformer.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.VisionTransformer.interpolate_pos_encoding"><code class="docutils literal notranslate"><span class="pre">VisionTransformer.interpolate_pos_encoding()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.VisionTransformerPredictor"><code class="docutils literal notranslate"><span class="pre">VisionTransformerPredictor</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.VisionTransformerPredictor.fix_init_weight"><code class="docutils literal notranslate"><span class="pre">VisionTransformerPredictor.fix_init_weight()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.VisionTransformerPredictor.forward"><code class="docutils literal notranslate"><span class="pre">VisionTransformerPredictor.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.vit_base"><code class="docutils literal notranslate"><span class="pre">vit_base()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.vit_giant"><code class="docutils literal notranslate"><span class="pre">vit_giant()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.vit_huge"><code class="docutils literal notranslate"><span class="pre">vit_huge()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.vit_large"><code class="docutils literal notranslate"><span class="pre">vit_large()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.vit_predictor"><code class="docutils literal notranslate"><span class="pre">vit_predictor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.vit_small"><code class="docutils literal notranslate"><span class="pre">vit_small()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmlearn.modules.encoders.vision.html#mmlearn.modules.encoders.vision.vit_tiny"><code class="docutils literal notranslate"><span class="pre">vit_tiny()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>

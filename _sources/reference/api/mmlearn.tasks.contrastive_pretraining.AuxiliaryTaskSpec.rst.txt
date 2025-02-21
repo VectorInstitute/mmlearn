@@ -1,0 +1,30 @@
+mmlearn.tasks.contrastive\_pretraining.AuxiliaryTaskSpec
+========================================================
+
+.. currentmodule:: mmlearn.tasks.contrastive_pretraining
+
+.. autoclass:: AuxiliaryTaskSpec
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~AuxiliaryTaskSpec.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~AuxiliaryTaskSpec.loss_weight
+   .. autoattribute:: ~AuxiliaryTaskSpec.modality
+   .. autoattribute:: ~AuxiliaryTaskSpec.task
+   
+   

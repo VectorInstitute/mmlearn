@@ -1,0 +1,83 @@
+mmlearn.modules.encoders.vision.TimmViT
+=======================================
+
+.. currentmodule:: mmlearn.modules.encoders.vision
+
+.. autoclass:: TimmViT
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~TimmViT.__init__
+   .. automethod:: ~TimmViT.add_module
+   .. automethod:: ~TimmViT.apply
+   .. automethod:: ~TimmViT.bfloat16
+   .. automethod:: ~TimmViT.buffers
+   .. automethod:: ~TimmViT.children
+   .. automethod:: ~TimmViT.compile
+   .. automethod:: ~TimmViT.cpu
+   .. automethod:: ~TimmViT.cuda
+   .. automethod:: ~TimmViT.double
+   .. automethod:: ~TimmViT.eval
+   .. automethod:: ~TimmViT.extra_repr
+   .. automethod:: ~TimmViT.float
+   .. automethod:: ~TimmViT.forward
+   .. automethod:: ~TimmViT.get_buffer
+   .. automethod:: ~TimmViT.get_extra_state
+   .. automethod:: ~TimmViT.get_intermediate_layers
+   .. automethod:: ~TimmViT.get_parameter
+   .. automethod:: ~TimmViT.get_patch_info
+   .. automethod:: ~TimmViT.get_submodule
+   .. automethod:: ~TimmViT.half
+   .. automethod:: ~TimmViT.ipu
+   .. automethod:: ~TimmViT.load_state_dict
+   .. automethod:: ~TimmViT.modules
+   .. automethod:: ~TimmViT.mtia
+   .. automethod:: ~TimmViT.named_buffers
+   .. automethod:: ~TimmViT.named_children
+   .. automethod:: ~TimmViT.named_modules
+   .. automethod:: ~TimmViT.named_parameters
+   .. automethod:: ~TimmViT.parameters
+   .. automethod:: ~TimmViT.register_backward_hook
+   .. automethod:: ~TimmViT.register_buffer
+   .. automethod:: ~TimmViT.register_forward_hook
+   .. automethod:: ~TimmViT.register_forward_pre_hook
+   .. automethod:: ~TimmViT.register_full_backward_hook
+   .. automethod:: ~TimmViT.register_full_backward_pre_hook
+   .. automethod:: ~TimmViT.register_load_state_dict_post_hook
+   .. automethod:: ~TimmViT.register_load_state_dict_pre_hook
+   .. automethod:: ~TimmViT.register_module
+   .. automethod:: ~TimmViT.register_parameter
+   .. automethod:: ~TimmViT.register_state_dict_post_hook
+   .. automethod:: ~TimmViT.register_state_dict_pre_hook
+   .. automethod:: ~TimmViT.requires_grad_
+   .. automethod:: ~TimmViT.set_extra_state
+   .. automethod:: ~TimmViT.set_submodule
+   .. automethod:: ~TimmViT.share_memory
+   .. automethod:: ~TimmViT.state_dict
+   .. automethod:: ~TimmViT.to
+   .. automethod:: ~TimmViT.to_empty
+   .. automethod:: ~TimmViT.train
+   .. automethod:: ~TimmViT.type
+   .. automethod:: ~TimmViT.xpu
+   .. automethod:: ~TimmViT.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~TimmViT.T_destination
+   .. autoattribute:: ~TimmViT.call_super_init
+   .. autoattribute:: ~TimmViT.dump_patches
+   .. autoattribute:: ~TimmViT.training
+   
+   

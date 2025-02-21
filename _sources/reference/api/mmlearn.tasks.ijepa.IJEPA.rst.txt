@@ -1,0 +1,178 @@
+mmlearn.tasks.ijepa.IJEPA
+=========================
+
+.. currentmodule:: mmlearn.tasks.ijepa
+
+.. autoclass:: IJEPA
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~IJEPA.__init__
+   .. automethod:: ~IJEPA.add_module
+   .. automethod:: ~IJEPA.all_gather
+   .. automethod:: ~IJEPA.apply
+   .. automethod:: ~IJEPA.backward
+   .. automethod:: ~IJEPA.bfloat16
+   .. automethod:: ~IJEPA.buffers
+   .. automethod:: ~IJEPA.children
+   .. automethod:: ~IJEPA.clip_gradients
+   .. automethod:: ~IJEPA.compile
+   .. automethod:: ~IJEPA.configure_callbacks
+   .. automethod:: ~IJEPA.configure_gradient_clipping
+   .. automethod:: ~IJEPA.configure_model
+   .. automethod:: ~IJEPA.configure_optimizers
+   .. automethod:: ~IJEPA.configure_sharded_model
+   .. automethod:: ~IJEPA.cpu
+   .. automethod:: ~IJEPA.cuda
+   .. automethod:: ~IJEPA.double
+   .. automethod:: ~IJEPA.eval
+   .. automethod:: ~IJEPA.extra_repr
+   .. automethod:: ~IJEPA.float
+   .. automethod:: ~IJEPA.forward
+   .. automethod:: ~IJEPA.freeze
+   .. automethod:: ~IJEPA.get_buffer
+   .. automethod:: ~IJEPA.get_extra_state
+   .. automethod:: ~IJEPA.get_parameter
+   .. automethod:: ~IJEPA.get_submodule
+   .. automethod:: ~IJEPA.half
+   .. automethod:: ~IJEPA.ipu
+   .. automethod:: ~IJEPA.load_from_checkpoint
+   .. automethod:: ~IJEPA.load_state_dict
+   .. automethod:: ~IJEPA.log
+   .. automethod:: ~IJEPA.log_dict
+   .. automethod:: ~IJEPA.lr_scheduler_step
+   .. automethod:: ~IJEPA.lr_schedulers
+   .. automethod:: ~IJEPA.manual_backward
+   .. automethod:: ~IJEPA.modules
+   .. automethod:: ~IJEPA.mtia
+   .. automethod:: ~IJEPA.named_buffers
+   .. automethod:: ~IJEPA.named_children
+   .. automethod:: ~IJEPA.named_modules
+   .. automethod:: ~IJEPA.named_parameters
+   .. automethod:: ~IJEPA.on_after_backward
+   .. automethod:: ~IJEPA.on_after_batch_transfer
+   .. automethod:: ~IJEPA.on_before_backward
+   .. automethod:: ~IJEPA.on_before_batch_transfer
+   .. automethod:: ~IJEPA.on_before_optimizer_step
+   .. automethod:: ~IJEPA.on_before_zero_grad
+   .. automethod:: ~IJEPA.on_fit_end
+   .. automethod:: ~IJEPA.on_fit_start
+   .. automethod:: ~IJEPA.on_load_checkpoint
+   .. automethod:: ~IJEPA.on_predict_batch_end
+   .. automethod:: ~IJEPA.on_predict_batch_start
+   .. automethod:: ~IJEPA.on_predict_end
+   .. automethod:: ~IJEPA.on_predict_epoch_end
+   .. automethod:: ~IJEPA.on_predict_epoch_start
+   .. automethod:: ~IJEPA.on_predict_model_eval
+   .. automethod:: ~IJEPA.on_predict_start
+   .. automethod:: ~IJEPA.on_save_checkpoint
+   .. automethod:: ~IJEPA.on_test_batch_end
+   .. automethod:: ~IJEPA.on_test_batch_start
+   .. automethod:: ~IJEPA.on_test_end
+   .. automethod:: ~IJEPA.on_test_epoch_end
+   .. automethod:: ~IJEPA.on_test_epoch_start
+   .. automethod:: ~IJEPA.on_test_model_eval
+   .. automethod:: ~IJEPA.on_test_model_train
+   .. automethod:: ~IJEPA.on_test_start
+   .. automethod:: ~IJEPA.on_train_batch_end
+   .. automethod:: ~IJEPA.on_train_batch_start
+   .. automethod:: ~IJEPA.on_train_end
+   .. automethod:: ~IJEPA.on_train_epoch_end
+   .. automethod:: ~IJEPA.on_train_epoch_start
+   .. automethod:: ~IJEPA.on_train_start
+   .. automethod:: ~IJEPA.on_validation_batch_end
+   .. automethod:: ~IJEPA.on_validation_batch_start
+   .. automethod:: ~IJEPA.on_validation_end
+   .. automethod:: ~IJEPA.on_validation_epoch_end
+   .. automethod:: ~IJEPA.on_validation_epoch_start
+   .. automethod:: ~IJEPA.on_validation_model_eval
+   .. automethod:: ~IJEPA.on_validation_model_train
+   .. automethod:: ~IJEPA.on_validation_model_zero_grad
+   .. automethod:: ~IJEPA.on_validation_start
+   .. automethod:: ~IJEPA.optimizer_step
+   .. automethod:: ~IJEPA.optimizer_zero_grad
+   .. automethod:: ~IJEPA.optimizers
+   .. automethod:: ~IJEPA.parameters
+   .. automethod:: ~IJEPA.predict_dataloader
+   .. automethod:: ~IJEPA.predict_step
+   .. automethod:: ~IJEPA.prepare_data
+   .. automethod:: ~IJEPA.print
+   .. automethod:: ~IJEPA.register_backward_hook
+   .. automethod:: ~IJEPA.register_buffer
+   .. automethod:: ~IJEPA.register_forward_hook
+   .. automethod:: ~IJEPA.register_forward_pre_hook
+   .. automethod:: ~IJEPA.register_full_backward_hook
+   .. automethod:: ~IJEPA.register_full_backward_pre_hook
+   .. automethod:: ~IJEPA.register_load_state_dict_post_hook
+   .. automethod:: ~IJEPA.register_load_state_dict_pre_hook
+   .. automethod:: ~IJEPA.register_module
+   .. automethod:: ~IJEPA.register_parameter
+   .. automethod:: ~IJEPA.register_state_dict_post_hook
+   .. automethod:: ~IJEPA.register_state_dict_pre_hook
+   .. automethod:: ~IJEPA.requires_grad_
+   .. automethod:: ~IJEPA.save_hyperparameters
+   .. automethod:: ~IJEPA.set_extra_state
+   .. automethod:: ~IJEPA.set_submodule
+   .. automethod:: ~IJEPA.setup
+   .. automethod:: ~IJEPA.share_memory
+   .. automethod:: ~IJEPA.state_dict
+   .. automethod:: ~IJEPA.teardown
+   .. automethod:: ~IJEPA.test_dataloader
+   .. automethod:: ~IJEPA.test_step
+   .. automethod:: ~IJEPA.to
+   .. automethod:: ~IJEPA.to_empty
+   .. automethod:: ~IJEPA.to_onnx
+   .. automethod:: ~IJEPA.to_torchscript
+   .. automethod:: ~IJEPA.toggle_optimizer
+   .. automethod:: ~IJEPA.train
+   .. automethod:: ~IJEPA.train_dataloader
+   .. automethod:: ~IJEPA.training_step
+   .. automethod:: ~IJEPA.transfer_batch_to_device
+   .. automethod:: ~IJEPA.type
+   .. automethod:: ~IJEPA.unfreeze
+   .. automethod:: ~IJEPA.untoggle_optimizer
+   .. automethod:: ~IJEPA.val_dataloader
+   .. automethod:: ~IJEPA.validation_step
+   .. automethod:: ~IJEPA.xpu
+   .. automethod:: ~IJEPA.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   
+   .. autoattribute:: ~IJEPA.CHECKPOINT_HYPER_PARAMS_KEY
+   .. autoattribute:: ~IJEPA.CHECKPOINT_HYPER_PARAMS_NAME
+   .. autoattribute:: ~IJEPA.CHECKPOINT_HYPER_PARAMS_TYPE
+   .. autoattribute:: ~IJEPA.T_destination
+   .. autoattribute:: ~IJEPA.automatic_optimization
+   .. autoattribute:: ~IJEPA.call_super_init
+   .. autoattribute:: ~IJEPA.current_epoch
+   .. autoattribute:: ~IJEPA.device
+   .. autoattribute:: ~IJEPA.device_mesh
+   .. autoattribute:: ~IJEPA.dtype
+   .. autoattribute:: ~IJEPA.dump_patches
+   .. autoattribute:: ~IJEPA.example_input_array
+   .. autoattribute:: ~IJEPA.fabric
+   .. autoattribute:: ~IJEPA.global_rank
+   .. autoattribute:: ~IJEPA.global_step
+   .. autoattribute:: ~IJEPA.hparams
+   .. autoattribute:: ~IJEPA.hparams_initial
+   .. autoattribute:: ~IJEPA.local_rank
+   .. autoattribute:: ~IJEPA.logger
+   .. autoattribute:: ~IJEPA.loggers
+   .. autoattribute:: ~IJEPA.on_gpu
+   .. autoattribute:: ~IJEPA.strict_loading
+   .. autoattribute:: ~IJEPA.trainer
+   .. autoattribute:: ~IJEPA.training
+   
+   

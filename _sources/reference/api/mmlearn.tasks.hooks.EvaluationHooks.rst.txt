@@ -1,0 +1,26 @@
+mmlearn.tasks.hooks.EvaluationHooks
+===================================
+
+.. currentmodule:: mmlearn.tasks.hooks
+
+.. autoclass:: EvaluationHooks
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __getitem__, __iter__
+
+   
+   
+   .. rubric:: Methods
+
+   
+   .. automethod:: ~EvaluationHooks.__init__
+   .. automethod:: ~EvaluationHooks.evaluation_step
+   .. automethod:: ~EvaluationHooks.on_evaluation_epoch_end
+   .. automethod:: ~EvaluationHooks.on_evaluation_epoch_start
+   
+   
+
+   
+   
+   
