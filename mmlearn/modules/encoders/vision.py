@@ -2,12 +2,11 @@
 
 import math
 from functools import partial
-from typing import Any, Callable, Literal, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Literal, Optional, Union, cast
 
 import timm
 import torch
 from hydra_zen import store
-from peft import PeftConfig
 from timm.models.vision_transformer import VisionTransformer as TimmVisionTransformer
 from timm.models.vision_transformer import global_pool_nlc
 from torch import nn
@@ -19,6 +18,10 @@ from mmlearn.datasets.processors.masking import apply_masks
 from mmlearn.datasets.processors.transforms import repeat_interleave_batch
 from mmlearn.modules.layers.embedding import PatchEmbed, get_2d_sincos_pos_embed
 from mmlearn.modules.layers.transformer_block import Block
+
+
+if TYPE_CHECKING:
+    from peft import PeftConfig
 
 
 @store(
