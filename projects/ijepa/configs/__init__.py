@@ -15,7 +15,7 @@ logger = getLogger()
 def ijepa_transforms(
     crop_size: int = 224,
     crop_scale: tuple = (0.3, 1.0),
-    color_jitter: float = 0.0,
+    color_jitter_strength: float = 0.0,
     horizontal_flip: bool = False,
     color_distortion: bool = False,
     gaussian_blur: bool = False,
@@ -31,7 +31,7 @@ def ijepa_transforms(
         Size of the image crop.
     crop_scale : tuple, default=(0.3, 1.0)
         Range for the random resized crop scaling.
-    color_jitter : float, default=0.0
+    color_jitter_strength : float, default=0.0
         Strength of color jitter.
     horizontal_flip : bool, default=False
         Whether to apply random horizontal flip.
@@ -89,7 +89,7 @@ def ijepa_transforms(
         if horizontal_flip:
             transforms_list.append(transforms.RandomHorizontalFlip())
         if color_distortion:
-            transforms_list.append(get_color_distortion(s=color_jitter))
+            transforms_list.append(get_color_distortion(s=color_jitter_strength))
         if gaussian_blur:
             transforms_list.append(GaussianBlur(p=0.5))
     else:
