@@ -321,7 +321,7 @@ class IJEPAMaskGenerator:
     allow_overlap: bool = False
     enc_mask_scale: tuple[float, float] = (0.85, 1.0)
     pred_mask_scale: tuple[float, float] = (0.15, 0.2)
-    aspect_ratio: tuple[float, float] = (0.75, 1.0)
+    aspect_ratio: tuple[float, float] = (0.75, 1.5)
     nenc: int = 1
     npred: int = 4
 

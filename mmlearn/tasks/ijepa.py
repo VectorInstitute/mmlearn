@@ -90,9 +90,6 @@ class IJEPA(TrainingTask):
         self.modality = Modalities.get_modality(modality)
         self.mask_generator = IJEPAMaskGenerator()
 
-        self.current_step = 0
-        self.total_steps = None
-
         self.encoder = encoder
         self.predictor = predictor
 
@@ -100,26 +97,22 @@ class IJEPA(TrainingTask):
         self.predictor.embed_dim = encoder.embed_dim
         self.predictor.num_heads = encoder.num_heads
 
-        self.ema = ExponentialMovingAverage(
-            self.encoder,
-            ema_decay,
-            ema_decay_end,
-            ema_anneal_end_step,
-            device_id=self.device,
+        self.target_encoder = ExponentialMovingAverage(
+            self.encoder, ema_decay, ema_decay_end, ema_anneal_end_step
         )
 
     def configure_model(self) -> None:
         """Configure the model."""
-        self.ema.model.to(device=self.device, dtype=self.dtype)
+        self.target_encoder.configure_model(self.device)
 
     def on_before_zero_grad(self, optimizer: torch.optim.Optimizer) -> None:
         """Perform exponential moving average update of target encoder.
 
-        This is done right after the optimizer step, which comes just before `zero_grad`
-        to account for gradient accumulation.
+        This is done right after the ``optimizer.step()`, which comes just before
+        ``optimizer.zero_grad()`` to account for gradient accumulation.
         """
-        if self.ema is not None:
-            self.ema.step(self.encoder)
+        if self.target_encoder is not None:
+            self.target_encoder.step(self.encoder)
 
     def training_step(self, batch: dict[str, Any], batch_idx: int) -> torch.Tensor:
         """Perform a single training step.
@@ -200,10 +193,10 @@ class IJEPA(TrainingTask):
         checkpoint : dict[str, Any]
             The state dictionary to save the EMA state to.
         """
-        if self.ema is not None:
+        if self.target_encoder is not None:
             checkpoint["ema_params"] = {
-                "decay": self.ema.decay,
-                "num_updates": self.ema.num_updates,
+                "decay": self.target_encoder.decay,
+                "num_updates": self.target_encoder.num_updates,
             }
 
     def on_load_checkpoint(self, checkpoint: dict[str, Any]) -> None:
@@ -214,12 +207,12 @@ class IJEPA(TrainingTask):
         checkpoint : dict[str, Any]
             The state dictionary to restore the EMA state from.
         """
-        if "ema_params" in checkpoint and self.ema is not None:
+        if "ema_params" in checkpoint and self.target_encoder is not None:
             ema_params = checkpoint.pop("ema_params")
-            self.ema.decay = ema_params["decay"]
-            self.ema.num_updates = ema_params["num_updates"]
+            self.target_encoder.decay = ema_params["decay"]
+            self.target_encoder.num_updates = ema_params["num_updates"]
 
-            self.ema.restore(self.encoder)
+            self.target_encoder.restore(self.encoder)
 
     def _shared_step(
         self, batch: dict[str, Any], batch_idx: int, step_type: str
@@ -237,7 +230,7 @@ class IJEPA(TrainingTask):
 
         # Forward pass through target encoder to get h
         with torch.no_grad():
-            h = self.ema.model(batch)[0]
+            h = self.target_encoder.model(batch)[0]
             h = F.layer_norm(h, h.size()[-1:])
             h_masked = apply_masks(h, predictor_masks)
             h_masked = repeat_interleave_batch(
@@ -252,7 +245,7 @@ class IJEPA(TrainingTask):
         z_pred = self.predictor(z, encoder_masks, predictor_masks)
 
         if step_type == "train":
-            self.log("train/ema_decay", self.ema.decay, prog_bar=True)
+            self.log("train/ema_decay", self.target_encoder.decay, prog_bar=True)
 
         if self.loss_fn is not None and (
             step_type == "train"
