@@ -23,8 +23,6 @@ class ExponentialMovingAverage:
         The final decay value for EMA.
     ema_anneal_end_step : int
         The number of steps to anneal the decay from ``ema_decay`` to ``ema_end_decay``.
-    device_id : Optional[Union[int, torch.device]], optional, default=None
-        The device to move the model to.
     skip_keys : Optional[Union[list[str], Set[str]]], optional, default=None
         The keys to skip in the EMA update. These parameters will be copied directly
         from the model to the EMA model.
@@ -41,14 +39,9 @@ class ExponentialMovingAverage:
         ema_decay: float,
         ema_end_decay: float,
         ema_anneal_end_step: int,
-        device_id: Optional[Union[int, torch.device]] = None,
         skip_keys: Optional[Union[list[str], Set[str]]] = None,
-    ):
+    ) -> None:
         self.model = self.deepcopy_model(model)
-        self.model.requires_grad_(False)
-
-        if device_id is not None:
-            self.model.to(device_id)
 
         self.skip_keys: Union[list[str], set[str]] = skip_keys or set()
         self.num_updates = 0
@@ -56,6 +49,8 @@ class ExponentialMovingAverage:
         self.ema_decay = ema_decay
         self.ema_end_decay = ema_end_decay
         self.ema_anneal_end_step = ema_anneal_end_step
+
+        self._model_configured = False
 
     @staticmethod
     def deepcopy_model(model: torch.nn.Module) -> torch.nn.Module:
@@ -93,8 +88,23 @@ class ExponentialMovingAverage:
         pct_remaining = 1 - curr_step / total_steps
         return end - r * pct_remaining
 
+    def configure_model(self, device_id: Union[int, torch.device]) -> None:
+        """Configure the model for EMA."""
+        if self._model_configured:
+            return
+
+        self.model.requires_grad_(False)
+        self.model.to(device_id)
+
+        self._model_configured = True
+
     def step(self, new_model: torch.nn.Module) -> None:
         """Perform single EMA update step."""
+        if not self._model_configured:
+            raise RuntimeError(
+                "Model is not configured for EMA. Call `configure_model` first."
+            )
+
         self._update_weights(new_model)
         self._update_ema_decay()
 
