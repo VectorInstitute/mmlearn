@@ -15,6 +15,7 @@ mmlearn.modules.ema.ExponentialMovingAverage
 
    
    .. automethod:: ~ExponentialMovingAverage.__init__
+   .. automethod:: ~ExponentialMovingAverage.configure_model
    .. automethod:: ~ExponentialMovingAverage.deepcopy_model
    .. automethod:: ~ExponentialMovingAverage.get_annealed_rate
    .. automethod:: ~ExponentialMovingAverage.restore

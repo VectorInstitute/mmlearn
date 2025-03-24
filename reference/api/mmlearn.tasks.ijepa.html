@@ -382,8 +382,8 @@ not be adjusted during training.</p></li>
 <dt class="sig sig-object py" id="mmlearn.tasks.ijepa.IJEPA.on_before_zero_grad">
 <span class="sig-name descname"><span class="pre">on_before_zero_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mmlearn/tasks/ijepa.html#IJEPA.on_before_zero_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mmlearn.tasks.ijepa.IJEPA.on_before_zero_grad" title="Link to this definition">¶</a></dt>
 <dd><p>Perform exponential moving average update of target encoder.</p>
-<p>This is done right after the optimizer step, which comes just before <cite>zero_grad</cite>
-to account for gradient accumulation.</p>
+<p>This is done right after the <code class="docutils literal notranslate"><span class="pre">optimizer.step()`,</span> <span class="pre">which</span> <span class="pre">comes</span> <span class="pre">just</span> <span class="pre">before</span>
+<span class="pre">``optimizer.zero_grad()</span></code> to account for gradient accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
