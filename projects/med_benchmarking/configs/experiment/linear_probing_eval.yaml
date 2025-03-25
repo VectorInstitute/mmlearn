@@ -1,0 +1,308 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.train.bach: BACH
+  - /datasets/transforms@datasets.train.bach.transform: med_clip_vision_transform
+  - /datasets@datasets.val.bach: BACH
+  - /datasets/transforms@datasets.val.bach.transform: med_clip_vision_transform
+  - /datasets@datasets.train.lc25k_lung: LC25000
+  - /datasets/transforms@datasets.train.lc25k_lung.transform: med_clip_vision_transform
+  - /datasets@datasets.val.lc25k_lung: LC25000
+  - /datasets/transforms@datasets.val.lc25k_lung.transform: med_clip_vision_transform
+  - /datasets@datasets.train.lc25k_colon: LC25000
+  - /datasets/transforms@datasets.train.lc25k_colon.transform: med_clip_vision_transform
+  - /datasets@datasets.val.lc25k_colon: LC25000
+  - /datasets/transforms@datasets.val.lc25k_colon.transform: med_clip_vision_transform
+  - /datasets@datasets.train.nck_crc: NckCrc
+  - /datasets/transforms@datasets.train.nck_crc.transform: med_clip_vision_transform
+  - /datasets@datasets.val.nck_crc: NckCrc
+  - /datasets/transforms@datasets.val.nck_crc.transform: med_clip_vision_transform
+  - /datasets@datasets.train.pad_ufes_20: PadUfes20
+  - /datasets/transforms@datasets.train.pad_ufes_20.transform: med_clip_vision_transform
+  - /datasets@datasets.val.pad_ufes_20: PadUfes20
+  - /datasets/transforms@datasets.val.pad_ufes_20.transform: med_clip_vision_transform
+  - /datasets@datasets.train.pcam: PCAM
+  - /datasets/transforms@datasets.train.pcam.transform: med_clip_vision_transform
+  - /datasets@datasets.val.pcam: PCAM
+  - /datasets/transforms@datasets.val.pcam.transform: med_clip_vision_transform
+  - /datasets@datasets.train.sicap: SICAP
+  - /datasets/transforms@datasets.train.sicap.transform: med_clip_vision_transform
+  - /datasets@datasets.val.sicap: SICAP
+  - /datasets/transforms@datasets.val.sicap.transform: med_clip_vision_transform
+  - /datasets@datasets.train.pathmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.pathmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.pathmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.pathmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.dermamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.dermamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.dermamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.dermamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.octmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.octmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.octmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.octmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.pneumoniamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.pneumoniamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.pneumoniamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.pneumoniamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.retinamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.retinamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.retinamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.retinamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.breastmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.breastmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.breastmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.breastmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.bloodmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.bloodmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.bloodmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.bloodmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.tissuemnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.tissuemnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.tissuemnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.tissuemnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.organamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.organamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.organamnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.organamnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.organcmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.organcmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.organcmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.organcmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.train.organsmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.train.organsmnist.transform: med_clip_vision_transform
+  - /datasets@datasets.val.organsmnist: MedMNISTPlus
+  - /datasets/transforms@datasets.val.organsmnist.transform: med_clip_vision_transform
+  - /modules/optimizers@task.optimizer: AdamW
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+  - /modules/encoders@task.encoder.rgb: HFCLIPVisionEncoderWithProjection
+  - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - override /task: LinearClassifierModule
+  - _self_
+
+seed: 0
+
+datasets:
+  train:
+    pcam:
+      split: train
+      transform:
+        job_type: train
+    bach:
+      split: train
+      transform:
+        job_type: train
+    lc25k_lung:
+      split: train
+      transform:
+        job_type: train
+    lc25k_colon:
+      root_dir: ${oc.env:LC25000_COLON_ROOT_DIR}
+      split: train
+      organ: colon
+      transform:
+        job_type: train
+    pathmnist:
+      split: train
+      name: pathmnist
+      transform:
+        job_type: train
+    dermamnist:
+      split: train
+      name: dermamnist
+      transform:
+        job_type: train
+    octmnist:
+      split: train
+      name: octmnist
+      transform:
+        job_type: train
+    pneumoniamnist:
+      split: train
+      name: pneumoniamnist
+      transform:
+        job_type: train
+    retinamnist:
+      split: train
+      name: retinamnist
+      transform:
+        job_type: train
+    breastmnist:
+      split: train
+      name: breastmnist
+      transform:
+        job_type: train
+    bloodmnist:
+      split: train
+      name: bloodmnist
+      transform:
+        job_type: train
+    tissuemnist:
+      split: train
+      name: tissuemnist
+      transform:
+        job_type: train
+    organamnist:
+      split: train
+      name: organamnist
+      transform:
+        job_type: train
+    organcmnist:
+      split: train
+      name: organcmnist
+      transform:
+        job_type: train
+    organsmnist:
+      split: train
+      name: organsmnist
+      transform:
+        job_type: train
+    nck_crc:
+      split: train
+      transform:
+        job_type: train
+    pad_ufes_20:
+      split: train
+      transform:
+        job_type: train
+    sicap:
+      split: train
+      transform:
+        job_type: train
+  val:
+    pcam:
+      split: test
+      transform:
+        job_type: eval
+    bach:
+      split: test
+      transform:
+        job_type: eval
+    lc25k_lung:
+      split: test
+      transform:
+        job_type: eval
+    lc25k_colon:
+      root_dir: ${oc.env:LC25000_COLON_ROOT_DIR}
+      split: test
+      organ: colon
+      transform:
+        job_type: eval
+    pathmnist:
+      split: test
+      name: pathmnist
+      transform:
+        job_type: eval
+    dermamnist:
+      split: test
+      name: dermamnist
+      transform:
+        job_type: eval
+    octmnist:
+      split: test
+      name: octmnist
+      transform:
+        job_type: eval
+    pneumoniamnist:
+      split: test
+      name: pneumoniamnist
+      transform:
+        job_type: eval
+    retinamnist:
+      split: test
+      name: retinamnist
+      transform:
+        job_type: eval
+    breastmnist:
+      split: test
+      name: breastmnist
+      transform:
+        job_type: eval
+    bloodmnist:
+      split: test
+      name: bloodmnist
+      transform:
+        job_type: eval
+    tissuemnist:
+      split: test
+      name: tissuemnist
+      transform:
+        job_type: eval
+    organamnist:
+      split: test
+      name: organamnist
+      transform:
+        job_type: eval
+    organcmnist:
+      split: test
+      name: organcmnist
+      transform:
+        job_type: eval
+    organsmnist:
+      split: test
+      name: organsmnist
+      transform:
+        job_type: eval
+    nck_crc:
+      split: validation
+      transform:
+        job_type: eval
+    pad_ufes_20:
+      split: test
+      transform:
+        job_type: eval
+    sicap:
+      split: test
+      transform:
+        job_type: eval
+
+dataloader:
+  test:
+    batch_size: 64
+    num_workers: 4
+    shuffle: False
+
+task:
+  task: multiclass
+  num_classes: 4
+  num_output_features: 512
+  hidden_dims: [256]
+  modality: rgb
+  encoder_checkpoint_path: /path/to/checkpoint
+  top_k_list: [1]
+  optimizer:
+    betas:
+    - 0.9
+    - 0.98
+    lr: 0.1
+    weight_decay: 0.1
+    eps: 1.0e-6
+  lr_scheduler:
+    scheduler:
+      T_max: 250 # make sure to change this if max_epochs or accumulate_grad_batches is changed
+    extras:
+      interval: step
+
+
+trainer:
+  precision: 16-mixed
+  deterministic: False
+  benchmark: True
+  sync_batchnorm: False # set to True if using DDP with batchnorm
+  log_every_n_steps: 100
+  max_epochs: 40
+  callbacks:
+    model_checkpoint:
+      monitor: val/loss
+      save_top_k: 1
+      save_last: True
+      every_n_epochs: 1
+      dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on Vector SLURM environment
+    model_summary:
+      max_depth: 2
+
+
+tags:
+  - ${experiment_name}
+  - linear_probing
+  - classification
