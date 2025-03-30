@@ -16,14 +16,17 @@ from torchmetrics import AUROC, Accuracy, F1Score, MetricCollection, Precision, 
 
 from mmlearn.datasets.core import Modalities
 from mmlearn.modules.layers import MLP
+from mmlearn.tasks.base import TrainingTask
+
+from mmlearn.tasks.zero_shot_classification import ZeroShotClassification
 
 
 def extract_vision_encoder(
     encoder: Any,
     model_checkpoint_path: Optional[str],
+    modality_to_extract: Optional[str] = "rgb",
     keys_to_remove: Optional[List[str]] = None,
     keys_to_rename: Optional[Dict[str, str]] = None,  # Default for renaming
-    keys_to_ignore: Optional[List[str]] = None,
 ) -> nn.Module:
     """
     Extract the vision encoder from a PyTorch Lightning model.
@@ -61,12 +64,6 @@ def extract_vision_encoder(
                 k: v for k, v in state_dict.items() if k not in keys_to_remove
             }
 
-        # Ignore specific keys
-        if keys_to_ignore:
-            state_dict = {
-                k: v for k, v in state_dict.items() if k not in keys_to_ignore
-            }
-
         # Rename keys based on input mappings
         if keys_to_rename:
             state_dict = {
@@ -78,15 +75,15 @@ def extract_vision_encoder(
 
         try:
             if state_dict:
-                model["rgb"].load_state_dict(state_dict, strict=True)
+                model[modality_to_extract].load_state_dict(state_dict, strict=True)
                 print("Encoder state dict loaded successfully")
         except Exception as e:
             print(f"Error loading state dict: {e}")
-    return model["rgb"]
+    return model[modality_to_extract]
 
 
 @store(group="task", provider="mmlearn")
-class LinearClassifierModule(L.LightningModule):
+class LinearClassifier(TrainingTask):
     """A linear classifier module for evaluating pretrained encoders.
 
     Parameters
@@ -98,7 +95,7 @@ class LinearClassifierModule(L.LightningModule):
         `common.constants.Modality` for valid values. The target label key is
         inferred from this modality. This means that, for example, that if the
         modality is 'rgb', the target label key is expected to be 'rgb_target'.
-    num_output_features : int
+    embed_dim : int
         Output features from the encoder, defining the linear classifier's input size.
     num_classes : int
         Number of classes for the classification task.
@@ -154,18 +151,19 @@ class LinearClassifierModule(L.LightningModule):
 
     def __init__(
         self,
-        # encoder: torch.nn.Module,
         encoder: nn.Module,
-        model_checkpoint_path: Optional[str],  # change name
+        model_checkpoint_path: Optional[str],
         modality: str,
-        num_output_features: int,
+        embed_dim: int,
         num_classes: int,
         hidden_dims: Optional[List[int]] = None,
         task: Literal["binary", "multiclass", "multilabel"] = "multiclass",
         freeze_encoder: bool = True,
-        pre_classifier_batch_norm: bool = False,
+        keys_to_remove: Optional[Dict[str, str]] = None,
+        keys_to_rename: Optional[Dict[str, str]] = {"encoders.rgb.": ""},
         top_k_list: Optional[List[int]] = None,
         optimizer: Optional[partial[torch.optim.Optimizer]] = None,
+        pre_classifier_batch_norm: bool = False,
         lr_scheduler: Optional[
             Union[
                 Dict[str, partial[torch.optim.lr_scheduler.LRScheduler]],
@@ -173,7 +171,7 @@ class LinearClassifierModule(L.LightningModule):
             ]
         ] = None,
     ):
-        super().__init__()
+        super().__init__(loss_fn=nn.CrossEntropyLoss())
         assert task in ["binary", "multiclass", "multilabel"], (
             f"Invalid task type: {task}. "
             "Expected one of ['binary', 'multiclass', 'multilabel']."
@@ -182,16 +180,13 @@ class LinearClassifierModule(L.LightningModule):
         self.modality = modality
 
         self.encoder: nn.Module = extract_vision_encoder(
-            encoder, model_checkpoint_path, keys_to_rename={"encoders.rgb.": ""}
+            encoder, model_checkpoint_path, keys_to_rename=keys_to_rename,
+            keys_to_remove=keys_to_remove,
         )
 
-        linear_layer = MLP(num_output_features, num_classes, hidden_dims)
+        linear_layer = MLP(embed_dim, num_classes, hidden_dims,
+                   norm_layer=nn.BatchNorm1d if pre_classifier_batch_norm else None)
 
-        if pre_classifier_batch_norm:
-            linear_layer = nn.Sequential(
-                nn.BatchNorm1d(num_output_features, affine=False),
-                linear_layer,
-            )
         self.classifier = linear_layer
 
         self.freeze_encoder = freeze_encoder
@@ -201,61 +196,67 @@ class LinearClassifierModule(L.LightningModule):
             for param in self.encoder.parameters():
                 param.requires_grad = False
 
-        self.loss_fn = nn.CrossEntropyLoss()
+        if task == "multilabel":
+            self.loss_fn = nn.BCEWithLogitsLoss()
+            
 
         self.top_k_list = top_k_list
-        if task == "multiclass":
-            if self.top_k_list is None:
-                self.top_k_list = [1, 5]
-            accuracy_metrics = {
-                f"top_{k}_accuracy": Accuracy(
-                    task=task, num_classes=num_classes, top_k=k
-                )
-                for k in self.top_k_list
-            }
+        # if task == "multiclass":
+        #     if self.top_k_list is None:
+        #         self.top_k_list = [1, 5]
+        #     accuracy_metrics = {
+        #         f"top_{k}_accuracy": Accuracy(
+        #             task=task, num_classes=num_classes, top_k=k
+        #         )
+        #         for k in self.top_k_list
+        #     }
 
-            # Additional metrics for multiclass classification
-            additional_metrics = {
-                "precision": Precision(
-                    task=task, num_classes=num_classes, average="macro"
-                ),
-                "recall": Recall(task=task, num_classes=num_classes, average="macro"),
-                "f1_score": F1Score(
-                    task=task, num_classes=num_classes, average="macro"
-                ),
-                "auc": AUROC(
-                    task=task, num_classes=num_classes, average="macro"
-                ),  # AUROC for multiclass
-            }
+        #     # Additional metrics for multiclass classification
+        #     additional_metrics = {
+        #         "precision": Precision(
+        #             task=task, num_classes=num_classes, average="macro"
+        #         ),
+        #         "recall": Recall(task=task, num_classes=num_classes, average="macro"),
+        #         "f1_score": F1Score(
+        #             task=task, num_classes=num_classes, average="macro"
+        #         ),
+        #         "auc": AUROC(
+        #             task=task, num_classes=num_classes, average="macro"
+        #         ),  # AUROC for multiclass
+        #     }
 
-        elif task == "multilabel":
-            # Accuracy and other metrics for multilabel classification
-            accuracy_metrics = {"accuracy": Accuracy(task=task, num_labels=num_classes)}
+        # elif task == "multilabel":
+        #     # Accuracy and other metrics for multilabel classification
+        #     accuracy_metrics = {"accuracy": Accuracy(task=task, num_labels=num_classes)}
 
-            # Additional metrics for multilabel classification
-            additional_metrics = {
-                "precision": Precision(
-                    task=task, num_labels=num_classes, average="macro"
-                ),
-                "recall": Recall(task=task, num_labels=num_classes, average="macro"),
-                "f1_score": F1Score(task=task, num_labels=num_classes, average="macro"),
-                "auc": AUROC(task=task, num_labels=num_classes),  # AUC for multilabel
-            }
+        #     # Additional metrics for multilabel classification
+        #     additional_metrics = {
+        #         "precision": Precision(
+        #             task=task, num_labels=num_classes, average="macro"
+        #         ),
+        #         "recall": Recall(task=task, num_labels=num_classes, average="macro"),
+        #         "f1_score": F1Score(task=task, num_labels=num_classes, average="macro"),
+        #         "auc": AUROC(task=task, num_labels=num_classes),  # AUC for multilabel
+        #     }
 
-        else:  # binary
-            # Accuracy and other metrics for binary classification
-            accuracy_metrics = {"accuracy": Accuracy(task=task)}
+        # else:  # binary
+        #     # Accuracy and other metrics for binary classification
+        #     accuracy_metrics = {"accuracy": Accuracy(task=task)}
 
-            # Additional metrics for binary classification
-            additional_metrics = {
-                "precision": Precision(task=task),
-                "recall": Recall(task=task),
-                "f1_score": F1Score(task=task),
-                "auc": AUROC(task=task),  # AUROC for binary classification
-            }
+        #     # Additional metrics for binary classification
+        #     additional_metrics = {
+        #         "precision": Precision(task=task),
+        #         "recall": Recall(task=task),
+        #         "f1_score": F1Score(task=task),
+        #         "auc": AUROC(task=task),  # AUROC for binary classification
+        #     }
 
         # combine all metrics
-        metrics = MetricCollection({**accuracy_metrics, **additional_metrics})
+        # metrics = MetricCollection({**accuracy_metrics, **additional_metrics})
+        metrics = ZeroShotClassification._create_metrics(num_classes=num_classes, 
+                                                         top_k=self.top_k_list,
+                                                         prefix="",
+                                                         postfix="",)
         self.train_metrics = metrics.clone(prefix="train/")
         self.valid_metrics = metrics.clone(prefix="val/")
 
@@ -349,11 +350,39 @@ class LinearClassifierModule(L.LightningModule):
             The loss computed for the batch.
         """
         logits, y = self._get_logits_and_labels(batch)
-
+        
         loss: torch.Tensor = self.loss_fn(logits, y)
         self.log("val/loss", self.all_gather(loss.clone().detach()).mean())
 
         self.valid_metrics.update(logits, y)
+        return loss
+    
+    def test_step(
+        self,
+        batch: Dict[str, torch.Tensor],
+        batch_idx: int,
+    ) -> torch.Tensor:
+        """
+        Execute a test step using a single batch.
+
+        Parameters
+        ----------
+        batch : Dict[str, torch.Tensor]
+            The current batch of test data, including input tensors and labels.
+        batch_idx : int
+            The index of the current test batch.
+
+        Returns
+        -------
+        torch.Tensor
+            The loss computed for the batch.
+        """
+        logits, y = self._get_logits_and_labels(batch)
+
+        loss: torch.Tensor = self.loss_fn(logits, y)
+        self.log("val/loss", self.all_gather(loss.clone().detach()).mean())
+
+        self.test_metrics.update(logits, y)
         return loss
 
     def on_validation_epoch_end(self) -> None:
@@ -363,6 +392,15 @@ class LinearClassifierModule(L.LightningModule):
             print(f"  {metric}: {value.item()}")
         self.log_dict(val_metrics)
         self.valid_metrics.reset()
+    
+    
+    def on_test_epoch_end(self) -> None:
+        """Compute test metrics accumulated over the epoch."""
+        val_metrics = self.test_metrics.compute()
+        for metric, value in val_metrics.items():
+            print(f"  {metric}: {value.item()}")
+        self.log_dict(val_metrics)
+        self.test_metrics.reset()
 
     def configure_optimizers(self) -> OptimizerLRScheduler:  # noqa: PLR0912
         """Configure the optimizer and learning rate scheduler."""
