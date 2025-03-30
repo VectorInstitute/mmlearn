@@ -154,12 +154,12 @@ class LinearClassifier(TrainingTask):
         modality: str,
         embed_dim: int,
         num_classes: int,
+        top_k_list: List[int],
         hidden_dims: Optional[List[int]] = None,
         task: Literal["binary", "multiclass", "multilabel"] = "multiclass",
         freeze_encoder: bool = True,
-        keys_to_remove: Optional[Dict[str, str]] = None,
-        keys_to_rename: Optional[Dict[str, str]] = {"encoders.rgb.": ""},
-        top_k_list: Optional[List[int]] = None,
+        keys_to_remove: Optional[List[str]] = None,
+        keys_to_rename: Optional[Dict[str, str]] = None,
         optimizer: Optional[partial[torch.optim.Optimizer]] = None,
         pre_classifier_batch_norm: bool = False,
         lr_scheduler: Optional[
@@ -204,6 +204,7 @@ class LinearClassifier(TrainingTask):
             self.loss_fn = nn.BCEWithLogitsLoss()
 
         self.top_k_list = top_k_list
+<<<<<<< HEAD
         # if task == "multiclass":
         #     if self.top_k_list is None:
         #         self.top_k_list = [1, 5]
@@ -256,6 +257,9 @@ class LinearClassifier(TrainingTask):
 
         # combine all metrics
         # metrics = MetricCollection({**accuracy_metrics, **additional_metrics})
+=======
+
+>>>>>>> Fix pre-commit isssues
         metrics = ZeroShotClassification._create_metrics(
             num_classes=num_classes, top_k=self.top_k_list, prefix="", postfix=""
         )
