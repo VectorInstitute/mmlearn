@@ -12,12 +12,10 @@ from hydra_zen import store
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from lightning_utilities.core.rank_zero import rank_zero_warn
 from torch import nn
-from torchmetrics import AUROC, Accuracy, F1Score, MetricCollection, Precision, Recall
 
 from mmlearn.datasets.core import Modalities
 from mmlearn.modules.layers import MLP
 from mmlearn.tasks.base import TrainingTask
-
 from mmlearn.tasks.zero_shot_classification import ZeroShotClassification
 
 
@@ -180,12 +178,18 @@ class LinearClassifier(TrainingTask):
         self.modality = modality
 
         self.encoder: nn.Module = extract_vision_encoder(
-            encoder, model_checkpoint_path, keys_to_rename=keys_to_rename,
+            encoder,
+            model_checkpoint_path,
+            keys_to_rename=keys_to_rename,
             keys_to_remove=keys_to_remove,
         )
 
-        linear_layer = MLP(embed_dim, num_classes, hidden_dims,
-                   norm_layer=nn.BatchNorm1d if pre_classifier_batch_norm else None)
+        linear_layer = MLP(
+            embed_dim,
+            num_classes,
+            hidden_dims,
+            norm_layer=nn.BatchNorm1d if pre_classifier_batch_norm else None,
+        )
 
         self.classifier = linear_layer
 
@@ -198,7 +202,6 @@ class LinearClassifier(TrainingTask):
 
         if task == "multilabel":
             self.loss_fn = nn.BCEWithLogitsLoss()
-            
 
         self.top_k_list = top_k_list
         # if task == "multiclass":
@@ -253,10 +256,9 @@ class LinearClassifier(TrainingTask):
 
         # combine all metrics
         # metrics = MetricCollection({**accuracy_metrics, **additional_metrics})
-        metrics = ZeroShotClassification._create_metrics(num_classes=num_classes, 
-                                                         top_k=self.top_k_list,
-                                                         prefix="",
-                                                         postfix="",)
+        metrics = ZeroShotClassification._create_metrics(
+            num_classes=num_classes, top_k=self.top_k_list, prefix="", postfix=""
+        )
         self.train_metrics = metrics.clone(prefix="train/")
         self.valid_metrics = metrics.clone(prefix="val/")
 
@@ -350,13 +352,13 @@ class LinearClassifier(TrainingTask):
             The loss computed for the batch.
         """
         logits, y = self._get_logits_and_labels(batch)
-        
+
         loss: torch.Tensor = self.loss_fn(logits, y)
         self.log("val/loss", self.all_gather(loss.clone().detach()).mean())
 
         self.valid_metrics.update(logits, y)
         return loss
-    
+
     def test_step(
         self,
         batch: Dict[str, torch.Tensor],
@@ -392,8 +394,7 @@ class LinearClassifier(TrainingTask):
             print(f"  {metric}: {value.item()}")
         self.log_dict(val_metrics)
         self.valid_metrics.reset()
-    
-    
+
     def on_test_epoch_end(self) -> None:
         """Compute test metrics accumulated over the epoch."""
         val_metrics = self.test_metrics.compute()
