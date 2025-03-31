@@ -3,7 +3,7 @@
 import json
 import os
 import warnings
-from typing import Any, Callable, Dict, List, Literal, Optional, Union
+from typing import Any, Callable, Literal, Optional, Union
 
 import numpy as np
 import torch
@@ -61,8 +61,8 @@ class MedVQA(Dataset[Example]):
         self,
         root_dir: str,
         split: Literal["train", "val", "test"],
-        encoder: Dict[str, Any],
-        autoencoder: Dict[str, Any],
+        encoder: dict[str, Any],
+        autoencoder: dict[str, Any],
         num_ans_candidates: int,
         rgb_transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
         ae_transform: Optional[Callable[[Image.Image], torch.Tensor]] = None,
@@ -116,7 +116,7 @@ class MedVQA(Dataset[Example]):
             One sample of the dataset.
             Modalities.TEXT : torch.Tensor
                 Question as tokens.
-            Modalities.RGB : torch.Tensor | List[torch.Tensor]
+            Modalities.RGB : torch.Tensor | list[torch.Tensor]
                 Preprocessed image.
                 A list of two torch Tensors if `autoencoder.available` is set
                 True in the dataset config, otherwise a single torch Tensor.
@@ -207,7 +207,7 @@ class MedVQA(Dataset[Example]):
 class MedVQAProcessor:
     """Preprocessor for textual reports of MedVQA datasets."""
 
-    def __call__(self, sentence: Union[str, List[str]]) -> Union[str, List[str]]:
+    def __call__(self, sentence: Union[str, list[str]]) -> Union[str, list[str]]:
         """Process the textual captions."""
         if not isinstance(sentence, (list, str)):
             raise TypeError(

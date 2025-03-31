@@ -15,14 +15,13 @@ repos:
       - id: check-yaml
       - id: check-toml
 
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.8.4
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.6.9
     hooks:
-      - id: poetry-check
-        args: [--lock]
+      - id: uv-lock
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.2
+    rev: v0.11.2
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -31,13 +30,13 @@ repos:
         types_or: [ python, pyi, jupyter ]
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.27.0
+    rev: v1
     hooks:
       - id: typos
         args: []
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.15.0
     hooks:
       - id: mypy
         entry: mypy
@@ -46,7 +45,7 @@ repos:
         exclude: tests|projects
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.9.0
+    rev: 1.9.1
     hooks:
       - id: nbqa-ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -59,3 +58,15 @@ repos:
       entry: python3 -m pytest -m "not integration_test"
       pass_filenames: false
       always_run: true
+
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] Add auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: [pytest]
+  submodules: false

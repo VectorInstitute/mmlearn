@@ -2,25 +2,26 @@
 
 import math
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Literal, Optional, Union, cast
 
 import timm
 import torch
 from hydra_zen import store
-from peft import PeftConfig
 from timm.models.vision_transformer import VisionTransformer as TimmVisionTransformer
+from timm.models.vision_transformer import global_pool_nlc
 from torch import nn
 from transformers.modeling_outputs import BaseModelOutput
 
 from mmlearn import hf_utils
 from mmlearn.datasets.core.modalities import Modalities
 from mmlearn.datasets.processors.masking import apply_masks
-from mmlearn.datasets.processors.transforms import (
-    repeat_interleave_batch,
-    trunc_normal_,
-)
+from mmlearn.datasets.processors.transforms import repeat_interleave_batch
 from mmlearn.modules.layers.embedding import PatchEmbed, get_2d_sincos_pos_embed
 from mmlearn.modules.layers.transformer_block import Block
+
+
+if TYPE_CHECKING:
+    from peft import PeftConfig
 
 
 @store(
@@ -36,32 +37,37 @@ class TimmViT(nn.Module):
     ----------
     model_name : str
         The name of the model to use.
+    modality : str, default="RGB"
+        The modality of the input data. This allows this model to be used with different
+        image modalities e.g. RGB, Depth, etc.
     projection_dim : int, default=768
         The dimension of the projection head.
     pretrained : bool, default=True
         Whether to use the pretrained weights.
-    freeze_layers : Union[int, float, List[int], bool], default=False
+    freeze_layers : Union[int, float, list[int], bool], default=False
         Whether to freeze the layers.
     freeze_layer_norm : bool, default=True
         Whether to freeze the layer norm.
-    peft_config : Optional[PeftConfig], default=None
-        The PEFT configuration.
-    model_kwargs : Optional[Dict[str, Any]], default=None
+    peft_config : Optional[PeftConfig], optional, default=None
+        The configuration from the `peft <https://huggingface.co/docs/peft/index>`_
+        library to use to wrap the model for parameter-efficient finetuning.
+    model_kwargs : Optional[dict[str, Any]], default=None
         Additional keyword arguments for the model.
     """
 
     def __init__(
         self,
         model_name: str,
+        modality: str = "RGB",
         projection_dim: int = 768,
         pretrained: bool = True,
-        freeze_layers: Union[int, float, List[int], bool] = False,
+        freeze_layers: Union[int, float, list[int], bool] = False,
         freeze_layer_norm: bool = True,
-        peft_config: Optional[PeftConfig] = None,
-        model_kwargs: Optional[Dict[str, Any]] = None,
+        peft_config: Optional["PeftConfig"] = None,
+        model_kwargs: Optional[dict[str, Any]] = None,
     ) -> None:
-        """Initialize the Vision Transformer model."""
         super().__init__()
+        self.modality = Modalities.get_modality(modality)
         if model_kwargs is None:
             model_kwargs = {}
 
@@ -82,13 +88,13 @@ class TimmViT(nn.Module):
             self.model = hf_utils._wrap_peft_model(self.model, peft_config)
 
     def _freeze_layers(
-        self, freeze_layers: Union[int, float, List[int], bool], freeze_layer_norm: bool
+        self, freeze_layers: Union[int, float, list[int], bool], freeze_layer_norm: bool
     ) -> None:
         """Freeze the layers of the model.
 
         Parameters
         ----------
-        freeze_layers : Union[int, float, List[int], bool]
+        freeze_layers : Union[int, float, list[int], bool]
             Whether to freeze the layers.
         freeze_layer_norm : bool
             Whether to freeze the layer norm.
@@ -113,20 +119,21 @@ class TimmViT(nn.Module):
                             (not freeze_layer_norm) if "norm" in name else False
                         )
 
-    def forward(self, inputs: Dict[str, Any]) -> BaseModelOutput:
+    def forward(self, inputs: dict[str, Any]) -> BaseModelOutput:
         """Run the forward pass.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The `image` will be expected under the `Modalities.RGB` key.
+        inputs : dict[str, Any]
+            The input data. The ``image`` will be expected under the
+            ``Modalities.RGB`` key.
 
         Returns
         -------
         BaseModelOutput
             The output of the model.
         """
-        x = inputs[Modalities.RGB.name]
+        x = inputs[self.modality.name]
         last_hidden_state, hidden_states = self.model.forward_intermediates(
             x, output_fmt="NLC"
         )
@@ -137,30 +144,31 @@ class TimmViT(nn.Module):
         )
 
     def get_intermediate_layers(
-        self, inputs: Dict[str, Any], n: int = 1
-    ) -> List[torch.Tensor]:
+        self, inputs: dict[str, Any], n: int = 1
+    ) -> list[torch.Tensor]:
         """Get the output of the intermediate layers.
 
         Parameters
         ----------
-        inputs : Dict[str, Any]
-            The input data. The `image` will be expected under the `Modalities.RGB` key.
+        inputs : dict[str, Any]
+            The input data. The ``image`` will be expected under the ``Modalities.RGB``
+            key.
         n : int, default=1
             The number of intermediate layers to return.
 
         Returns
         -------
-        List[torch.Tensor]
+        list[torch.Tensor]
             The outputs of the last n intermediate layers.
         """
         return self.model.get_intermediate_layers(inputs[Modalities.RGB], n)  # type: ignore
 
-    def get_patch_info(self) -> Tuple[int, int]:
+    def get_patch_info(self) -> tuple[int, int]:
         """Get patch size and number of patches.
 
         Returns
         -------
-        Tuple[int, int]
+        tuple[int, int]
             Patch size and number of patches.
         """
         patch_size = self.model.patch_embed.patch_size[0]
@@ -169,14 +177,16 @@ class TimmViT(nn.Module):
 
 
 class VisionTransformer(nn.Module):
-    """
-    Vision Transformer.
+    """Vision Transformer.
 
     This module implements a Vision Transformer that processes images using a
     series of transformer blocks and patch embeddings.
 
     Parameters
     ----------
+    modality : str, optional, default="RGB"
+        The modality of the input data. This allows this model to be used with different
+        image modalities e.g. RGB, Depth, etc.
     img_size : List[int], optional, default=None
         List of input image sizes.
     patch_size : int, optional, default=16
@@ -185,12 +195,8 @@ class VisionTransformer(nn.Module):
         Number of input channels.
     embed_dim : int, optional, default=768
         Embedding dimension.
-    predictor_embed_dim : int, optional, default=384
-        Embedding dimension for the predictor.
     depth : int, optional, default=12
         Number of transformer blocks.
-    predictor_depth : int, optional, default=12
-        Number of transformer blocks in the predictor.
     num_heads : int, optional, default=12
         Number of attention heads.
     mlp_ratio : float, optional, default=4.0
@@ -205,7 +211,7 @@ class VisionTransformer(nn.Module):
         Dropout rate for the attention mechanism.
     drop_path_rate : float, optional, default=0.0
         Dropout rate for stochastic depth.
-    norm_layer : Callable[..., nn.Module], optional, default=nn.LayerNorm
+    norm_layer : Callable[..., torch.nn.Module], optional, default=torch.nn.LayerNorm
         Normalization layer to use.
     init_std : float, optional, default=0.02
         Standard deviation for weight initialization.
@@ -215,26 +221,27 @@ class VisionTransformer(nn.Module):
 
     def __init__(
         self,
-        img_size: Optional[List[int]] = None,
+        modality: str = "RGB",
+        img_size: Optional[list[int]] = None,
         patch_size: int = 16,
         in_chans: int = 3,
         embed_dim: int = 768,
-        predictor_embed_dim: int = 384,
         depth: int = 12,
-        predictor_depth: int = 12,
         num_heads: int = 12,
         mlp_ratio: float = 4.0,
         qkv_bias: bool = True,
         qk_scale: Optional[float] = None,
+        global_pool: Literal["", "avg", "avgmax", "max", "token"] = "",
         drop_rate: float = 0.0,
         attn_drop_rate: float = 0.0,
         drop_path_rate: float = 0.0,
         norm_layer: Callable[..., nn.Module] = nn.LayerNorm,
         init_std: float = 0.02,
-        **kwargs: Any,
     ) -> None:
-        """Initialize the Vision Transformer module."""
         super().__init__()
+        assert global_pool in ("", "avg", "avgmax", "max", "token")
+
+        self.modality = Modalities.get_modality(modality)
         self.num_features = self.embed_dim = embed_dim
         self.num_heads = num_heads
         img_size = [224, 224] if img_size is None else img_size
@@ -281,6 +288,8 @@ class VisionTransformer(nn.Module):
         )
         self.norm = norm_layer(embed_dim)
 
+        self.global_pool = global_pool
+
         # Weight Initialization
         self.init_std = init_std
         self.apply(self._init_weights)
@@ -298,27 +307,26 @@ class VisionTransformer(nn.Module):
     def _init_weights(self, m: nn.Module) -> None:
         """Initialize weights for the layers."""
         if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
             nn.init.constant_(m.weight, 1.0)
         elif isinstance(m, nn.Conv2d):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
     def forward(
-        self,
-        x: torch.Tensor,
-        masks: Optional[Union[torch.Tensor, List[torch.Tensor]]] = None,
-        return_hidden_states: bool = False,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]:
+        self, inputs: dict[str, Any], return_hidden_states: bool = False
+    ) -> tuple[torch.Tensor, Optional[list[torch.Tensor]]]:
         """Forward pass through the Vision Transformer."""
+        masks = inputs.get(self.modality.mask)
         if masks is not None and not isinstance(masks, list):
             masks = [masks]
 
+        x = inputs[self.modality.name]
         # -- Patchify x
         x = self.patch_embed(x)
 
@@ -331,7 +339,7 @@ class VisionTransformer(nn.Module):
             x = apply_masks(x, masks)
 
         # -- Initialize a list to store hidden states
-        hidden_states: Optional[List[torch.Tensor]] = (
+        hidden_states: Optional[list[torch.Tensor]] = (
             [] if return_hidden_states else None
         )
 
@@ -345,16 +353,18 @@ class VisionTransformer(nn.Module):
         if self.norm is not None:
             x = self.norm(x)
 
+        # -- Apply global pooling
+        x = global_pool_nlc(x, pool_type=self.global_pool)
+
         # -- Return both final output and hidden states if requested
         if return_hidden_states:
             return x, hidden_states
-        return x
+        return (x, None)
 
     def interpolate_pos_encoding(
         self, x: torch.Tensor, pos_embed: torch.Tensor
     ) -> torch.Tensor:
-        """
-        Interpolate positional encoding to match the size of the input tensor.
+        """Interpolate positional encoding to match the size of the input tensor.
 
         Parameters
         ----------
@@ -387,8 +397,7 @@ class VisionTransformer(nn.Module):
 
 
 class VisionTransformerPredictor(nn.Module):
-    """
-    Vision Transformer Predictor.
+    """Vision Transformer Predictor.
 
     This module implements a Vision Transformer that predicts masked tokens
     using a series of transformer blocks.
@@ -417,7 +426,7 @@ class VisionTransformerPredictor(nn.Module):
         Dropout rate for the attention mechanism.
     drop_path_rate : float, optional, default=0.0
         Dropout rate for stochastic depth.
-    norm_layer : Callable[..., nn.Module], optional, default=nn.LayerNorm
+    norm_layer : Callable[..., torch.nn.Module], optional, default=torch.nn.LayerNorm
         Normalization layer to use.
     init_std : float, optional, default=0.02
         Standard deviation for weight initialization.
@@ -442,7 +451,6 @@ class VisionTransformerPredictor(nn.Module):
         init_std: float = 0.02,
         **kwargs: Any,
     ) -> None:
-        """Initialize the Vision Transformer Predictor module."""
         super().__init__()
         self.num_patches = num_patches
         self.embed_dim = embed_dim
@@ -490,7 +498,7 @@ class VisionTransformerPredictor(nn.Module):
 
         # Weight Initialization
         self.init_std = init_std
-        trunc_normal_(self.mask_token, std=self.init_std)
+        _trunc_normal(self.mask_token, std=self.init_std)
         self.apply(self._init_weights)
 
     def fix_init_weight(self) -> None:
@@ -506,27 +514,27 @@ class VisionTransformerPredictor(nn.Module):
     def _init_weights(self, m: nn.Module) -> None:
         """Initialize weights for the layers."""
         if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.bias, 0)
             nn.init.constant_(m.weight, 1.0)
         elif isinstance(m, nn.Conv2d):
-            trunc_normal_(m.weight, std=self.init_std)
+            _trunc_normal(m.weight, std=self.init_std)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
     def forward(
         self,
         x: torch.Tensor,
-        masks_x: Union[torch.Tensor, List[torch.Tensor]],
-        masks: Union[torch.Tensor, List[torch.Tensor]],
+        masks_x: Union[torch.Tensor, list[torch.Tensor]],
+        masks: Union[torch.Tensor, list[torch.Tensor]],
     ) -> torch.Tensor:
         """Forward pass through the Vision Transformer Predictor."""
-        assert (masks is not None) and (
-            masks_x is not None
-        ), "Cannot run predictor without mask indices"
+        assert (masks is not None) and (masks_x is not None), (
+            "Cannot run predictor without mask indices"
+        )
 
         if not isinstance(masks_x, list):
             masks_x = [masks_x]
@@ -565,6 +573,78 @@ class VisionTransformerPredictor(nn.Module):
         return self.predictor_proj(x)
 
 
+def _trunc_normal(
+    tensor: torch.Tensor,
+    mean: float = 0.0,
+    std: float = 1.0,
+    a: float = -2.0,
+    b: float = 2.0,
+) -> torch.Tensor:
+    """Initialize a tensor using a truncated normal distribution.
+
+    Parameters
+    ----------
+    tensor : torch.Tensor
+        The tensor to be initialized.
+    mean : float, default=0.
+        Mean of the normal distribution.
+    std : float, default=1.
+        Standard deviation of the normal distribution.
+    a : float, default=-2.
+        Minimum value of the truncated distribution.
+    b : float, default=2.
+        Maximum value of the truncated distribution.
+
+    Returns
+    -------
+    torch.Tensor
+        The initialized tensor.
+    """
+    return _no_grad_trunc_normal_(tensor, mean, std, a, b)
+
+
+def _no_grad_trunc_normal_(
+    tensor: torch.Tensor, mean: float, std: float, a: float, b: float
+) -> torch.Tensor:
+    """Apply truncated normal initialization to a tensor.
+
+    Parameters
+    ----------
+    tensor : torch.Tensor
+        The tensor to be initialized.
+    mean : float
+        Mean of the normal distribution.
+    std : float
+        Standard deviation of the normal distribution.
+    a : float
+        Minimum value of the truncated distribution.
+    b : float
+        Maximum value of the truncated distribution.
+
+    Returns
+    -------
+    torch.Tensor
+        The initialized tensor.
+    """
+
+    def norm_cdf(x: float) -> float:
+        """Compute standard normal cumulative distribution function."""
+        return (1.0 + math.erf(x / math.sqrt(2.0))) / 2.0
+
+    with torch.no_grad():
+        lower_limit = norm_cdf((a - mean) / std)
+        upper_limit = norm_cdf((b - mean) / std)
+
+        tensor.uniform_(2 * lower_limit - 1, 2 * upper_limit - 1)
+        tensor.erfinv_()
+
+        tensor.mul_(std * math.sqrt(2.0))
+        tensor.add_(mean)
+        tensor.clamp_(min=a, max=b)
+
+        return tensor
+
+
 @cast(
     VisionTransformerPredictor,
     store(
@@ -572,15 +652,23 @@ class VisionTransformerPredictor(nn.Module):
         provider="mmlearn",
     ),
 )
-def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
-    """
-    Create a VisionTransformerPredictor model.
+def vit_predictor(
+    kwargs: Optional[dict[str, Any]] = None,
+) -> VisionTransformerPredictor:
+    """Create a VisionTransformerPredictor model.
+
+    Parameters
+    ----------
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the predictor.
 
     Returns
     -------
     VisionTransformerPredictor
         An instance of VisionTransformerPredictor.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformerPredictor(
         mlp_ratio=4, qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), **kwargs
     )
@@ -593,15 +681,25 @@ def vit_predictor(**kwargs: Any) -> VisionTransformerPredictor:
         provider="mmlearn",
     ),
 )
-def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with tiny configuration.
+def vit_tiny(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with tiny configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=192,
@@ -621,15 +719,25 @@ def vit_tiny(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with small configuration.
+def vit_small(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with small configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=384,
@@ -649,15 +757,25 @@ def vit_small(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with base configuration.
+def vit_base(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with base configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=768,
@@ -677,15 +795,25 @@ def vit_base(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with large configuration.
+def vit_large(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with large configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=1024,
@@ -705,15 +833,25 @@ def vit_large(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with huge configuration.
+def vit_huge(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with huge configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=1280,
@@ -733,15 +871,25 @@ def vit_huge(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
         provider="mmlearn",
     ),
 )
-def vit_giant(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
-    """
-    Create a VisionTransformer model with giant configuration.
+def vit_giant(
+    patch_size: int = 16, kwargs: Optional[dict[str, Any]] = None
+) -> VisionTransformer:
+    """Create a VisionTransformer model with giant configuration.
+
+    Parameters
+    ----------
+    patch_size : int, default=16
+        Size of each patch.
+    kwargs : dict[str, Any], optional, default=None
+        Keyword arguments for the model variant.
 
     Returns
     -------
     VisionTransformer
         An instance of VisionTransformer.
     """
+    if kwargs is None:
+        kwargs = {}
     return VisionTransformer(
         patch_size=patch_size,
         embed_dim=1408,
@@ -754,7 +902,7 @@ def vit_giant(patch_size: int = 16, **kwargs: Any) -> VisionTransformer:
     )
 
 
-VIT_EMBED_DIMS: Dict[str, int] = {
+VIT_EMBED_DIMS: dict[str, int] = {
     "vit_tiny": 192,
     "vit_small": 384,
     "vit_base": 768,

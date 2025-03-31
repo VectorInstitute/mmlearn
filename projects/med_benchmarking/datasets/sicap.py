@@ -1,7 +1,7 @@
 """Sicap Dataset."""
 
 import os
-from typing import Callable, Dict, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import pandas as pd
 import torch
@@ -76,7 +76,7 @@ class SICAP(Dataset[Example]):
         )
 
     @property
-    def id2label(self) -> Dict[int, str]:
+    def id2label(self) -> dict[int, str]:
         """Return the label mapping."""
         return {
             0: "benign glands",

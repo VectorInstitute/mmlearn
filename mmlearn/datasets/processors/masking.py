@@ -3,7 +3,7 @@
 import math
 import random
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 import torch
 from hydra_zen import store
@@ -16,6 +16,7 @@ class RandomMaskGenerator:
 
     Returns a random mask of shape `(nb_patches, nb_patches)` based on the
     configuration where the number of patches to be masked is num_masking_patches.
+    **This is intended to be used for tasks like masked language modeling.**
 
     Parameters
     ----------
@@ -31,7 +32,7 @@ class RandomMaskGenerator:
         inputs: torch.Tensor,
         tokenizer: PreTrainedTokenizerBase,
         special_tokens_mask: Optional[torch.Tensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Generate a random mask.
 
         Returns a random mask of shape (nb_patches, nb_patches) based on the
@@ -85,25 +86,28 @@ class RandomMaskGenerator:
 class BlockwiseImagePatchMaskGenerator:
     """Blockwise image patch mask generator.
 
+    This is primarily intended for the data2vec method.
+
     Parameters
     ----------
-    input_size: int or Tuple[int, int]
-        The size of the input image.
-    num_masking_patches: int
-        The number of patches to be masked.
-    min_num_patches: int, default=4
-        The minimum number of patches to be masked.
-    max_num_patches: int, default=None
-        The maximum number of patches to be masked.
-    min_aspect_ratio: float, default=0.3
+    input_size : Union[int, tuple[int, int]]
+        The size of the input image. If an integer is provided, the image is assumed
+        to be square.
+    num_masking_patches : int
+        The number of patches to mask.
+    min_num_patches : int, default=4
+        The minimum number of patches to mask.
+    max_num_patches : int, default=None
+        The maximum number of patches to mask.
+    min_aspect_ratio : float, default=0.3
         The minimum aspect ratio of the patch.
-    max_aspect_ratio: float, default=None
+    max_aspect_ratio : float, default=None
         The maximum aspect ratio of the patch.
     """
 
     def __init__(
         self,
-        input_size: Union[int, Tuple[int, int]],
+        input_size: Union[int, tuple[int, int]],
         num_masking_patches: int,
         min_num_patches: int = 4,
         max_num_patches: Any = None,
@@ -143,8 +147,14 @@ class BlockwiseImagePatchMaskGenerator:
             self.log_aspect_ratio[1],
         )
 
-    def get_shape(self) -> Tuple[int, int]:
-        """Get the shape of the mask."""
+    def get_shape(self) -> tuple[int, int]:
+        """Get the shape of the input.
+
+        Returns
+        -------
+        tuple[int, int]
+            The shape of the input as a tuple `(height, width)`.
+        """
         return self.height, self.width
 
     def _mask(self, mask: torch.Tensor, max_mask_patches: int) -> int:
@@ -229,24 +239,27 @@ class BlockwiseImagePatchMaskGenerator:
 
 
 def apply_masks(
-    x: torch.Tensor, masks: Union[torch.Tensor, List[torch.Tensor]]
+    x: torch.Tensor, masks: Union[torch.Tensor, list[torch.Tensor]]
 ) -> torch.Tensor:
     """
     Apply masks to the input tensor by selecting the patches to keep based on the masks.
 
+    This function is primarily intended to be used for the
+    :py:class:`i-JEPA <mmlearn.tasks.ijepa.IJEPA>`.
+
     Parameters
     ----------
     x : torch.Tensor
-        Input tensor of shape (B, N, D).
-    masks : Union[torch.Tensor, List[torch.Tensor]]
-        A list of mask tensors of shape (N,), (1, N), or (B, N).
+        Input tensor of shape ``(B, N, D)``.
+    masks : Union[torch.Tensor, list[torch.Tensor]]
+        A list of mask tensors of shape ``(N,)``, ``(1, N)``, or ``(B, N)``.
 
     Returns
     -------
     torch.Tensor
         The masked tensor where only the patches indicated by the masks are kept.
-        The output tensor has shape (B * num_masks, N', D),
-        where N' is the number of patches kept.
+        The output tensor has shape ``(B * num_masks, N', D)``, where ``N'`` is
+        the number of patches kept.
     """
     all_x = []
     batch_size = x.size(0)
@@ -302,13 +315,13 @@ class IJEPAMaskGenerator:
         Number of predictor masks to generate.
     """
 
-    input_size: Tuple[int, int] = (224, 224)
+    input_size: tuple[int, int] = (224, 224)
     patch_size: int = 16
     min_keep: int = 10
     allow_overlap: bool = False
-    enc_mask_scale: Tuple[float, float] = (0.85, 1.0)
-    pred_mask_scale: Tuple[float, float] = (0.15, 0.2)
-    aspect_ratio: Tuple[float, float] = (0.75, 1.0)
+    enc_mask_scale: tuple[float, float] = (0.85, 1.0)
+    pred_mask_scale: tuple[float, float] = (0.15, 0.2)
+    aspect_ratio: tuple[float, float] = (0.75, 1.5)
     nenc: int = 1
     npred: int = 4
 
@@ -320,9 +333,9 @@ class IJEPAMaskGenerator:
     def _sample_block_size(
         self,
         generator: torch.Generator,
-        scale: Tuple[float, float],
-        aspect_ratio: Tuple[float, float],
-    ) -> Tuple[int, int]:
+        scale: tuple[float, float],
+        aspect_ratio: tuple[float, float],
+    ) -> tuple[int, int]:
         """Sample the size of the mask block based on scale and aspect ratio."""
         _rand = torch.rand(1, generator=generator).item()
         min_s, max_s = scale
@@ -341,10 +354,8 @@ class IJEPAMaskGenerator:
         return h, w
 
     def _sample_block_mask(
-        self,
-        b_size: Tuple[int, int],
-        acceptable_regions: Optional[torch.Tensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        self, b_size: tuple[int, int]
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Sample a mask block."""
         h, w = b_size
         top = torch.randint(0, self.height - h, (1,)).item()
@@ -357,10 +368,7 @@ class IJEPAMaskGenerator:
 
         return mask.flatten(), mask_complement.flatten()
 
-    def __call__(
-        self,
-        batch_size: int = 1,
-    ) -> Dict[str, Any]:
+    def __call__(self, batch_size: int = 1) -> dict[str, Any]:
         """Generate encoder and predictor masks for a batch of examples.
 
         Parameters
@@ -370,7 +378,7 @@ class IJEPAMaskGenerator:
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any]
             A dictionary of encoder masks and predictor masks.
         """
         seed = torch.randint(
@@ -402,6 +410,6 @@ class IJEPAMaskGenerator:
             masks_enc.append(mask_e)
 
         return {
-            "encoder_masks": masks_enc,  # List of tensors of shape (batch_size, N)
-            "predictor_masks": masks_pred,  # List of tensors of shape (batch_size, N)
+            "encoder_masks": masks_enc,  # list of tensors of shape (batch_size, N)
+            "predictor_masks": masks_pred,  # list of tensors of shape (batch_size, N)
         }

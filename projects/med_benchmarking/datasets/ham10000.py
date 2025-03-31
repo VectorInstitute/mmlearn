@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Dict, Optional
+from typing import Callable, Optional
 
 import pandas as pd
 import torch
@@ -80,7 +80,7 @@ class HAM10000(Dataset[Example]):
         )
 
     @property
-    def id2label(self) -> Dict[int, str]:
+    def id2label(self) -> dict[int, str]:
         """Return the label mapping."""
         return {
             0: "Melanocytic Nevi",

@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 import faiss
 import lightning.pytorch as pl
@@ -46,10 +46,10 @@ class TaxonomicClassification(EvaluationHooks):
 
     def on_evaluation_epoch_start(self, pl_module: pl.LightningModule) -> None:
         # initialize the dictionary to store the embeddings and labels
-        self._embedding_store: Dict[str, Dict[str, Any]] = {}
+        self._embedding_store: dict[str, dict[str, Any]] = {}
 
     def evaluation_step(  # noqa: PLR0912
-        self, pl_module: pl.LightningModule, batch: Dict[str, Any], batch_idx: int
+        self, pl_module: pl.LightningModule, batch: dict[str, Any], batch_idx: int
     ) -> None:
         if pl_module.trainer.sanity_checking:
             return
@@ -60,7 +60,7 @@ class TaxonomicClassification(EvaluationHooks):
             and Modalities.TEXT.name in batch
         ), "The batch must contain the RGB, DNA and text modalities"
 
-        outputs: Dict[str, Any] = pl_module(batch)
+        outputs: dict[str, Any] = pl_module(batch)
 
         splits_batch = batch["split"]
         labels_batch = batch["labels"]
@@ -167,7 +167,7 @@ class TaxonomicClassification(EvaluationHooks):
                     labels + labels + labels
                 )
 
-    def on_evaluation_epoch_end(self, pl_module: pl.LightningModule) -> Dict[str, Any]:
+    def on_evaluation_epoch_end(self, pl_module: pl.LightningModule) -> dict[str, Any]:
         # concatenate the embeddings for the entire dataset
         if not self._embedding_store:
             return {}
@@ -205,8 +205,8 @@ class TaxonomicClassification(EvaluationHooks):
 
 
 def _convert_label_dict_to_list_of_dict(
-    label_batch: Dict[str, np.str_],
-) -> list[Dict[str, np.str_]]:
+    label_batch: dict[str, np.str_],
+) -> list[dict[str, np.str_]]:
     order = label_batch["order"]
 
     family = label_batch["family"]
@@ -215,7 +215,7 @@ def _convert_label_dict_to_list_of_dict(
 
     return [
         {"order": o, "family": f, "genus": g, "species": s}
-        for o, f, g, s in zip(order, family, genus, species)
+        for o, f, g, s in zip(order, family, genus, species, strict=False)
     ]
 
 
@@ -282,7 +282,7 @@ def _top_k_micro_accuracy(
             k_micro_acc[k] = {}
         for level in LEVELS:
             correct_in_curr_level = 0
-            for pred_dict, gt_dict in zip(pred_list, gt_list):
+            for pred_dict, gt_dict in zip(pred_list, gt_list, strict=False):
                 pred_labels = pred_dict[level][:k]
                 gt_label = gt_dict[level]
                 if gt_label in pred_labels:
@@ -313,7 +313,7 @@ def _top_k_macro_accuracy(
         for level in LEVELS:
             pred_counts[k][level] = {}
             gt_counts[k][level] = {}
-            for pred, gt in zip(pred_list, gt_list):
+            for pred, gt in zip(pred_list, gt_list, strict=False):
                 pred_labels = pred[level][:k]
                 gt_label = gt[level]
                 if gt_label not in pred_counts[k][level]:
@@ -405,9 +405,9 @@ def _print_micro_and_macro_acc(
 
 
 def _inference_and_print_result(
-    keys_dict: Dict[str, Any],
-    seen_dict: Dict[str, Any],
-    unseen_dict: Dict[str, Any],
+    keys_dict: dict[str, Any],
+    seen_dict: dict[str, Any],
+    unseen_dict: dict[str, Any],
     k_list: Optional[list[int]] = None,
 ) -> tuple[
     dict[str, dict[str, dict[str, dict[str, dict[int, dict[str, float]]]]]],

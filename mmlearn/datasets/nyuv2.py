@@ -1,13 +1,13 @@
 """SUN RGB-D dataset."""
 
 import os
-from typing import Callable, List, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import numpy as np
 import torch
 from hydra_zen import MISSING, store
 from lightning_utilities.core.imports import RequirementCache
-from PIL.Image import Image as PILImage
+from PIL import Image as PILImage
 from torch.utils.data import Dataset
 from torchvision.transforms.v2.functional import to_pil_image
 
@@ -35,21 +35,15 @@ _LABELS = [
 ]
 
 
-def text_labels() -> List[str]:
-    """Return a list of the CheXpert dataset's textual labels."""
-    return _LABELS
-
-
 def depth_normalize(
     depth_file: str, min_depth: float = 0.01, max_depth: int = 50
 ) -> torch.Tensor:
-    """Load depth file and convert to disparity.
+    """Load depth file and convert to disparity image.
 
     Parameters
     ----------
     depth_file : str
         Path to the depth file.
-        Sensor type of the depth file.
     min_depth : float, default=0.01
         Minimum depth value to clip the depth image.
     max_depth : int, default=50
@@ -58,7 +52,7 @@ def depth_normalize(
     Returns
     -------
     torch.Tensor
-        Normalized depth image.
+        The normalized depth image.
     """
     depth_image = np.array(PILImage.open(depth_file))
     depth = np.array(depth_image).astype(np.float32)
@@ -87,12 +81,20 @@ class NYUv2Dataset(Dataset[Example]):
         Split of the dataset to use.
     return_type : {"disparity", "image"}, default="disparity"
         Return type of the depth images.
-        Disparity: Return the depth image as disparity map.
-        Image: Return the depth image as a 3-channel image.
-    rgb_transform: Optional[Callable[[PILImage], torch.Tensor]], default=None
-        Transform to apply to the RGB images.
-    depth_transform: Optional[Callable[[PILImage], torch.Tensor]], default=None
-        Transform to apply to the depth images.
+
+        - `"disparity"`: Return the depth image as disparity map.
+        - `"image"`: Return the depth image as a 3-channel image.
+    rgb_transform: Callable[[PIL.Image], torch.Tensor], default=None
+       A callable that takes in an RGB PIL image and returns a transformed version
+       of the image as a PyTorch tensor.
+    depth_transform: Callable[[PIL.Image], torch.Tensor], default=None
+        A callable that takes in a depth PIL image and returns a transformed version
+        of the image as a PyTorch tensor.
+
+    Raises
+    ------
+    ImportError
+        If `opencv-python` is not installed.
     """
 
     def __init__(
@@ -118,7 +120,7 @@ class NYUv2Dataset(Dataset[Example]):
 
         root_dir = os.path.join(root_dir, split)
         depth_files = [os.path.join(root_dir, "depth", f"{f}.png") for f in file_ids]
-        rgb_files = [os.path.join(root_dir, "rgb", f"{f}.jpg") for f in file_ids]
+        rgb_files = [os.path.join(root_dir, "rgb", f"{f}.png") for f in file_ids]
 
         label_files = [
             os.path.join(root_dir, "scene_class", f"{f}.txt") for f in file_ids
@@ -142,7 +144,7 @@ class NYUv2Dataset(Dataset[Example]):
             depth_files = [depth_files[i] for i in valid_indices]
             labels = [labels[i] for i in valid_indices]
 
-        self.samples = list(zip(rgb_files, depth_files, labels))
+        self.samples = list(zip(rgb_files, depth_files, labels, strict=False))
 
         self.rgb_transform = rgb_transform
         self.depth_transform = depth_transform

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Optional
 
 import hydra
 import lightning.pytorch.callbacks as lightning_callbacks
@@ -54,13 +54,16 @@ class JobType(str, Enum):
 class DatasetConf:
     """Configuration template for the datasets."""
 
+    #: Configuration for the training dataset.
     train: Optional[Any] = field(
         default=None,
         metadata={"help": "Configuration for the training dataset."},
     )
+    #: Configuration for the validation dataset.
     val: Optional[Any] = field(
         default=None, metadata={"help": "Configuration for the validation dataset."}
     )
+    #: Configuration for the test dataset.
     test: Optional[Any] = field(
         default=None,
         metadata={"help": "Configuration for the test dataset."},
@@ -71,14 +74,17 @@ class DatasetConf:
 class DataLoaderConf:
     """Configuration for the dataloader."""
 
+    #: Configuration for the training dataloader.
     train: Any = field(
         default_factory=_DataLoaderConf,
         metadata={"help": "Configuration for the training dataloader."},
     )
+    #: Configuration for the validation dataloader.
     val: Any = field(
         default_factory=_DataLoaderConf,
         metadata={"help": "Configuration for the validation dataloader."},
     )
+    #: Configuration for the test dataloader.
     test: Any = field(
         default_factory=_DataLoaderConf,
         metadata={"help": "Configuration for the test dataloader."},
@@ -89,34 +95,28 @@ class DataLoaderConf:
 class MMLearnConf:
     """Top-level configuration for mmlearn experiments."""
 
-    defaults: List[Any] = field(
+    defaults: list[Any] = field(
         default_factory=lambda: [
             "_self_",  # See https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/default_composition_order for more information
             {"task": MISSING},
             {"override hydra/launcher": "submitit_slurm"},
         ]
     )
-    experiment_name: str = field(
-        default=MISSING, metadata={"help": "Name of the experiment."}
-    )
-    job_type: JobType = field(
-        default=JobType.train, metadata={"help": "Type of the job."}
-    )
-    seed: Optional[int] = field(
-        default=None, metadata={"help": "Seed for the random number generators."}
-    )
-    datasets: DatasetConf = field(
-        default_factory=DatasetConf,
-        metadata={"help": "Configuration for the datasets."},
-    )
-    dataloader: DataLoaderConf = field(
-        default_factory=DataLoaderConf,
-        metadata={"help": "Configuration for the dataloader."},
-    )
-    task: Any = field(
-        default=MISSING,
-        metadata={"help": "Configuration for the task, typically a LightningModule."},
-    )
+    #: Name of the experiment. This must be specified for any experiment to run.
+    experiment_name: str = field(default=MISSING)
+    #: Type of the job.
+    job_type: JobType = field(default=JobType.train)
+    #: Seed for the random number generators. This is set for Python, Numpy and PyTorch,
+    #: including the workers in PyTorch Dataloaders.
+    seed: Optional[int] = field(default=None)
+    #: Configuration for the datasets.
+    datasets: DatasetConf = field(default_factory=DatasetConf)
+    #: Configuration for the dataloaders.
+    dataloader: DataLoaderConf = field(default_factory=DataLoaderConf)
+    #: Configuration for the task. This is required to run any experiment.
+    task: Any = field(default=MISSING)
+    #: Configuration for the trainer. The options here are the same as in
+    #: :py:class:`~lightning.pytorch.trainer.trainer.Trainer`
     trainer: Any = field(
         default_factory=builds(
             lightning_trainer.Trainer,
@@ -125,22 +125,19 @@ class MMLearnConf:
             enable_progress_bar=True,
             enable_checkpointing=True,
             default_root_dir=_get_default_ckpt_dir(),
-        ),
-        metadata={"help": "Configuration for the Trainer."},
+        )
     )
-    tags: Optional[List[str]] = field(
-        default_factory=lambda: [II("experiment_name")],
-        metadata={"help": "Tags for the experiment. Useful for wandb logging."},
-    )
-    resume_from_checkpoint: Optional[Path] = field(
-        default=None,
-        metadata={"help": "Path to the checkpoint to resume training from."},
-    )
-    strict_loading: bool = field(
-        default=True,
-        metadata={"help": "Whether to strictly enforce loading of model weights."},
-    )
-    torch_compile_kwargs: Dict[str, Any] = field(
+    #: Tags for the experiment. This is useful for `wandb <https://docs.wandb.ai/ref/python/init>`_
+    #: logging.
+    tags: Optional[list[str]] = field(default_factory=lambda: [II("experiment_name")])
+    #: Path to the checkpoint to resume training from.
+    resume_from_checkpoint: Optional[Path] = field(default=None)
+    #: Whether to strictly enforce loading of model weights i.e. `strict=True` in
+    #: :py:meth:`~lightning.pytorch.core.module.LightningModule.load_from_checkpoint`.
+    strict_loading: bool = field(default=True)
+    #: Configuration for torch.compile. These are essentially the same as the
+    #: arguments for :py:func:`torch.compile`.
+    torch_compile_kwargs: dict[str, Any] = field(
         default_factory=lambda: {
             "disable": True,
             "fullgraph": False,
@@ -148,9 +145,9 @@ class MMLearnConf:
             "backend": "inductor",
             "mode": None,
             "options": None,
-        },
-        metadata={"help": "Configuration for torch.jit.compile."},
+        }
     )
+    #: Hydra configuration.
     hydra: HydraConf = field(
         default_factory=lambda: HydraConf(
             searchpath=["pkg://mmlearn.conf"],
@@ -187,6 +184,9 @@ cs.store(
 
 
 #################### External Modules ####################
+#: A custom ZenStore object that will immediately add entries to Hydra's global
+#: config store as soon as they are registered. Use this as a decorator for
+#: newly-defined configurable functions/classes outside the main mmlearn package.
 external_store = ZenStore(name="external_store", deferred_hydra_store=False)
 
 
@@ -197,7 +197,7 @@ def register_external_modules(
     package: Optional[str] = None,
     provider: Optional[str] = None,
     base_cls: Optional[type] = None,
-    ignore_cls: Optional[List[type]] = None,
+    ignore_cls: Optional[list[type]] = None,
     ignore_prefix: Optional[str] = None,
     **kwargs_for_builds: Any,
 ) -> None:
@@ -209,22 +209,22 @@ def register_external_modules(
         The module to add classes from.
     group : str
         The config group to add the classes to.
-    name : str, optional, default=None
+    name : Optional[str], optional, default=None
         The name to give to the dynamically-generated configs. If `None`, the
         class name is used.
-    package : str, optional, default=None
+    package : Optional[str], optional, default=None
         The package to add the configs to.
-    provider : str, optional, default=None
+    provider : Optional[str], optional, default=None
         The provider to add the configs to.
-    base_cls : type, optional, default=None
+    base_cls : Optional[type], optional, default=None
         The base class to filter classes by. The base class is also excluded from
         the configs.
-    ignore_cls : List[type], optional, default=None
-        List of classes to ignore.
-    ignore_prefix : str, optional, default=None
+    ignore_cls : Optional[list[type]], optional, default=None
+        list of classes to ignore.
+    ignore_prefix : Optional[str], optional, default=None
         Ignore classes whose names start with this prefix.
     kwargs_for_builds : Any
-        Additional keyword arguments to pass to `hydra_zen.builds`.
+        Additional keyword arguments to pass to ``hydra_zen.builds``.
 
     """
     for key, cls in module.__dict__.items():
@@ -457,7 +457,7 @@ else:
 
 
 #################### Custom Hydra Main Decorator ####################
-def hydra_main(
+def _hydra_main(
     config_path: Optional[str] = _UNSPECIFIED_,
     config_name: Optional[str] = None,
     version_base: Optional[str] = _UNSPECIFIED_,

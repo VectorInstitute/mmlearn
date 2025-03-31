@@ -20,7 +20,7 @@ def test_ema() -> None:
         ema_end_decay=0.9999,
         ema_anneal_end_step=300000,
     )
-    ema.model = ema.model.cpu()  # for testing purposes
+    ema.configure_model(device_id=torch.device("cpu"))
 
     # test output between model and ema model
     model_input = torch.rand(1, 3, 224, 224)

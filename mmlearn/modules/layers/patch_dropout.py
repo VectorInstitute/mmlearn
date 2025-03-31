@@ -10,21 +10,23 @@ class PatchDropout(torch.nn.Module):
     """Patch dropout layer.
 
     Drops patch tokens (after embedding and adding CLS token) from the input tensor.
-    Usually used in vision transformers to reduce the number of tokens [1].
+    Usually used in vision transformers to reduce the number of tokens. [1]_
 
     Parameters
     ----------
     keep_rate : float, optional, default=0.5
         The proportion of tokens to keep.
-    bias : float, optional, default=None
+    bias : Optional[float], optional, default=None
         The bias to add to the random noise before sorting.
     token_shuffling : bool, optional, default=False
         If True, the tokens are shuffled.
 
     References
     ----------
-    [1] PatchDropout: Economizing Vision Transformers Using Patch Dropout
-        https://arxiv.org/abs/2208.07220
+    .. [1] Liu, Y., Matsoukas, C., Strand, F., Azizpour, H., & Smith, K. (2023).
+       Patchdropout: Economizing vision transformers using patch dropout. In Proceedings
+       of the IEEE/CVF Winter Conference on Applications of Computer Vision
+       (pp. 3953-3962).
     """
 
     def __init__(
@@ -46,7 +48,7 @@ class PatchDropout(torch.nn.Module):
         Parameters
         ----------
         x : torch.Tensor
-            Input tensor of shape (batch_sz, seq_len, dim).
+            Input tensor of shape ``(batch_sz, seq_len, dim)``.
         force_drop : bool, optional, default=False
             If True, the tokens are always dropped, even when the model is in
             evaluation mode.
@@ -54,7 +56,7 @@ class PatchDropout(torch.nn.Module):
         Returns
         -------
         torch.Tensor
-            Tensor of shape (batch_sz, keep_len, dim) containing the kept tokens.
+            Tensor of shape ``(batch_sz, keep_len, dim)`` containing the kept tokens.
         """
         if (not self.training and not force_drop) or self.keep_rate == 1:
             return x
@@ -75,12 +77,12 @@ class PatchDropout(torch.nn.Module):
         Parameters
         ----------
         x : torch.Tensor
-            Input tensor of shape (batch_sz, seq_len, dim).
+            Input tensor of shape ``(batch_sz, seq_len, dim)``.
 
         Returns
         -------
         torch.Tensor
-            Tensor of shape (batch_sz, keep_len) containing the token ids to keep.
+            Tensor of shape ``(batch_sz, keep_len)`` containing the token ids to keep.
 
         """
         batch_sz, seq_len, _ = x.shape

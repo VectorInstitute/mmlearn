@@ -1,13 +1,13 @@
 """SUN RGB-D dataset."""
 
 import os
-from typing import Callable, List, Literal, Optional
+from typing import Callable, Literal, Optional
 
 import numpy as np
 import torch
 from hydra_zen import MISSING, store
 from lightning_utilities.core.imports import RequirementCache
-from PIL.Image import Image as PILImage
+from PIL import Image as PILImage
 from torch.utils.data import Dataset
 from torchvision.transforms.v2.functional import to_pil_image
 
@@ -41,11 +41,6 @@ _LABELS = [
     "rest space",
     "study space",
 ]
-
-
-def text_labels() -> List[str]:
-    """Return a list of labels."""
-    return _LABELS
 
 
 # from https://github.com/facebookresearch/omnivore/issues/12#issuecomment-1070911016
@@ -118,9 +113,6 @@ def convert_depth_to_disparity(
 class SUNRGBDDataset(Dataset[Example]):
     """SUN RGB-D dataset.
 
-    Repo followed to extract the dataset:
-    https://github.com/TUI-NICR/nicr-scene-analysis-datasets
-
     Parameters
     ----------
     root_dir : str
@@ -130,11 +122,17 @@ class SUNRGBDDataset(Dataset[Example]):
     return_type : {"disparity", "image"}, default="disparity"
         Return type of the depth images. If "disparity", the depth images are
         converted to disparity similar to the ImageBind implementation.
-        Else returns the depth image as a 3-channel image.
-    rgb_transform : Optional[Callable[[PILImage], torch.Tensor]], default=None
-        Transformation to apply to RGB images.
-    depth_transform : Optional[Callable[[PILImage], torch.Tensor]], default=None
-        Transformation to apply to depth images.
+        Otherwise, return the depth image as a 3-channel image.
+    rgb_transform: Callable[[PIL.Image], torch.Tensor], default=None
+       A callable that takes in an RGB PIL image and returns a transformed version
+       of the image as a PyTorch tensor.
+    depth_transform: Callable[[PIL.Image], torch.Tensor], default=None
+        A callable that takes in a depth PIL image and returns a transformed version
+        of the image as a PyTorch tensor.
+
+    References
+    ----------
+    .. [1] Repo followed to extract the dataset: https://github.com/TUI-NICR/nicr-scene-analysis-datasets
     """
 
     def __init__(
@@ -199,7 +197,14 @@ class SUNRGBDDataset(Dataset[Example]):
             sensor_types = [sensor_types[i] for i in valid_indices]
 
         self.samples = list(
-            zip(rgb_files, depth_files, labels, intrinsic_files, sensor_types)
+            zip(
+                rgb_files,
+                depth_files,
+                labels,
+                intrinsic_files,
+                sensor_types,
+                strict=False,
+            )
         )
 
         self.rgb_transform = rgb_transform

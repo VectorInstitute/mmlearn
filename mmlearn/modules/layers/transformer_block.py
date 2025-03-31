@@ -12,8 +12,7 @@ from mmlearn.modules.layers.mlp import MLP
 def drop_path(
     x: torch.Tensor, drop_prob: float = 0.0, training: bool = False
 ) -> torch.Tensor:
-    """
-    Drop paths (Stochastic Depth) for regularization during training.
+    """Drop paths (Stochastic Depth) for regularization during training.
 
     Parameters
     ----------
@@ -41,18 +40,17 @@ def drop_path(
 
 
 class DropPath(nn.Module):
-    """
-    Drop paths (Stochastic Depth) per sample.
+    """Drop paths (Stochastic Depth) per sample.
 
     Parameters
     ----------
-    drop_prob : Optional[float], optional
-        Probability of dropping paths. Default is None.
+    drop_prob : float, optional, default=0.0
+        Probability of dropping paths.
     """
 
-    def __init__(self, drop_prob: float) -> None:
-        super(DropPath, self).__init__()
-        self.drop_prob = drop_prob if drop_prob is not None else 0.0
+    def __init__(self, drop_prob: float = 0.0) -> None:
+        super().__init__()
+        self.drop_prob = drop_prob
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass through DropPath module."""
@@ -60,8 +58,7 @@ class DropPath(nn.Module):
 
 
 class Block(nn.Module):
-    """
-    Transformer Block.
+    """Transformer Block.
 
     This module represents a Transformer block that includes self-attention,
     normalization layers, and a feedforward multi-layer perceptron (MLP) network.
@@ -76,7 +73,7 @@ class Block(nn.Module):
         Ratio of hidden dimension to the input dimension in the MLP.
     qkv_bias : bool, optional, default=False
         If True, add a learnable bias to the query, key, value projections.
-    qk_scale : float, optional, default=None
+    qk_scale : Optional[float], optional, default=None
         Override default qk scale of head_dim ** -0.5 if set.
     drop : float, optional, default=0.0
         Dropout probability for the output of attention and MLP layers.
@@ -84,9 +81,9 @@ class Block(nn.Module):
         Dropout probability for the attention scores.
     drop_path : float, optional, default=0.0
         Stochastic depth rate, a form of layer dropout.
-    act_layer : Callable[..., nn.Module], optional, default=nn.GELU
+    act_layer : Callable[..., torch.nn.Module], optional, default=nn.GELU
         Activation layer in the MLP.
-    norm_layer : Callable[..., nn.Module], optional, default=nn.LayerNorm
+    norm_layer : Callable[..., torch.nn.Module], optional, default=torch.nn.LayerNorm
         Normalization layer.
 
     """
@@ -116,11 +113,12 @@ class Block(nn.Module):
         )
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.norm2 = norm_layer(dim)
-        mlp_hidden_dim = int(dim * mlp_ratio)
+
         self.mlp = MLP(
             in_dim=dim,
-            hidden_dims=[mlp_hidden_dim],
+            hidden_dims_multiplier=[mlp_ratio],
             activation_layer=act_layer,
+            bias=True,
             dropout=drop,
         )
 

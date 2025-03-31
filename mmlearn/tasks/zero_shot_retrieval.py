@@ -1,7 +1,7 @@
 """Zero-shot cross-modal retrieval evaluation task."""
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import lightning.pytorch as pl
 import torch
@@ -19,9 +19,14 @@ from mmlearn.tasks.hooks import EvaluationHooks
 class RetrievalTaskSpec:
     """Specification for a retrieval task."""
 
+    #: The query modality.
     query_modality: str
+
+    #: The target modality.
     target_modality: str
-    top_k: List[int]
+
+    #: The top-k values for which to compute the retrieval recall metrics.
+    top_k: list[int]
 
 
 @store(group="eval_task", provider="mmlearn")
@@ -35,19 +40,18 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
     Parameters
     ----------
-    task_specs : List[RetrievalTaskSpec]
+    task_specs : list[RetrievalTaskSpec]
         A list of retrieval task specifications. Each specification defines the query
         and target modalities, as well as the top-k values for which to compute the
         retrieval recall metrics.
 
     """
 
-    def __init__(self, task_specs: List[RetrievalTaskSpec]):
-        """Initialize the module."""
+    def __init__(self, task_specs: list[RetrievalTaskSpec]) -> None:
         super().__init__()
 
         self.task_specs = task_specs
-        self.metrics: Dict[Tuple[str, str], MetricCollection] = {}
+        self.metrics: dict[tuple[str, str], MetricCollection] = {}
         self._available_modalities = set()
 
         for spec in self.task_specs:
@@ -75,7 +79,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
     def evaluation_step(
         self,
         pl_module: pl.LightningModule,
-        batch: Dict[str, torch.Tensor],
+        batch: dict[str, torch.Tensor],
         batch_idx: int,
     ) -> None:
         """Run the forward pass and update retrieval recall metrics.
@@ -84,7 +88,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
         ----------
         pl_module : pl.LightningModule
             A reference to the Lightning module being evaluated.
-        batch : Dict[str, torch.Tensor]
+        batch : dict[str, torch.Tensor]
             A dictionary of batched input tensors.
         batch_idx : int
             The index of the batch.
@@ -93,7 +97,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
         if pl_module.trainer.sanity_checking:
             return
 
-        outputs: Dict[str, Any] = {}
+        outputs: dict[str, Any] = {}
         for modality_name in self._available_modalities:
             if modality_name in batch:
                 outputs[modality_name] = pl_module.encode(
@@ -110,7 +114,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
     def on_evaluation_epoch_end(
         self, pl_module: pl.LightningModule
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Compute the retrieval recall metrics.
 
         Parameters
@@ -120,7 +124,7 @@ class ZeroShotCrossModalRetrieval(EvaluationHooks):
 
         Returns
         -------
-        Optional[Dict[str, Any]]
+        Optional[dict[str, Any]]
             A dictionary of evaluation results or `None` if no results are available.
         """
         if pl_module.trainer.sanity_checking:

@@ -1,7 +1,7 @@
 """Utilities for loading components from the HuggingFace `transformers` library."""
 
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type
+from typing import TYPE_CHECKING, Any, Optional, Type
 
 from lightning_utilities.core.imports import RequirementCache
 from torch import nn
@@ -23,37 +23,39 @@ def load_huggingface_model(
     model_name_or_path: str,
     load_pretrained_weights: bool = True,
     get_model_attr: Optional[str] = None,
-    model_config_kwargs: Optional[Dict[str, Any]] = None,
+    model_config_kwargs: Optional[dict[str, Any]] = None,
     config_type: Optional[Type[PretrainedConfig]] = None,
 ) -> nn.Module:
-    """Load a model from the HuggingFace `transformers` library.
+    """Load a model from the HuggingFace ``transformers`` library.
 
     Parameters
     ----------
     model_type : Type[_BaseAutoModelClass]
-        The model class to instantiate e.g. `AutoModel`.
+        The model class to instantiate e.g. ``transformers.AutoModel``.
     model_name_or_path : str
         The model name or path to load the model from.
     load_pretrained_weights : bool, optional, default=True
         Whether to load the pretrained weights or not. If false, the argument
-        `pretrained_model_name_or_path` will be used to get the model configuration
+        ``pretrained_model_name_or_path`` will be used to get the model configuration
         and the model will be initialized with random weights.
-    get_model_attr : str, optional, default=None
+    get_model_attr : Optional[str], optional, default=None
         If not None, the attribute of the model to return. For example, if the model
-        is an `AutoModel` and `get_model_attr='encoder'`, the encoder part of the
-        model will be returned. If None, the full model will be returned.
-    model_config_kwargs : Dict[str, Any]
+        is an ``transformers.AutoModel`` and ``get_model_attr='encoder'``, the
+        encoder part of the model will be returned. If ``None``, the full model
+        will be returned.
+    model_config_kwargs : Optional[dict[str, Any]], optional, default=None
         Additional keyword arguments to pass to the model configuration.
         The values in kwargs of any keys which are configuration attributes will
         be used to override the loaded values. Behavior concerning key/value pairs
         whose keys are *not* configuration attributes is controlled by the
-        `return_unused_kwargs` keyword parameter.
-    config_type : Type[PretrainedConfig], optional, default=None
-        The class of the configuration to use. If None, `AutoConfig` will be used.
+        ``return_unused_kwargs`` keyword parameter.
+    config_type : Optional[Type[PretrainedConfig]], optional, default=None
+        The class of the configuration to use. If None, ``transformers.AutoConfig``
+        will be used.
 
     Returns
     -------
-    nn.Module
+    torch.nn.Module
         The instantiated model.
     """
     model_config_kwargs = model_config_kwargs or {}
