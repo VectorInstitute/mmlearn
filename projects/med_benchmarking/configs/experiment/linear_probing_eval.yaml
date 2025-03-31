@@ -9,7 +9,7 @@ defaults:
   - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
   - /modules/encoders@task.encoder.rgb: HFCLIPVisionEncoderWithProjection
   - /trainer/logger@trainer.logger.wandb: WandbLogger
-  - override /task: LinearClassifier
+  - override /task: LinearEvaluation
   - _self_
 
 seed: 0
@@ -37,12 +37,12 @@ dataloader:
     shuffle: False
 
 task:
-  task: multiclass
-  num_classes: 4
-  embed_dim: 512
+  encoder: ???
   modality: rgb
-  model_checkpoint_path: /projects/multimodal/checkpoints/mmlearn/med_benchmarking/vit_base_patch16_224_ep11.ckpt
-  top_k_list: [1]
+  num_output_features: ???
+  checkpoint_path: ???
+  state_dict_pattern_replacement_map:
+    "encoders.rgb.": ""
   optimizer:
     betas:
     - 0.9
@@ -55,9 +55,6 @@ task:
       T_max: 188 # make sure to change this if max_epochs or accumulate_grad_batches is changed
     extras:
       interval: step
-  keys_to_rename:
-    "encoders.rgb.": ""
-
 
 trainer:
   precision: 16-mixed

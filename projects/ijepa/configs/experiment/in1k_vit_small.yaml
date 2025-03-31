@@ -5,13 +5,12 @@ defaults:
   - /datasets/transforms@datasets.train.transform: ijepa_transforms
   - /datasets@datasets.val: ImageNet
   - /datasets/transforms@datasets.val.transform: ijepa_transforms
-  - /modules/encoders@task.encoder: vit_base
+  - /modules/encoders@task.encoder: vit_small
   - /modules/encoders@task.predictor: vit_predictor
   - /modules/optimizers@task.optimizer: AdamW
-  - /modules/lr_schedulers@task.lr_scheduler.scheduler: CosineAnnealingLR
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: linear_warmup_cosine_annealing_lr
   - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
   - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
-  - /trainer/callbacks@trainer.callbacks.early_stopping: EarlyStopping
   - /trainer/callbacks@trainer.callbacks.model_summary: ModelSummary
   - /trainer/logger@trainer.logger.wandb: WandbLogger
   - override /task: IJEPA
@@ -20,6 +19,16 @@ defaults:
 seed: 0
 
 datasets:
+  train:
+    transform:
+      color_jitter_strength: 0.4
+      horizontal_flip: true
+      color_distortion: true
+      gaussian_blur: false
+      crop_scale:
+        - 0.3
+        - 1.0
+      crop_size: 224
   val:
     split: val
     transform:
@@ -28,45 +37,50 @@ datasets:
 dataloader:
   train:
     batch_size: 256
-    num_workers: 10
+    num_workers: 8
+    pin_memory: true
+    drop_last: true
   val:
     batch_size: 256
-    num_workers: 10
+    num_workers: 8
+    pin_memory: false
 
 task:
+  ema_decay: 0.996
+  ema_decay_end: 1.0
+  ema_anneal_end_step: ${task.lr_scheduler.scheduler.max_steps}
+  predictor:
+    kwargs:
+      embed_dim: 384
+      predictor_embed_dim: 384
+      depth: 6
+      num_heads: 6
   optimizer:
-    betas:
-    - 0.9
-    - 0.999
     lr: 1.0e-3
     weight_decay: 0.05
-    eps: 1.0e-8
   lr_scheduler:
     scheduler:
-      T_max: ${trainer.max_epochs}
+      warmup_steps: 12_510
+      max_steps: 125_100
+      start_factor: 0.2
+      eta_min: 1.0e-6
     extras:
-      interval: epoch
+      interval: step
 
 trainer:
-  max_epochs: 300
-  precision: 16-mixed
+  max_epochs: 100
+  precision: bf16-mixed
   deterministic: False
   benchmark: True
   sync_batchnorm: False  # Set to True if using DDP with batchnorm
-  log_every_n_steps: 100
-  accumulate_grad_batches: 4
+  log_every_n_steps: 10
+  accumulate_grad_batches: 1
   check_val_every_n_epoch: 1
   callbacks:
     model_checkpoint:
-      monitor: val/loss
-      save_top_k: 1
       save_last: True
-      every_n_epochs: 1
-      dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on Vector SLURM environment
-    early_stopping:
-      monitor: val/loss
-      patience: 5
-      mode: min
+      every_n_epochs: 10
+      dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on VI's SLURM environment
     model_summary:
       max_depth: 2
 
