@@ -7,8 +7,47 @@ from PIL import ImageFilter
 import torch
 from torchvision import transforms
 from mmlearn.conf import external_store
+from timm.data.transforms import ResizeKeepRatio
+
 
 logger = getLogger()
+
+
+@external_store(group="datasets/transforms")
+def linear_eval_transforms(
+    crop_size: int = 224,
+    normalization: tuple = ((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+    job_type: Literal["train", "eval"] = "train",
+) -> transforms.Compose:
+    """
+    Create transforms for linear evaluation.
+
+    Parameters
+    ----------
+    crop_size : int, default=224
+        Size of the image crop.
+    normalization : tuple, default=((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+        Mean and std for normalization.
+    job_type : {"train", "eval"}, default="train"
+        Type of the job (training or evaluation) for which the transforms are needed.
+
+    Returns
+    -------
+    transforms.Compose
+        Composed transforms for linear evaluation with images.
+    """
+    transforms_list = []
+    if job_type == "train":
+        transforms_list.append(transforms.RandomResizedCrop(crop_size))
+        transforms_list.append(transforms.RandomHorizontalFlip())
+    else:
+        transforms_list.append(ResizeKeepRatio(crop_size + 32, interpolation="bicubic"))
+        transforms_list.append(transforms.CenterCrop(crop_size))
+
+    transforms_list.append(transforms.ToTensor())
+    transforms_list.append(transforms.Normalize(normalization[0], normalization[1]))
+
+    return transforms.Compose(transforms_list)
 
 
 @external_store(group="datasets/transforms")
