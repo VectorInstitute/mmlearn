@@ -12,7 +12,12 @@ repos:
       - id: mixed-line-ending
         args: [--fix=lf]
       - id: detect-private-key
+      - id: check-byte-order-marker
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: detect-private-key
       - id: check-yaml
+        args: [--unsafe]
       - id: check-toml
 
   - repo: https://github.com/astral-sh/uv-pre-commit

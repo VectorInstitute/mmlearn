@@ -46,7 +46,7 @@ class CheXpert(Dataset[Example]):
 
     Parameters
     ----------
-    data_root : str
+    root_dir : str
         Directory which contains `.json` files stating all dataset entries.
     split : {"train", "valid"}
         Dataset split.

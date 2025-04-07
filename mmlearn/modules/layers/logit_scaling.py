@@ -12,7 +12,7 @@ class LearnableLogitScaling(torch.nn.Module):
 
     Parameters
     ----------
-    logit_scale_init : float, optional, default=1/0.07
+    init_logit_scale : float, optional, default=1/0.07
         Initial value of the logit scale.
     learnable : bool, optional, default=True
         If True, the logit scale is learnable. Otherwise, it is fixed.

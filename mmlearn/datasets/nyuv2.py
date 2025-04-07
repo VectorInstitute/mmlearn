@@ -85,8 +85,8 @@ class NYUv2Dataset(Dataset[Example]):
         - `"disparity"`: Return the depth image as disparity map.
         - `"image"`: Return the depth image as a 3-channel image.
     rgb_transform: Callable[[PIL.Image], torch.Tensor], default=None
-       A callable that takes in an RGB PIL image and returns a transformed version
-       of the image as a PyTorch tensor.
+        A callable that takes in an RGB PIL image and returns a transformed version
+        of the image as a PyTorch tensor.
     depth_transform: Callable[[PIL.Image], torch.Tensor], default=None
         A callable that takes in a depth PIL image and returns a transformed version
         of the image as a PyTorch tensor.
