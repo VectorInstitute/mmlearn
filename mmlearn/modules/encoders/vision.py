@@ -215,8 +215,6 @@ class VisionTransformer(nn.Module):
         Normalization layer to use.
     init_std : float, optional, default=0.02
         Standard deviation for weight initialization.
-    **kwargs : dict
-        Additional keyword arguments.
     """
 
     def __init__(
@@ -430,8 +428,6 @@ class VisionTransformerPredictor(nn.Module):
         Normalization layer to use.
     init_std : float, optional, default=0.02
         Standard deviation for weight initialization.
-    **kwargs : dict
-        Additional keyword arguments.
     """
 
     def __init__(
