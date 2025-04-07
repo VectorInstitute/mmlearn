@@ -1,7 +1,0 @@
-mmlearn.modules.layers.transformer\_block module
-================================================
-
-.. automodule:: mmlearn.modules.layers.transformer_block
-   :members:
-   :undoc-members:
-   :show-inheritance:

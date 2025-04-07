@@ -1,7 +1,0 @@
-mmlearn.tasks.ijepa module
-==========================
-
-.. automodule:: mmlearn.tasks.ijepa
-   :members:
-   :undoc-members:
-   :show-inheritance:

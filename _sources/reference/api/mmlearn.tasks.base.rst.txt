@@ -1,7 +1,0 @@
-mmlearn.tasks.base module
-=========================
-
-.. automodule:: mmlearn.tasks.base
-   :members:
-   :undoc-members:
-   :show-inheritance:

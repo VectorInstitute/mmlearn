@@ -1,7 +1,0 @@
-mmlearn.modules.encoders.vision module
-======================================
-
-.. automodule:: mmlearn.modules.encoders.vision
-   :members:
-   :undoc-members:
-   :show-inheritance:

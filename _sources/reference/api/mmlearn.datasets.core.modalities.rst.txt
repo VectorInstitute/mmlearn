@@ -1,7 +1,0 @@
-mmlearn.datasets.core.modalities module
-=======================================
-
-.. automodule:: mmlearn.datasets.core.modalities
-   :members:
-   :undoc-members:
-   :show-inheritance:

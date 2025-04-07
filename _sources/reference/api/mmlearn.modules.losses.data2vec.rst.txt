@@ -1,7 +1,0 @@
-mmlearn.modules.losses.data2vec module
-======================================
-
-.. automodule:: mmlearn.modules.losses.data2vec
-   :members:
-   :undoc-members:
-   :show-inheritance:

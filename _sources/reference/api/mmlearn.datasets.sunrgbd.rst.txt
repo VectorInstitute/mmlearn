@@ -1,7 +1,0 @@
-mmlearn.datasets.sunrgbd module
-===============================
-
-.. automodule:: mmlearn.datasets.sunrgbd
-   :members:
-   :undoc-members:
-   :show-inheritance:

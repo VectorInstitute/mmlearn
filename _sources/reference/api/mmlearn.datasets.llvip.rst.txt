@@ -1,7 +1,0 @@
-mmlearn.datasets.llvip module
-=============================
-
-.. automodule:: mmlearn.datasets.llvip
-   :members:
-   :undoc-members:
-   :show-inheritance:

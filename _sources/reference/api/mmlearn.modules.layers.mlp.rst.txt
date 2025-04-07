@@ -1,7 +1,0 @@
-mmlearn.modules.layers.mlp module
-=================================
-
-.. automodule:: mmlearn.modules.layers.mlp
-   :members:
-   :undoc-members:
-   :show-inheritance:

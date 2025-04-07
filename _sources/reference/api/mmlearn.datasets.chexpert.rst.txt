@@ -1,7 +1,0 @@
-mmlearn.datasets.chexpert module
-================================
-
-.. automodule:: mmlearn.datasets.chexpert
-   :members:
-   :undoc-members:
-   :show-inheritance:

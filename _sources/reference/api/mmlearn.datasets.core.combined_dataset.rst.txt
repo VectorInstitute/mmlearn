@@ -1,7 +1,0 @@
-mmlearn.datasets.core.combined\_dataset module
-==============================================
-
-.. automodule:: mmlearn.datasets.core.combined_dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:

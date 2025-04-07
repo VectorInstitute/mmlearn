@@ -1,7 +1,0 @@
-mmlearn.datasets.nyuv2 module
-=============================
-
-.. automodule:: mmlearn.datasets.nyuv2
-   :members:
-   :undoc-members:
-   :show-inheritance:

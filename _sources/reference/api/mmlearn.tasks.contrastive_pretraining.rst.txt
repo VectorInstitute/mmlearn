@@ -1,7 +1,0 @@
-mmlearn.tasks.contrastive\_pretraining module
-=============================================
-
-.. automodule:: mmlearn.tasks.contrastive_pretraining
-   :members:
-   :undoc-members:
-   :show-inheritance:

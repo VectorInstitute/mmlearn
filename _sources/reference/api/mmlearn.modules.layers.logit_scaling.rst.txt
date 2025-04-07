@@ -1,7 +1,0 @@
-mmlearn.modules.layers.logit\_scaling module
-============================================
-
-.. automodule:: mmlearn.modules.layers.logit_scaling
-   :members:
-   :undoc-members:
-   :show-inheritance:

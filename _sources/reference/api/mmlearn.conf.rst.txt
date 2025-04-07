@@ -1,7 +1,0 @@
-mmlearn.conf package
-====================
-
-.. automodule:: mmlearn.conf
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-mmlearn.datasets.core.data\_collator module
-===========================================
-
-.. automodule:: mmlearn.datasets.core.data_collator
-   :members:
-   :undoc-members:
-   :show-inheritance:

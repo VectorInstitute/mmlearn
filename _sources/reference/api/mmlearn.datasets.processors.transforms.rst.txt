@@ -1,7 +1,0 @@
-mmlearn.datasets.processors.transforms module
-=============================================
-
-.. automodule:: mmlearn.datasets.processors.transforms
-   :members:
-   :undoc-members:
-   :show-inheritance:

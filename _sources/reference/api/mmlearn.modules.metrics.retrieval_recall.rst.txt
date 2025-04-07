@@ -1,7 +1,0 @@
-mmlearn.modules.metrics.retrieval\_recall module
-================================================
-
-.. automodule:: mmlearn.modules.metrics.retrieval_recall
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-mmlearn.modules.lr\_schedulers.linear\_warmup\_cosine\_lr module
-================================================================
-
-.. automodule:: mmlearn.modules.lr_schedulers.linear_warmup_cosine_lr
-   :members:
-   :undoc-members:
-   :show-inheritance:

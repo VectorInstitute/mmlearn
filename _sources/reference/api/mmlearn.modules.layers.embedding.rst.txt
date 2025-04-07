@@ -1,7 +1,0 @@
-mmlearn.modules.layers.embedding module
-=======================================
-
-.. automodule:: mmlearn.modules.layers.embedding
-   :members:
-   :undoc-members:
-   :show-inheritance:

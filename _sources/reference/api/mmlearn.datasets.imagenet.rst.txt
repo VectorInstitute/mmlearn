@@ -1,7 +1,0 @@
-mmlearn.datasets.imagenet module
-================================
-
-.. automodule:: mmlearn.datasets.imagenet
-   :members:
-   :undoc-members:
-   :show-inheritance:

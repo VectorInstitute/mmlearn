@@ -1,7 +1,0 @@
-mmlearn.modules.losses.contrastive module
-=========================================
-
-.. automodule:: mmlearn.modules.losses.contrastive
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-mmlearn.datasets.processors.tokenizers module
-=============================================
-
-.. automodule:: mmlearn.datasets.processors.tokenizers
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-mmlearn.modules.layers.patch\_dropout module
-============================================
-
-.. automodule:: mmlearn.modules.layers.patch_dropout
-   :members:
-   :undoc-members:
-   :show-inheritance:

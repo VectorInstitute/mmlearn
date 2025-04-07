@@ -1,7 +1,0 @@
-mmlearn.modules.encoders.text module
-====================================
-
-.. automodule:: mmlearn.modules.encoders.text
-   :members:
-   :undoc-members:
-   :show-inheritance:

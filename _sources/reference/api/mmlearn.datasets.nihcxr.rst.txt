@@ -1,7 +1,0 @@
-mmlearn.datasets.nihcxr module
-==============================
-
-.. automodule:: mmlearn.datasets.nihcxr
-   :members:
-   :undoc-members:
-   :show-inheritance:

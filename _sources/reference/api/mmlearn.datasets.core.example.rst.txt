@@ -1,7 +1,0 @@
-mmlearn.datasets.core.example module
-====================================
-
-.. automodule:: mmlearn.datasets.core.example
-   :members:
-   :undoc-members:
-   :show-inheritance:

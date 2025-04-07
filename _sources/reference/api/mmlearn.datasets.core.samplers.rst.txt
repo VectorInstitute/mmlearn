@@ -1,7 +1,0 @@
-mmlearn.datasets.core.samplers module
-=====================================
-
-.. automodule:: mmlearn.datasets.core.samplers
-   :members:
-   :undoc-members:
-   :show-inheritance:

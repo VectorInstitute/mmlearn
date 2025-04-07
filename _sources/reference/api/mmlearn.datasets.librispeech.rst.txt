@@ -1,7 +1,0 @@
-mmlearn.datasets.librispeech module
-===================================
-
-.. automodule:: mmlearn.datasets.librispeech
-   :members:
-   :undoc-members:
-   :show-inheritance:
