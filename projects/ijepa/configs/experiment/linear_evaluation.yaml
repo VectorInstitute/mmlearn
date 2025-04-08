@@ -1,0 +1,90 @@
+# @package _global_
+
+defaults:
+  - /datasets@datasets.train: ImageNet
+  - /datasets/transforms@datasets.train.transform: linear_eval_transforms
+  - /datasets@datasets.val: ImageNet
+  - /datasets/transforms@datasets.val.transform: linear_eval_transforms
+  - /modules/encoders@task.encoder: vit_small
+  - /helpers@task.encoder_outputs_processor: avg_pool_last_n_hidden_states
+  - /modules/optimizers@task.optimizer: SGD
+  - /modules/lr_schedulers@task.lr_scheduler.scheduler: MultiStepLR
+  - /trainer/callbacks@trainer.callbacks.lr_monitor: LearningRateMonitor
+  - /trainer/callbacks@trainer.callbacks.model_checkpoint: ModelCheckpoint
+  - /trainer/callbacks@trainer.callbacks.model_summary: ModelSummary
+  - /trainer/logger@trainer.logger.wandb: WandbLogger
+  - override /task: LinearEvaluation
+  - _self_
+
+seed: 0
+
+datasets:
+  val:
+    split: val
+    transform:
+      job_type: eval
+
+dataloader:
+  train:
+    batch_size: 256
+    num_workers: 8
+    pin_memory: true
+    drop_last: true
+  val:
+    batch_size: 256
+    num_workers: 8
+    pin_memory: true
+
+task:
+  encoder:
+    kwargs:
+      modality: rgb
+  checkpoint_path: ???
+  modality: ${task.encoder.kwargs.modality}
+  num_output_features: 1536 # 384 * task.encoder_output_processors.n for vit_small
+  num_classes: 1_000
+  state_dict_pattern_replacement_map:
+    encoder.: ""
+  state_dict_patterns_to_exclude:
+    - "predictor.*"
+  encoder_input_kwargs:
+    return_hidden_states: True
+  encoder_outputs_processor:
+    _partial_: True
+    n: 4
+  optimizer:
+    lr: 0.01
+    weight_decay: 0.0005
+    momentum: 0.9
+    nesterov: True
+  lr_scheduler:
+    scheduler:
+      milestones: [8, 16, 24]
+      gamma: 0.1
+    extras:
+      interval: epoch
+
+trainer:
+  max_epochs: 28
+  precision: bf16-mixed
+  deterministic: False
+  benchmark: True
+  sync_batchnorm: False  # Set to True if using DDP with batchnorm
+  log_every_n_steps: 10
+  accumulate_grad_batches: 1
+  check_val_every_n_epoch: 1
+  callbacks:
+    model_checkpoint:
+      monitor: val/loss
+      save_top_k: 1
+      save_last: True
+      every_n_epochs: 1
+      dirpath: /checkpoint/${oc.env:USER}/${oc.env:SLURM_JOB_ID} # only works on VI's SLURM environment
+    model_summary:
+      max_depth: 2
+
+tags:
+  - ${experiment_name}
+  - linear evaluation
+  - vit_small
+  - ImageNet
