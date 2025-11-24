@@ -19,7 +19,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install libcurl4-openssl-dev libssl-dev
 
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.0
 
       - name: Install uv
         uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182
