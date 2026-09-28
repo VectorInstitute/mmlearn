@@ -81,7 +81,7 @@ class BarcodeBERT(nn.Module):
         outputs = self.model(
             input_ids=inputs[Modalities.DNA.name],
             attention_mask=inputs.get(
-                "attention_mask", inputs.get(Modalities.DNA.attention_mask, None)
+                "attention_mask", inputs.get(Modalities.DNA.attention_mask)
             ),
             position_ids=inputs.get("position_ids"),
             output_attentions=inputs.get("output_attentions"),
