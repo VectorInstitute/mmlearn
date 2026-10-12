@@ -327,7 +327,7 @@ class HFCLIPTextEncoderWithProjection(nn.Module):
         """
         input_ids = inputs[Modalities.TEXT.name]
         attention_mask: Optional[torch.Tensor] = inputs.get(
-            "attention_mask", inputs.get(Modalities.TEXT.attention_mask, None)
+            "attention_mask", inputs.get(Modalities.TEXT.attention_mask)
         )
         position_ids = inputs.get("position_ids")
 
